@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sarpa Group — Gestion Opérationnelle</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --mp:#2D1B4E;--md:#3A2260;--mm:#4E2F82;--ms:#6B3FA0;--ml:#9B6DD0;
+  --mpale:#E8D9FA;--mghost:rgba(107,63,160,.18);
+  --must:#D4A017;--must2:#F0BB30;--mustpale:#FDF3D0;--mustgh:rgba(212,160,23,.15);
+  --white:#fff;--bg:#1E1035;--sf:#2D1B4E;--sf2:#3A2260;--sf3:#4E2F82;
+  --bd:rgba(155,109,208,.18);--bd2:rgba(155,109,208,.32);
+  --tx:#F0EBF8;--tx2:#C4ADDF;--tx3:#8A6BB0;
+  --gn:#1BA87A;--gn2:#22D49C;--lgn:rgba(27,168,122,.14);
+  --rd:#C0392B;--rd2:#F05545;--lrd:rgba(192,57,43,.14);
+  --or:#C96A10;--or2:#F08030;--lor:rgba(201,106,16,.14);
+  --bl:#2563EB;--bl2:#3B82F6;--lbl:rgba(37,99,235,.14);
+  --fh:'Outfit',sans-serif;--fb:'Instrument Sans',sans-serif;--fm:'JetBrains Mono',monospace;
+  --r:12px;--r2:8px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--fb);background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden}
+
+/* SIDEBAR */
+#sb{position:fixed;left:0;top:0;bottom:0;width:250px;background:var(--md);border-right:1px solid var(--bd);display:flex;flex-direction:column;z-index:200;transition:transform .3s}
+.logo{padding:22px 20px 18px;border-bottom:1px solid var(--bd);background:linear-gradient(135deg,var(--mp),var(--mm))}
+.ld{width:38px;height:38px;background:linear-gradient(135deg,var(--must),var(--must2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-weight:900;font-size:17px;color:var(--mp);box-shadow:0 4px 16px rgba(212,160,23,.35);flex-shrink:0}
+.ln{font-family:var(--fh);font-size:16px;font-weight:800;color:#fff;letter-spacing:-.01em}
+.lt{font-size:9.5px;color:var(--must2);font-family:var(--fm);letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
+.lp{display:flex;align-items:center;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid var(--bd)}
+.pdot{width:7px;height:7px;border-radius:50%;background:var(--gn2);animation:glow 2s infinite}
+@keyframes glow{0%,100%{box-shadow:0 0 4px var(--gn2);opacity:1}50%{box-shadow:0 0 10px var(--gn2);opacity:.6}}
+.plbl{font-size:10px;color:var(--tx3);font-family:var(--fm)}
+nav{flex:1;padding:10px 0;overflow-y:auto}
+.ns{padding:14px 18px 4px;font-size:9px;font-weight:700;color:var(--tx3);font-family:var(--fm);letter-spacing:.14em;text-transform:uppercase}
+.ni{display:flex;align-items:center;gap:10px;padding:9px 18px;cursor:pointer;color:var(--tx2);font-size:13px;font-weight:500;border-left:2px solid transparent;transition:all .15s;user-select:none}
+.ni:hover{background:var(--mghost);color:var(--mpale)}
+.ni.active{background:rgba(212,160,23,.12);color:var(--must2);border-left-color:var(--must2)}
+.ni .ic{font-size:15px;width:20px;text-align:center}
+.nbadge{margin-left:auto;font-size:9.5px;font-weight:700;background:var(--rd2);color:#fff;padding:1px 6px;border-radius:20px}
+.sbfoot{padding:14px 18px;border-top:1px solid var(--bd)}
+.sft{font-family:var(--fm);font-size:12px;color:var(--must2);font-weight:500}
+.sfr{font-size:11px;color:var(--tx3);margin-top:2px}
+
+/* MAIN */
+#mn{margin-left:250px;min-height:100vh}
+.topbar{position:sticky;top:0;z-index:100;height:58px;padding:0 28px;background:rgba(30,16,53,.9);backdrop-filter:blur(16px);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+.ttl{font-family:var(--fh);font-size:18px;font-weight:700;color:#fff}
+.tba{display:flex;gap:8px;align-items:center}
+
+/* PAGES */
+.pg{display:none;padding:24px 28px 48px}
+.pg.active{display:block;animation:fu .22s ease}
+@keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* BUTTONS */
+.btn{padding:8px 16px;border-radius:var(--r2);font-family:var(--fb);font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.bm{background:var(--must);color:var(--mp)}.bm:hover{background:var(--must2);transform:translateY(-1px)}
+.bp{background:var(--ms);color:#fff}.bp:hover{background:var(--ml)}
+.bg{background:var(--mghost);color:var(--tx2);border:1px solid var(--bd2)}.bg:hover{background:var(--sf3);color:var(--tx)}
+.bs{background:var(--gn);color:#fff}
+.br{background:var(--rd2);color:#fff}
+
+/* KPI */
+.kgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:14px;margin-bottom:22px}
+.kc{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:18px 20px;position:relative;overflow:hidden;transition:transform .15s,border-color .15s}
+.kc:hover{transform:translateY(-2px);border-color:var(--bd2)}
+.kc::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r) var(--r) 0 0}
+.kc-m::after{background:linear-gradient(90deg,var(--must),var(--must2))}
+.kc-g::after{background:linear-gradient(90deg,var(--gn),var(--gn2))}
+.kc-r::after{background:linear-gradient(90deg,var(--rd),var(--rd2))}
+.kc-p::after{background:linear-gradient(90deg,var(--ms),var(--ml))}
+.kc-o::after{background:linear-gradient(90deg,var(--or),var(--or2))}
+.kc-b::after{background:linear-gradient(90deg,var(--bl),var(--bl2))}
+.ki{font-size:22px;margin-bottom:8px}
+.kl{font-size:10.5px;color:var(--tx3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}
+.kv{font-family:var(--fh);font-size:30px;font-weight:800;color:#fff;line-height:1}
+.ks{font-size:11.5px;color:var(--tx2);margin-top:5px}
+.kt{font-size:11px;margin-top:6px;font-weight:600}
+.kt.up{color:var(--gn2)}.kt.dn{color:var(--rd2)}.kt.wn{color:var(--or2)}.kt.mt{color:var(--tx3)}
+
+/* CARD */
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:20px}
+.ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.ct{font-family:var(--fh);font-size:12.5px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.07em;display:flex;align-items:center;gap:7px}
+
+/* TABLE */
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:var(--sf2);color:var(--tx3);font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:10px 14px;text-align:left;border-bottom:1px solid var(--bd)}
+td{padding:10px 14px;border-bottom:1px solid var(--bd);color:var(--tx2);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--mghost)}
+td strong{color:var(--tx)}
+.mono{font-family:var(--fm);font-size:12px}
+
+/* BADGE */
+.b{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.bg-g{background:rgba(27,168,122,.18);color:#34d399}
+.bg-r{background:rgba(240,85,69,.18);color:#f87171}
+.bg-o{background:rgba(240,128,48,.18);color:#fb923c}
+.bg-p{background:var(--mghost);color:var(--ml)}
+.bg-m{background:var(--mustgh);color:var(--must2)}
+.bg-x{background:rgba(255,255,255,.08);color:var(--tx3)}
+.bg-b{background:rgba(59,130,246,.18);color:#60a5fa}
+
+/* ALERT */
+.al{padding:11px 15px;border-radius:var(--r2);font-size:13px;display:flex;align-items:flex-start;gap:10px;margin-bottom:9px;border-left:3px solid}
+.al-r{background:var(--lrd);border-color:var(--rd2);color:#fca5a5}
+.al-o{background:var(--lor);border-color:var(--or2);color:#fdba74}
+.al-g{background:var(--lgn);border-color:var(--gn2);color:#6ee7b7}
+.al-m{background:var(--mustgh);border-color:var(--must2);color:var(--must2)}
+.al-p{background:var(--mghost);border-color:var(--ml);color:var(--mpale)}
+
+/* PROGRESS */
+.pb{height:5px;background:var(--sf3);border-radius:3px;overflow:hidden}
+.pf{height:100%;border-radius:3px;transition:width .5s ease}
+
+/* FORM */
+.fg{margin-bottom:13px}
+label{display:block;font-size:11.5px;color:var(--tx2);margin-bottom:5px;font-weight:600}
+input,select,textarea{width:100%;padding:9px 12px;background:var(--sf2);border:1px solid var(--bd2);border-radius:var(--r2);color:var(--tx);font-family:var(--fb);font-size:13px;transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--must);box-shadow:0 0 0 3px rgba(212,160,23,.18)}
+select option{background:var(--sf2)}
+textarea{resize:vertical;min-height:78px}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* MODAL */
+.mo{position:fixed;inset:0;background:rgba(12,5,26,.78);backdrop-filter:blur(6px);z-index:1000;display:none;align-items:center;justify-content:center;padding:16px}
+.mo.open{display:flex}
+.mdl{background:var(--sf);border:1px solid var(--bd2);border-radius:var(--r);padding:28px;width:520px;max-width:100%;max-height:90vh;overflow-y:auto;animation:su .22s cubic-bezier(.34,1.4,.64,1)}
+@keyframes su{from{opacity:0;transform:translateY(24px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.mt{font-family:var(--fh);font-size:19px;font-weight:700;color:#fff;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--bd)}
+.mf{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+
+/* TRUCK */
+.tg{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.tc{background:var(--sf2);border:1px solid var(--bd);border-radius:var(--r2);padding:14px;cursor:pointer;transition:all .15s;border-top:3px solid transparent}
+.tc:hover{transform:translateY(-2px);border-color:var(--bd2)}
+.tc.operational{border-top-color:var(--gn2)}
+.tc.breakdown{border-top-color:var(--rd2)}
+.tc.maintenance{border-top-color:var(--must2)}
+.tc-id{font-family:var(--fm);font-size:11.5px;font-weight:500;color:#fff}
+.tc-t{font-size:11px;color:var(--tx3);margin-top:2px}
+.tc-k{font-size:12px;color:var(--tx2);margin-top:8px}
+.tc-n{font-size:10.5px;color:var(--tx3);margin-top:5px;line-height:1.3}
+
+/* CHART */
+.cb{display:flex;align-items:flex-end;gap:4px;height:80px}
+.cbar{flex:1;border-radius:4px 4px 0 0;min-height:2px;transition:opacity .2s}
+.cbar:hover{opacity:.75!important}
+.cl{display:flex;gap:4px;margin-top:5px}
+.clb{flex:1;text-align:center;font-size:9px;color:var(--tx3);font-family:var(--fm)}
+
+/* GRIDS */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.sp2{grid-column:span 2}
+
+/* SECTION */
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.stl{font-family:var(--fh);font-size:15px;font-weight:700;color:#fff}
+.sst{font-size:12px;color:var(--tx3);margin-top:2px}
+.div{height:1px;background:var(--bd);margin:18px 0}
+.sp{margin-top:16px}
+
+/* TOAST */
+#toast{position:fixed;bottom:22px;right:22px;z-index:3000;padding:12px 18px;border-radius:var(--r2);font-size:13px;font-weight:600;background:var(--sf2);border:1px solid var(--must);color:var(--must2);display:flex;align-items:center;gap:8px;transform:translateY(80px);opacity:0;transition:all .3s cubic-bezier(.34,1.5,.64,1);box-shadow:0 8px 32px rgba(0,0,0,.4)}
+#toast.show{transform:translateY(0);opacity:1}
+
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--sf3);border-radius:2px}
+
+@media(max-width:900px){
+  #sb{transform:translateX(-100%)}
+  #sb.open{transform:translateX(0);box-shadow:4px 0 40px rgba(0,0,0,.5)}
+  #mn{margin-left:0}
+  .g2,.g3{grid-template-columns:1fr}
+  .fr{grid-template-columns:1fr}
+  .sp2{grid-column:span 1}
+  .kgrid{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<aside id="sb">
+  <div class="logo">
+    <div style="display:flex;align-items:center;gap:11px">
+      <div class="ld">S</div>
+      <div><div class="ln">Sarpa Group</div><div class="lt">Ops &amp; Logistique</div></div>
+    </div>
+    <div class="lp"><span class="pdot"></span><span class="plbl">Système actif — Dakar, SN</span></div>
+  </div>
+  <nav>
+    <div class="ns">Vue globale</div>
+    <div class="ni active" onclick="go('dashboard')"><span class="ic">◈</span> Tableau de bord</div>
+    <div class="ns">Centrale à Béton</div>
+    <div class="ni" onclick="go('production')"><span class="ic">🏗</span> Production</div>
+    <div class="ni" onclick="go('stocks')"><span class="ic">📦</span> Stocks &amp; Appro <span class="nbadge" id="nb-s">0</span></div>
+    <div class="ni" onclick="go('quality')"><span class="ic">✦</span> Qualité</div>
+    <div class="ns">Flotte Camions</div>
+    <div class="ni" onclick="go('fleet')"><span class="ic">🚛</span> État de la flotte <span class="nbadge" id="nb-f">0</span></div>
+    <div class="ni" onclick="go('tours')"><span class="ic">◎</span> Tournées</div>
+    <div class="ni" onclick="go('maintenance')"><span class="ic">⚙</span> Maintenance</div>
+    <div class="ns">Analyse</div>
+    <div class="ni" onclick="go('reports')"><span class="ic">▣</span> Statistiques</div>
+  </nav>
+  <div class="sbfoot">
+    <div class="sft" id="clock">—</div>
+    <div class="sfr">Dir. Opérations &amp; Logistique</div>
+  </div>
+</aside>
+
+<div id="toast">✦ <span id="tmsg"></span></div>
+
+<main id="mn">
+  <header class="topbar">
+    <div style="display:flex;align-items:center;gap:14px">
+      <button class="btn bg" id="mbtn" onclick="toggleSB()" style="display:none;padding:7px 10px">☰</button>
+      <div class="ttl" id="ptitle">Tableau de bord</div>
+    </div>
+    <div class="tba">
+      <button class="btn bg" onclick="resetData()" title="Données démo">↺ Démo</button>
+      <button class="btn bm" onclick="openM('mq')">✦ Saisie rapide</button>
+    </div>
+  </header>
+
+  <!-- DASHBOARD -->
+  <div class="pg active" id="pg-dashboard">
+    <div id="dash-al" style="margin-bottom:16px"></div>
+    <div class="kgrid">
+      <div class="kc kc-g"><div class="ki">🏗</div><div class="kl">Production aujourd'hui</div><div class="kv" id="d-p">—</div><div class="ks">m³ produits</div><div class="kt" id="d-pt">—</div></div>
+      <div class="kc kc-p"><div class="ki">🚛</div><div class="kl">Disponibilité flotte</div><div class="kv" id="d-f">—</div><div class="ks">camions / 18</div><div class="kt" id="d-ft">—</div></div>
+      <div class="kc kc-m"><div class="ki">◎</div><div class="kl">Tournées enregistrées</div><div class="kv" id="d-to">—</div><div class="ks">total saisies</div><div class="kt mt" id="d-tot">—</div></div>
+      <div class="kc kc-r"><div class="ki">⚠</div><div class="kl">Alertes actives</div><div class="kv" id="d-al">—</div><div class="ks">nécessitent action</div><div class="kt" id="d-alt">—</div></div>
+      <div class="kc kc-o"><div class="ki">📦</div><div class="kl">Stock ciment</div><div class="kv" id="d-ci">—</div><div class="ks">tonnes disponibles</div><div class="kt" id="d-cit">—</div></div>
+      <div class="kc kc-b"><div class="ki">✦</div><div class="kl">Taux non-conformité</div><div class="kv" id="d-nc">—</div><div class="ks">% mois en cours</div><div class="kt" id="d-nct">—</div></div>
+    </div>
+    <div class="g2" style="margin-bottom:16px">
+      <div class="card"><div class="ch"><div class="ct">🏗 Production — 7 jours (m³)</div></div><div class="cb" id="ch-p"></div><div class="cl" id="ch-pl"></div></div>
+      <div class="card"><div class="ch"><div class="ct">🚛 Flotte en temps réel</div></div><div id="d-fd"></div></div>
+    </div>
+    <div class="g2">
+      <div class="card"><div class="ch"><div class="ct">📦 Stocks critiques</div></div><div id="d-sd"></div></div>
+      <div class="card"><div class="ch"><div class="ct">◎ Dernières tournées</div></div><div id="d-td"></div></div>
+    </div>
+  </div>
+
+  <!-- PRODUCTION -->
+  <div class="pg" id="pg-production">
+    <div class="sh"><div><div class="stl">Production — Centrale à Béton</div><div class="sst">Saisie et suivi quotidien</div></div><button class="btn bm" onclick="openM('mp')">+ Saisir</button></div>
+    <div class="kgrid" style="grid-template-columns:repeat(4,1fr)">
+      <div class="kc kc-g"><div class="kl">Production mois</div><div class="kv" id="p-tot">—</div><div class="ks">m³</div></div>
+      <div class="kc kc-p"><div class="kl">Taux utilisation</div><div class="kv" id="p-ut">—</div><div class="ks">% capacité max</div></div>
+      <div class="kc kc-m"><div class="kl">Moy. journalière</div><div class="kv" id="p-av">—</div><div class="ks">m³/jour</div></div>
+      <div class="kc kc-r"><div class="kl">Objectif mensuel</div><div class="kv" style="font-size:22px">7 000</div><div class="ks">m³ cible</div></div>
+    </div>
+    <div class="card"><div class="ch"><div class="ct">📋 Registre de production</div></div><div class="tw"><table><thead><tr><th>Date</th><th>Formulation</th><th>Volume (m³)</th><th>Opérateur</th><th>NC (m³)</th><th>Remarques</th><th></th></tr></thead><tbody id="tp"></tbody></table></div></div>
+  </div>
+
+  <!-- STOCKS -->
+  <div class="pg" id="pg-stocks">
+    <div class="sh"><div><div class="stl">Stocks &amp; Approvisionnements</div></div><div style="display:flex;gap:8px"><button class="btn bg" onclick="openM('mc')">📋 Commande</button><button class="btn bm" onclick="openM('ms')">+ Mise à jour</button></div></div>
+    <div id="sal" style="margin-bottom:14px"></div>
+    <div class="g2" style="margin-bottom:16px">
+      <div class="card"><div class="ch"><div class="ct">🏗 Centrale à Béton</div></div><div id="s-c"></div></div>
+      <div class="card"><div class="ch"><div class="ct">🚛 Flotte de Camions</div></div><div id="s-f"></div></div>
+    </div>
+    <div class="card"><div class="ch"><div class="ct">📋 Historique commandes</div></div><div class="tw"><table><thead><tr><th>Date</th><th>Fournisseur</th><th>Article</th><th>Qté</th><th>Montant</th><th>Statut</th></tr></thead><tbody id="tc"></tbody></table></div></div>
+  </div>
+
+  <!-- QUALITY -->
+  <div class="pg" id="pg-quality">
+    <div class="sh"><div><div class="stl">Contrôle Qualité</div></div><button class="btn bm" onclick="openM('mq2')">+ Contrôle</button></div>
+    <div class="kgrid" style="grid-template-columns:repeat(4,1fr)">
+      <div class="kc kc-g"><div class="kl">Taux conformité</div><div class="kv" id="q-co">—</div><div class="ks">%</div></div>
+      <div class="kc kc-r"><div class="kl">Non-conformités</div><div class="kv" id="q-nc">—</div><div class="ks">total</div></div>
+      <div class="kc kc-p"><div class="kl">Contrôles réalisés</div><div class="kv" id="q-to">—</div><div class="ks">depuis début</div></div>
+      <div class="kc kc-m"><div class="kl">Résistance moy.</div><div class="kv" id="q-re">—</div><div class="ks">MPa à 28j</div></div>
+    </div>
+    <div class="card"><div class="ch"><div class="ct">📋 Registre qualité</div></div><div class="tw"><table><thead><tr><th>Date</th><th>Formulation</th><th>Résistance (MPa)</th><th>Slump (cm)</th><th>Conforme</th><th>Observation</th></tr></thead><tbody id="tq"></tbody></table></div></div>
+  </div>
+
+  <!-- FLEET -->
+  <div class="pg" id="pg-fleet">
+    <div class="sh"><div><div class="stl">Flotte — 18 Camions</div></div><button class="btn bm" onclick="openM('mf')">✏ Mettre à jour</button></div>
+    <div class="kgrid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
+      <div class="kc kc-g"><div class="kl">Opérationnels</div><div class="kv" id="f-ok">—</div><div class="ks">disponibles</div></div>
+      <div class="kc kc-r"><div class="kl">En panne</div><div class="kv" id="f-dn">—</div><div class="ks">hors service</div></div>
+      <div class="kc kc-m"><div class="kl">Maintenance</div><div class="kv" id="f-mn">—</div><div class="ks">en atelier</div></div>
+      <div class="kc kc-p"><div class="kl">Disponibilité</div><div class="kv" id="f-pc">—</div><div class="ks">% (obj. 85%)</div></div>
+    </div>
+    <div class="tg" id="trg"></div>
+  </div>
+
+  <!-- TOURS -->
+  <div class="pg" id="pg-tours">
+    <div class="sh"><div><div class="stl">Suivi des Tournées</div></div><button class="btn bm" onclick="openM('mt')">+ Tournée</button></div>
+    <div class="kgrid" style="grid-template-columns:repeat(4,1fr)">
+      <div class="kc kc-m"><div class="kl">Tournées aujourd'hui</div><div class="kv" id="to-td">—</div><div class="ks">livraisons</div></div>
+      <div class="kc kc-g"><div class="kl">Volume livré auj.</div><div class="kv" id="to-v">—</div><div class="ks">m³</div></div>
+      <div class="kc kc-p"><div class="kl">Ponctualité</div><div class="kv" id="to-p">—</div><div class="ks">% à temps</div></div>
+      <div class="kc kc-b"><div class="kl">Km parcourus</div><div class="kv" id="to-k">—</div><div class="ks">aujourd'hui</div></div>
+    </div>
+    <div class="card sp"><div class="ch"><div class="ct">◎ Registre tournées</div></div><div class="tw"><table><thead><tr><th>Date</th><th>Camion</th><th>Chauffeur</th><th>Destination</th><th>Vol.</th><th>Km</th><th>Départ</th><th>Retour</th><th>Ponct.</th></tr></thead><tbody id="tto"></tbody></table></div></div>
+  </div>
+
+  <!-- MAINTENANCE -->
+  <div class="pg" id="pg-maintenance">
+    <div class="sh"><div><div class="stl">Maintenance Préventive &amp; Curative</div></div><button class="btn bm" onclick="openM('mm')">+ Intervention</button></div>
+    <div id="mal" style="margin-bottom:14px"></div>
+    <div class="card"><div class="ch"><div class="ct">⚙ Registre des interventions</div></div><div class="tw"><table><thead><tr><th>Date</th><th>Équipement</th><th>Type</th><th>Description</th><th>Responsable</th><th>Coût (FCFA)</th><th>Statut</th></tr></thead><tbody id="tm"></tbody></table></div></div>
+  </div>
+
+  <!-- REPORTS -->
+  <div class="pg" id="pg-reports">
+    <div class="sh"><div class="stl">Statistiques &amp; Rapports</div></div>
+    <div class="g3" style="margin-bottom:16px">
+      <div class="card"><div class="ch"><div class="ct">🏗 Production</div></div><div id="r-p"></div></div>
+      <div class="card"><div class="ch"><div class="ct">🚛 Flotte</div></div><div id="r-f"></div></div>
+      <div class="card"><div class="ch"><div class="ct">⚙ Maintenance</div></div><div id="r-m"></div></div>
+    </div>
+    <div class="card"><div class="ch"><div class="ct">▣ Récapitulatif KPIs</div></div><div id="r-s"></div></div>
+  </div>
+</main>
+
+<!-- MODALS -->
+<div class="mo" id="mq"><div class="mdl" style="width:400px">
+  <div class="mt">✦ Saisie rapide</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <button class="btn bm" style="justify-content:center;padding:15px;flex-direction:column;gap:4px" onclick="sw('mq','mp')">🏗<br><span style="font-size:11px">Production</span></button>
+    <button class="btn bg" style="justify-content:center;padding:15px;flex-direction:column;gap:4px" onclick="sw('mq','mf')">🚛<br><span style="font-size:11px">Statut camion</span></button>
+    <button class="btn bg" style="justify-content:center;padding:15px;flex-direction:column;gap:4px" onclick="sw('mq','mt')">◎<br><span style="font-size:11px">Tournée</span></button>
+    <button class="btn bg" style="justify-content:center;padding:15px;flex-direction:column;gap:4px" onclick="sw('mq','mm')">⚙<br><span style="font-size:11px">Maintenance</span></button>
+    <button class="btn bg" style="justify-content:center;padding:15px;flex-direction:column;gap:4px" onclick="sw('mq','ms')">📦<br><span style="font-size:11px">Stock</span></button>
+    <button class="btn bg" style="justify-content:center;padding:15px;flex-direction:column;gap:4px" onclick="sw('mq','mq2')">✦<br><span style="font-size:11px">Qualité</span></button>
+  </div>
+  <div class="mf"><button class="btn bg" onclick="closeM('mq')">Fermer</button></div>
+</div></div>
+
+<div class="mo" id="mp"><div class="mdl"><div class="mt">🏗 Saisir la production</div>
+  <div class="fr"><div class="fg"><label>Date</label><input type="date" id="ip-d"></div><div class="fg"><label>Formulation</label><select id="ip-f"><option>B20 — Voirie</option><option>B25 — Standard</option><option>B30 — Structurel</option><option>B35 — Haute résistance</option><option>B40 — Spécial</option></select></div></div>
+  <div class="fr"><div class="fg"><label>Volume (m³)</label><input type="number" id="ip-v" placeholder="ex : 320" min="0"></div><div class="fg"><label>Opérateur</label><input type="text" id="ip-o" placeholder="Prénom Nom"></div></div>
+  <div class="fr"><div class="fg"><label>Non-conformités (m³)</label><input type="number" id="ip-n" value="0" min="0"></div><div class="fg"><label>Gâchées</label><input type="number" id="ip-g" value="0" min="0"></div></div>
+  <div class="fg"><label>Remarques</label><textarea id="ip-r" placeholder="Incidents, observations…"></textarea></div>
+  <div class="mf"><button class="btn bg" onclick="closeM('mp')">Annuler</button><button class="btn bm" onclick="savP()">Enregistrer</button></div>
+</div></div>
+
+<div class="mo" id="mf"><div class="mdl"><div class="mt">🚛 Mettre à jour un camion</div>
+  <div class="fg"><label>Camion</label><select id="if-t"></select></div>
+  <div class="fr"><div class="fg"><label>Statut</label><select id="if-s"><option value="operational">✅ Opérationnel</option><option value="breakdown">🔴 En panne</option><option value="maintenance">🟡 Maintenance</option></select></div><div class="fg"><label>Km actuels</label><input type="number" id="if-k"></div></div>
+  <div class="fg"><label>Description / motif</label><textarea id="if-d" placeholder="Panne, intervention…"></textarea></div>
+  <div class="mf"><button class="btn bg" onclick="closeM('mf')">Annuler</button><button class="btn bm" onclick="savF()">Enregistrer</button></div>
+</div></div>
+
+<div class="mo" id="mt"><div class="mdl"><div class="mt">◎ Nouvelle tournée</div>
+  <div class="fr"><div class="fg"><label>Date</label><input type="date" id="it-d"></div><div class="fg"><label>Camion</label><select id="it-t"></select></div></div>
+  <div class="fr"><div class="fg"><label>Chauffeur</label><input type="text" id="it-ch" placeholder="Prénom Nom"></div><div class="fg"><label>Destination</label><input type="text" id="it-de" placeholder="Lieu de livraison"></div></div>
+  <div class="fr"><div class="fg"><label>Volume (m³)</label><input type="number" id="it-v" min="0"></div><div class="fg"><label>Km</label><input type="number" id="it-k" min="0"></div></div>
+  <div class="fr"><div class="fg"><label>Départ</label><input type="time" id="it-dp"></div><div class="fg"><label>Retour</label><input type="time" id="it-r"></div></div>
+  <div class="fg"><label>Ponctuelle ?</label><select id="it-p"><option value="1">✅ Oui</option><option value="0">❌ Non</option></select></div>
+  <div class="mf"><button class="btn bg" onclick="closeM('mt')">Annuler</button><button class="btn bm" onclick="savT()">Enregistrer</button></div>
+</div></div>
+
+<div class="mo" id="mm"><div class="mdl"><div class="mt">⚙ Intervention maintenance</div>
+  <div class="fr"><div class="fg"><label>Date</label><input type="date" id="im-d"></div><div class="fg"><label>Équipement</label><select id="im-e"><option>SN-001-DK — Toupie 8m³</option><option>SN-002-DK — Toupie 8m³</option><option>SN-003-DK — Plateau</option><option>SN-004-DK — Plateau</option><option>SN-005-DK — Benne 10T</option><option>SN-006-DK — Toupie 6m³</option><option>SN-007-DK — Benne 10T</option><option>SN-008-DK — Citerne</option><option>Malaxeur principal</option><option>Pompe à béton</option><option>Tapis doseurs</option><option>Bascule pesage</option><option>Groupe électrogène</option><option>Autre</option></select></div></div>
+  <div class="fr"><div class="fg"><label>Type</label><select id="im-t"><option>Préventif</option><option>Curatif</option><option>Urgent</option></select></div><div class="fg"><label>Responsable</label><input type="text" id="im-r" placeholder="Chef mécanicien…"></div></div>
+  <div class="fg"><label>Description</label><textarea id="im-de" placeholder="Nature de l'intervention…"></textarea></div>
+  <div class="fr"><div class="fg"><label>Coût (FCFA)</label><input type="number" id="im-c" min="0" placeholder="0"></div><div class="fg"><label>Statut</label><select id="im-s"><option>En cours</option><option>Terminé</option><option>Planifié</option></select></div></div>
+  <div class="mf"><button class="btn bg" onclick="closeM('mm')">Annuler</button><button class="btn bm" onclick="savM()">Enregistrer</button></div>
+</div></div>
+
+<div class="mo" id="ms"><div class="mdl"><div class="mt">📦 Mise à jour stock</div>
+  <div class="fr"><div class="fg"><label>Article</label><select id="is-i"><option value="ciment">Ciment (T)</option><option value="sable">Sable (T)</option><option value="gravillons">Gravillons (T)</option><option value="adjuvants">Adjuvants (L)</option><option value="gasoil">Gasoil (L)</option><option value="huile">Huile moteur (L)</option><option value="filtres">Filtres à huile</option><option value="pneus">Pneus PL</option></select></div><div class="fg"><label>Quantité en stock</label><input type="number" id="is-q" min="0"></div></div>
+  <div class="fg"><label>Remarque</label><input type="text" id="is-n" placeholder="Livraison reçue, ajustement…"></div>
+  <div class="mf"><button class="btn bg" onclick="closeM('ms')">Annuler</button><button class="btn bm" onclick="savS()">Enregistrer</button></div>
+</div></div>
+
+<div class="mo" id="mc"><div class="mdl"><div class="mt">📋 Enregistrer une commande</div>
+  <div class="fr"><div class="fg"><label>Date</label><input type="date" id="ic-d"></div><div class="fg"><label>Fournisseur</label><input type="text" id="ic-f" placeholder="Nom fournisseur"></div></div>
+  <div class="fr"><div class="fg"><label>Article</label><input type="text" id="ic-a" placeholder="ex : Ciment CEM 32.5"></div><div class="fg"><label>Quantité</label><input type="text" id="ic-q" placeholder="ex : 50 T"></div></div>
+  <div class="fr"><div class="fg"><label>Montant (FCFA)</label><input type="number" id="ic-m" min="0"></div><div class="fg"><label>Statut</label><select id="ic-s"><option>En attente</option><option>Confirmée</option><option>Livrée</option></select></div></div>
+  <div class="mf"><button class="btn bg" onclick="closeM('mc')">Annuler</button><button class="btn bm" onclick="savC()">Enregistrer</button></div>
+</div></div>
+
+<div class="mo" id="mq2"><div class="mdl"><div class="mt">✦ Contrôle qualité</div>
+  <div class="fr"><div class="fg"><label>Date</label><input type="date" id="iq-d"></div><div class="fg"><label>Formulation</label><select id="iq-f"><option>B20</option><option>B25</option><option>B30</option><option>B35</option><option>B40</option></select></div></div>
+  <div class="fr"><div class="fg"><label>Résistance 28j (MPa)</label><input type="number" id="iq-r" step="0.1"></div><div class="fg"><label>Slump (cm)</label><input type="number" id="iq-s" step="0.5"></div></div>
+  <div class="fg"><label>Résultat</label><select id="iq-o"><option value="1">✅ Conforme</option><option value="0">❌ Non conforme</option></select></div>
+  <div class="fg"><label>Observation</label><textarea id="iq-n" placeholder="Commentaires techniques…"></textarea></div>
+  <div class="mf"><button class="btn bg" onclick="closeM('mq2')">Annuler</button><button class="btn bm" onclick="savQ()">Enregistrer</button></div>
+</div></div>
+
+<script>
+const KEY='sarpa_v3';
+const DEMO={
+  trucks:[
+    {id:'SN-001-DK',type:'Toupie 8m³',km:87420,status:'operational',desc:''},
+    {id:'SN-002-DK',type:'Toupie 8m³',km:64100,status:'operational',desc:''},
+    {id:'SN-003-DK',type:'Plateau',km:112300,status:'breakdown',desc:'Panne moteur — carter fissuré'},
+    {id:'SN-004-DK',type:'Plateau',km:45800,status:'operational',desc:''},
+    {id:'SN-005-DK',type:'Benne 10T',km:98700,status:'maintenance',desc:'Frein avant — en réparation'},
+    {id:'SN-006-DK',type:'Toupie 6m³',km:33200,status:'operational',desc:''},
+    {id:'SN-007-DK',type:'Benne 10T',km:143500,status:'breakdown',desc:'Boîte de vitesses — URGENT'},
+    {id:'SN-008-DK',type:'Citerne',km:57900,status:'operational',desc:''},
+    {id:'SN-009-DK',type:'Toupie 8m³',km:72100,status:'operational',desc:''},
+    {id:'SN-010-DK',type:'Plateau',km:88400,status:'operational',desc:''},
+    {id:'SN-011-DK',type:'Benne 10T',km:56200,status:'operational',desc:''},
+    {id:'SN-012-DK',type:'Toupie 6m³',km:41300,status:'operational',desc:''},
+    {id:'SN-013-DK',type:'Plateau',km:95600,status:'operational',desc:''},
+    {id:'SN-014-DK',type:'Benne 10T',km:67800,status:'operational',desc:''},
+    {id:'SN-015-DK',type:'Toupie 8m³',km:23400,status:'maintenance',desc:'Révision 25 000 km'},
+    {id:'SN-016-DK',type:'Citerne',km:78900,status:'operational',desc:''},
+    {id:'SN-017-DK',type:'Toupie 6m³',km:49100,status:'operational',desc:''},
+    {id:'SN-018-DK',type:'Plateau',km:61500,status:'operational',desc:''},
+  ],
+  stocks:{
+    ciment:{label:'Ciment',unit:'T',max:120,alert:80,critical:60,qty:87},
+    sable:{label:'Sable',unit:'T',max:300,alert:150,critical:80,qty:210},
+    gravillons:{label:'Gravillons',unit:'T',max:250,alert:120,critical:70,qty:158},
+    adjuvants:{label:'Adjuvants',unit:'L',max:500,alert:200,critical:100,qty:420},
+    gasoil:{label:'Gasoil',unit:'L',max:5000,alert:2000,critical:1000,qty:3200},
+    huile:{label:'Huile moteur',unit:'L',max:500,alert:150,critical:50,qty:280},
+    filtres:{label:'Filtres huile',unit:'u',max:30,alert:10,critical:5,qty:14},
+    pneus:{label:'Pneus PL',unit:'u',max:8,alert:4,critical:2,qty:5},
+  },
+  productions:[
+    {date:'2026-03-08',form:'B25 — Standard',vol:315,op:'Ibrahima Diallo',nc:2,g:1,rem:'Arrêt technique 45 min pompe'},
+    {date:'2026-03-07',form:'B30 — Structurel',vol:298,op:'Moussa Sy',nc:0,g:0,rem:''},
+    {date:'2026-03-06',form:'B25 — Standard',vol:342,op:'Ibrahima Diallo',nc:4,g:2,rem:'Forte demande Diamniadio'},
+    {date:'2026-03-05',form:'B20 — Voirie',vol:287,op:'Ousmane Fall',nc:1,g:0,rem:''},
+    {date:'2026-03-04',form:'B25 — Standard',vol:325,op:'Moussa Sy',nc:0,g:0,rem:''},
+    {date:'2026-03-03',form:'B30 — Structurel',vol:310,op:'Ibrahima Diallo',nc:3,g:1,rem:''},
+    {date:'2026-03-02',form:'B25 — Standard',vol:278,op:'Ousmane Fall',nc:0,g:0,rem:'Lundi — démarrage tardif'},
+  ],
+  tours:[
+    {date:'2026-03-10',truck:'SN-001-DK',driver:'Amadou Ndiaye',dest:'Route Dakar-Diamniadio',vol:8,km:42,dep:'06:45',ret:'09:20',punct:1},
+    {date:'2026-03-10',truck:'SN-006-DK',driver:'Lamine Sarr',dest:'Résidence Les Almadies',vol:6,km:28,dep:'07:00',ret:'09:00',punct:1},
+    {date:'2026-03-10',truck:'SN-009-DK',driver:'Souleymane Ba',dest:'Chantier Sacré-Cœur III',vol:8,km:15,dep:'07:30',ret:'09:45',punct:0},
+    {date:'2026-03-09',truck:'SN-002-DK',driver:'Ibou Diop',dest:'Immeuble Plateau Dakar',vol:7,km:22,dep:'06:30',ret:'08:50',punct:1},
+    {date:'2026-03-09',truck:'SN-004-DK',driver:'Cheikh Mbaye',dest:'École Guédiawaye',vol:8,km:38,dep:'07:00',ret:'10:10',punct:1},
+  ],
+  maintenances:[
+    {date:'2026-03-08',equip:'SN-003-DK — Plateau',type:'Urgent',desc:'Diagnostic panne moteur — carter fissuré',resp:'Chef mécanicien',cost:450000,status:'En cours'},
+    {date:'2026-03-07',equip:'SN-007-DK — Benne 10T',type:'Urgent',desc:'Remplacement boîte de vitesses',resp:'Prestataire CFAO',cost:600000,status:'En cours'},
+    {date:'2026-03-05',equip:'Malaxeur principal',type:'Préventif',desc:'Graissage mensuel + contrôle palettes',resp:'Chef mécanicien',cost:80000,status:'Terminé'},
+    {date:'2026-03-03',equip:'SN-005-DK — Benne 10T',type:'Curatif',desc:'Remplacement plaquettes frein avant',resp:'Chef mécanicien',cost:200000,status:'En cours'},
+  ],
+  commandes:[
+    {date:'2026-03-09',four:'Les Ciments du Sahel',art:'Ciment CEM 32.5',qty:'50 T',amt:3350000,status:'Confirmée'},
+    {date:'2026-03-07',four:'Agrégats du Sénégal',art:'Gravillons 5/15',qty:'30 m³',amt:3900000,status:'Livrée'},
+  ],
+  quality:[
+    {date:'2026-03-08',form:'B25',res:27.8,slump:12,ok:1,obs:'Conforme — résistance nominale atteinte'},
+    {date:'2026-03-07',form:'B30',res:31.2,slump:10,ok:1,obs:'Bonne résistance'},
+    {date:'2026-03-06',form:'B25',res:24.1,slump:15,ok:0,obs:'Slump élevé — dosage eau à revoir'},
+    {date:'2026-03-04',form:'B25',res:28.9,slump:11,ok:1,obs:''},
+  ]
+};
+
+let DB=(()=>{try{const d=localStorage.getItem(KEY);return d?JSON.parse(d):JSON.parse(JSON.stringify(DEMO));}catch(e){return JSON.parse(JSON.stringify(DEMO));}})();
+const sv=()=>{try{localStorage.setItem(KEY,JSON.stringify(DB));}catch(e){}};
+function resetData(){if(confirm('Réinitialiser les données ?')){DB=JSON.parse(JSON.stringify(DEMO));sv();renderAll();toast('Données réinitialisées');}}
+
+const TITLES={dashboard:'Tableau de bord',production:'Production béton',stocks:'Stocks & Approvisionnements',quality:'Contrôle qualité',fleet:'État de la flotte',tours:'Tournées',maintenance:'Maintenance',reports:'Statistiques'};
+function go(p){
+  document.querySelectorAll('.pg').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(x=>x.classList.remove('active'));
+  document.getElementById('pg-'+p).classList.add('active');
+  document.querySelector('[onclick="go(\''+p+'\')"]').classList.add('active');
+  document.getElementById('ptitle').textContent=TITLES[p]||p;
+  render(p);
+  if(window.innerWidth<900)document.getElementById('sb').classList.remove('open');
+}
+function toggleSB(){document.getElementById('sb').classList.toggle('open');}
+
+function openM(id){
+  document.getElementById(id).classList.add('open');
+  const today=new Date().toISOString().slice(0,10);
+  const df={mp:'ip-d',mt:'it-d',mm:'im-d',mc:'ic-d',mq2:'iq-d'};
+  if(df[id]){const el=document.getElementById(df[id]);if(el)el.value=today;}
+  if(id==='mf'||id==='mt'){
+    const sel=document.getElementById(id==='mf'?'if-t':'it-t');
+    if(sel){sel.innerHTML='';(id==='mt'?DB.trucks.filter(t=>t.status==='operational'):DB.trucks).forEach(t=>{const o=document.createElement('option');o.value=t.id;o.textContent=t.id+' — '+t.type;sel.appendChild(o);});}
+  }
+}
+function closeM(id){document.getElementById(id).classList.remove('open');}
+function sw(a,b){closeM(a);openM(b);}
+document.querySelectorAll('.mo').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');}));
+
+function toast(msg){const el=document.getElementById('toast');document.getElementById('tmsg').textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),3000);}
+
+function savP(){
+  const v=+document.getElementById('ip-v').value;if(!v){toast('Volume requis');return;}
+  DB.productions.unshift({date:document.getElementById('ip-d').value,form:document.getElementById('ip-f').value,vol:v,op:document.getElementById('ip-o').value||'—',nc:+document.getElementById('ip-n').value||0,g:+document.getElementById('ip-g').value||0,rem:document.getElementById('ip-r').value});
+  sv();closeM('mp');toast('Production : '+v+' m³ enregistrés');render('production');renderDash();
+}
+function savF(){
+  const id=document.getElementById('if-t').value,t=DB.trucks.find(x=>x.id===id);
+  if(t){t.status=document.getElementById('if-s').value;t.km=+document.getElementById('if-k').value||t.km;t.desc=document.getElementById('if-d').value;}
+  sv();closeM('mf');toast('Camion '+id+' mis à jour');render('fleet');renderDash();updateBadges();
+}
+function savT(){
+  DB.tours.unshift({date:document.getElementById('it-d').value,truck:document.getElementById('it-t').value,driver:document.getElementById('it-ch').value||'—',dest:document.getElementById('it-de').value||'—',vol:+document.getElementById('it-v').value||0,km:+document.getElementById('it-k').value||0,dep:document.getElementById('it-dp').value,ret:document.getElementById('it-r').value,punct:+document.getElementById('it-p').value});
+  sv();closeM('mt');toast('Tournée enregistrée');render('tours');renderDash();
+}
+function savM(){
+  DB.maintenances.unshift({date:document.getElementById('im-d').value,equip:document.getElementById('im-e').value,type:document.getElementById('im-t').value,desc:document.getElementById('im-de').value||'—',resp:document.getElementById('im-r').value||'—',cost:+document.getElementById('im-c').value||0,status:document.getElementById('im-s').value});
+  sv();closeM('mm');toast('Intervention enregistrée');render('maintenance');
+}
+function savS(){
+  const k=document.getElementById('is-i').value,q=+document.getElementById('is-q').value;
+  if(DB.stocks[k]&&!isNaN(q)){DB.stocks[k].qty=q;sv();closeM('ms');toast(DB.stocks[k].label+' : '+q+' '+DB.stocks[k].unit);render('stocks');renderDash();updateBadges();}
+}
+function savC(){
+  DB.commandes.unshift({date:document.getElementById('ic-d').value,four:document.getElementById('ic-f').value||'—',art:document.getElementById('ic-a').value||'—',qty:document.getElementById('ic-q').value||'—',amt:+document.getElementById('ic-m').value||0,status:document.getElementById('ic-s').value});
+  sv();closeM('mc');toast('Commande enregistrée');render('stocks');
+}
+function savQ(){
+  DB.quality.unshift({date:document.getElementById('iq-d').value,form:document.getElementById('iq-f').value,res:+document.getElementById('iq-r').value||0,slump:+document.getElementById('iq-s').value||0,ok:+document.getElementById('iq-o').value,obs:document.getElementById('iq-n').value});
+  sv();closeM('mq2');toast('Contrôle enregistré');render('quality');
+}
+function del(col,i){if(!confirm('Supprimer ?'))return;DB[col].splice(i,1);sv();render(col==='productions'?'production':col);toast('Supprimé');}
+
+const fmt=n=>Number(n).toLocaleString('fr-FR');
+function stBadge(s){
+  if(s==='operational')return '<span class="b bg-g">✅ Opérationnel</span>';
+  if(s==='breakdown')return '<span class="b bg-r">🔴 En panne</span>';
+  if(s==='maintenance')return '<span class="b bg-m">🟡 Maintenance</span>';
+  return '<span class="b bg-x">—</span>';
+}
+function stockRow(s){
+  const p=Math.min(100,Math.round(s.qty/s.max*100));
+  const c=s.qty<=s.critical?'var(--rd2)':s.qty<=s.alert?'var(--must2)':'var(--gn2)';
+  const l=s.qty<=s.critical?'🔴 CRITIQUE':s.qty<=s.alert?'🟡 ALERTE':'✅ OK';
+  return '<div style="margin-bottom:13px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:13px;color:var(--tx)">'+s.label+'</span><span style="font-size:12px;color:var(--tx2);font-family:var(--fm)">'+s.qty+' / '+s.max+' '+s.unit+'</span></div><div class="pb"><div class="pf" style="width:'+p+'%;background:'+c+'"></div></div><div style="display:flex;justify-content:space-between;margin-top:3px"><span style="font-size:10px;color:var(--tx3)">'+p+'%</span><span style="font-size:10px;color:'+c+'">'+l+'</span></div></div>';
+}
+function statB(v,l,c){return '<div style="text-align:center;padding:12px;background:'+c+';border-radius:8px"><div style="font-size:26px;font-weight:800;font-family:var(--fh);line-height:1">'+v+'</div><div style="font-size:11px;color:var(--tx3);margin-top:4px">'+l+'</div></div>';}
+
+function renderDash(){
+  const today=new Date().toISOString().slice(0,10);
+  const tp=DB.productions.filter(p=>p.date===today),tv=tp.reduce((a,b)=>a+b.vol,0);
+  const ok=DB.trucks.filter(t=>t.status==='operational').length,down=DB.trucks.filter(t=>t.status==='breakdown').length,mnt=DB.trucks.filter(t=>t.status==='maintenance').length;
+  const pct=Math.round(ok/DB.trucks.length*100);
+  const sa=Object.values(DB.stocks).filter(s=>s.qty<=s.alert).length;
+  const rec=DB.productions.slice(0,10),tv2=rec.reduce((a,b)=>a+b.vol,0),nc2=rec.reduce((a,b)=>a+b.nc,0);
+  const ncr=tv2>0?((nc2/tv2)*100).toFixed(1):0;
+  const cim=DB.stocks.ciment;
+  document.getElementById('d-p').textContent=tv||'—';
+  document.getElementById('d-pt').textContent=tv>0?(tv>=280?'▲ Objectif atteint':'▼ Sous l\'objectif (280 m³)'):'Aucune saisie aujourd\'hui';
+  document.getElementById('d-pt').className='kt '+(tv>=280?'up':'wn');
+  document.getElementById('d-f').textContent=ok+'/18';
+  document.getElementById('d-ft').textContent=pct+'% — Objectif 85%';
+  document.getElementById('d-ft').className='kt '+(pct>=85?'up':'dn');
+  document.getElementById('d-to').textContent=DB.tours.length;
+  document.getElementById('d-tot').textContent='Total cumulé';
+  document.getElementById('d-al').textContent=sa+down;
+  document.getElementById('d-alt').textContent=sa+' stocks · '+down+' pannes';
+  document.getElementById('d-alt').className='kt '+((sa+down)>0?'dn':'up');
+  document.getElementById('d-ci').textContent=cim.qty+'T';
+  document.getElementById('d-cit').textContent=cim.qty<=cim.critical?'🔴 CRITIQUE':cim.qty<=cim.alert?'🟡 Alerte':'✅ OK';
+  document.getElementById('d-cit').className='kt '+(cim.qty<=cim.critical?'dn':cim.qty<=cim.alert?'wn':'up');
+  document.getElementById('d-nc').textContent=ncr+'%';
+  document.getElementById('d-nct').textContent=ncr<2?'✅ Dans l\'objectif':'⚠ Au-dessus de 2%';
+  document.getElementById('d-nct').className='kt '+(ncr<2?'up':'dn');
+
+  const last7=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const ds=d.toISOString().slice(0,10);last7.push({ds,vl:DB.productions.filter(p=>p.date===ds).reduce((a,b)=>a+b.vol,0)});}
+  const maxV=Math.max(...last7.map(x=>x.vl),1);
+  const DAYS=['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+  document.getElementById('ch-p').innerHTML=last7.map(x=>{const h=Math.round(x.vl/maxV*78);const c=x.vl>=280?'var(--must)':x.vl>0?'var(--or2)':'var(--sf3)';return '<div class="cbar" style="height:'+(h||2)+'px;background:'+c+';opacity:.85" title="'+x.vl+' m³"></div>';}).join('');
+  document.getElementById('ch-pl').innerHTML=last7.map(x=>'<div class="clb">'+DAYS[new Date(x.ds+'T12:00:00').getDay()]+'<br>'+(x.vl||'0')+'</div>').join('');
+
+  document.getElementById('d-fd').innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">'+statB(ok,'Opérationnels','rgba(27,168,122,.15)')+statB(down,'En panne','rgba(240,85,69,.15)')+statB(mnt,'Maintenance','rgba(212,160,23,.15)')+'</div><div class="pb"><div class="pf" style="width:'+pct+'%;background:'+(pct>=85?'var(--must)':'var(--rd2)')+'"></div></div><div style="display:flex;justify-content:space-between;margin-top:4px;margin-bottom:10px"><span style="font-size:11px;color:var(--tx3)">Disponibilité : '+pct+'%</span><span style="font-size:11px;color:'+(pct>=85?'var(--must2)':'var(--rd2)')+'">Objectif : 85%</span></div>'+DB.trucks.filter(t=>t.status!=='operational').map(t=>'<div class="al '+(t.status==='breakdown'?'al-r':'al-m')+'"><span>'+(t.status==='breakdown'?'🔴':'🟡')+'</span><div><strong>'+t.id+'</strong> — '+(t.desc||'En traitement')+'</div></div>').join('');
+
+  const crit=Object.values(DB.stocks).filter(s=>s.qty<=s.alert);
+  document.getElementById('d-sd').innerHTML=crit.length===0?'<div class="al al-g">✅ Tous les stocks sont à des niveaux corrects</div>':crit.map(s=>'<div class="al '+(s.qty<=s.critical?'al-r':'al-m')+'"><span>'+(s.qty<=s.critical?'🔴':'🟡')+'</span><div><strong>'+s.label+'</strong> — '+s.qty+' '+s.unit+' / seuil '+s.alert+' '+s.unit+(s.qty<=s.critical?' — COMMANDER EN URGENCE':'')+'</div></div>').join('');
+
+  document.getElementById('d-td').innerHTML=DB.tours.length===0?'<div style="color:var(--tx3);font-size:13px">Aucune tournée enregistrée</div>':DB.tours.slice(0,4).map(t=>'<div style="padding:9px 0;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:13px;font-weight:600;color:var(--tx)">'+t.truck+'</div><div style="font-size:11px;color:var(--tx3)">'+t.dest+'</div></div><div style="text-align:right"><div style="font-size:13px;color:var(--tx2)">'+t.vol+' m³</div><span class="b '+(t.punct?'bg-g':'bg-r')+'" style="font-size:10px">'+(t.punct?'✅':'❌')+'</span></div></div>').join('');
+
+  const al=[];
+  if(cim.qty<=cim.critical)al.push({c:'al-r',m:'🔴 URGENT — Stock ciment critique : '+cim.qty+'T. Commander immédiatement.'});
+  if(down>=3)al.push({c:'al-r',m:'🔴 '+down+' camions en panne simultanément — Plan de contingence requis.'});
+  if(pct<80)al.push({c:'al-m',m:'🟡 Disponibilité flotte '+pct+'% — Sous le seuil minimum (85%).'});
+  Object.values(DB.stocks).filter(s=>s.qty<=s.alert&&s.qty>s.critical).forEach(s=>al.push({c:'al-m',m:'🟡 Stock '+s.label+' en alerte : '+s.qty+' '+s.unit+'.'}));
+  document.getElementById('dash-al').innerHTML=al.map(a=>'<div class="al '+a.c+'">'+a.m+'</div>').join('');
+}
+
+function renderProd(){
+  const m=new Date().toISOString().slice(0,7),mp=DB.productions.filter(p=>p.date.startsWith(m));
+  const tot=mp.reduce((a,b)=>a+b.vol,0),avg=mp.length?Math.round(tot/mp.length):0,util=Math.round(tot/8400*100);
+  document.getElementById('p-tot').textContent=fmt(tot);
+  document.getElementById('p-ut').textContent=util+'%';
+  document.getElementById('p-av').textContent=avg;
+  document.getElementById('tp').innerHTML=DB.productions.map((p,i)=>'<tr><td class="mono">'+p.date+'</td><td>'+p.form+'</td><td><strong>'+p.vol+' m³</strong></td><td>'+p.op+'</td><td>'+(p.nc>0?'<span class="b bg-r">'+p.nc+' m³</span>':'<span class="b bg-g">0</span>')+'</td><td style="font-size:12px;max-width:180px">'+(p.rem||'—')+'</td><td><button class="btn bg" style="padding:3px 8px;font-size:11px" onclick="del(\'productions\','+i+')">🗑</button></td></tr>').join('');
+}
+
+function renderStocks(){
+  ['s-c','s-f'].forEach((id,i)=>{const keys=i===0?['ciment','sable','gravillons','adjuvants']:['gasoil','huile','filtres','pneus'];document.getElementById(id).innerHTML=keys.map(k=>stockRow(DB.stocks[k])).join('');});
+  document.getElementById('sal').innerHTML=Object.values(DB.stocks).filter(s=>s.qty<=s.alert).map(s=>'<div class="al '+(s.qty<=s.critical?'al-r':'al-m')+'">'+(s.qty<=s.critical?'🔴':'🟡')+' <strong>'+s.label+'</strong> — '+s.qty+' '+s.unit+' · seuil '+s.alert+' '+s.unit+(s.qty<=s.critical?' — ⚠ COMMANDER EN URGENCE':'')+'</div>').join('');
+  document.getElementById('tc').innerHTML=DB.commandes.map(c=>'<tr><td class="mono">'+c.date+'</td><td><strong>'+c.four+'</strong></td><td>'+c.art+'</td><td>'+c.qty+'</td><td>'+fmt(c.amt)+' FCFA</td><td><span class="b '+(c.status==='Livrée'?'bg-g':c.status==='Confirmée'?'bg-b':'bg-x')+'">'+c.status+'</span></td></tr>').join('')||'<tr><td colspan="6" style="text-align:center;color:var(--tx3)">Aucune commande</td></tr>';
+}
+
+function renderQual(){
+  const q=DB.quality,nc=q.filter(x=>!x.ok).length,ncr=q.length?((nc/q.length)*100).toFixed(1):0,avgR=q.length?(q.reduce((a,b)=>a+b.res,0)/q.length).toFixed(1):0;
+  document.getElementById('q-co').textContent=(100-ncr)+'%';
+  document.getElementById('q-nc').textContent=nc;
+  document.getElementById('q-to').textContent=q.length;
+  document.getElementById('q-re').textContent=avgR;
+  document.getElementById('tq').innerHTML=q.map(x=>'<tr><td class="mono">'+x.date+'</td><td>'+x.form+'</td><td><strong style="color:'+(x.res>=25?'var(--gn2)':'var(--rd2)')+'">'+x.res+' MPa</strong></td><td>'+x.slump+' cm</td><td><span class="b '+(x.ok?'bg-g':'bg-r')+'">'+(x.ok?'✅ Conforme':'❌ NC')+'</span></td><td style="font-size:12px">'+(x.obs||'—')+'</td></tr>').join('')||'<tr><td colspan="6" style="text-align:center;color:var(--tx3)">Aucun contrôle</td></tr>';
+}
+
+function renderFleet(){
+  const ok=DB.trucks.filter(t=>t.status==='operational').length,down=DB.trucks.filter(t=>t.status==='breakdown').length,mnt=DB.trucks.filter(t=>t.status==='maintenance').length,pct=Math.round(ok/DB.trucks.length*100);
+  document.getElementById('f-ok').textContent=ok;document.getElementById('f-dn').textContent=down;document.getElementById('f-mn').textContent=mnt;document.getElementById('f-pc').textContent=pct+'%';
+  document.getElementById('trg').innerHTML=DB.trucks.map(t=>'<div class="tc '+t.status+'" onclick="editTruck(\''+t.id+'\')"><div class="tc-id">'+t.id+'</div><div class="tc-t">'+t.type+'</div><div style="margin-top:8px">'+stBadge(t.status)+'</div><div class="tc-k">📏 '+fmt(t.km)+' km</div>'+(t.desc?'<div class="tc-n">'+t.desc+'</div>':'')+'</div>').join('');
+}
+
+function editTruck(id){openM('mf');setTimeout(()=>{const sel=document.getElementById('if-t');if(sel)sel.value=id;const t=DB.trucks.find(x=>x.id===id);if(t){document.getElementById('if-s').value=t.status;document.getElementById('if-k').value=t.km;document.getElementById('if-d').value=t.desc||'';}},60);}
+
+function renderTours(){
+  const today=new Date().toISOString().slice(0,10),td=DB.tours.filter(t=>t.date===today);
+  document.getElementById('to-td').textContent=td.length;
+  document.getElementById('to-v').textContent=td.reduce((a,b)=>a+b.vol,0);
+  document.getElementById('to-k').textContent=td.reduce((a,b)=>a+b.km,0);
+  const pp=DB.tours.length?Math.round(DB.tours.filter(t=>t.punct).length/DB.tours.length*100):0;
+  document.getElementById('to-p').textContent=pp+'%';
+  document.getElementById('tto').innerHTML=DB.tours.map(t=>'<tr><td class="mono">'+t.date+'</td><td><strong>'+t.truck+'</strong></td><td>'+t.driver+'</td><td>'+t.dest+'</td><td><strong>'+t.vol+' m³</strong></td><td>'+t.km+' km</td><td>'+(t.dep||'—')+'</td><td>'+(t.ret||'—')+'</td><td><span class="b '+(t.punct?'bg-g':'bg-r')+'">'+(t.punct?'✅':'❌')+'</span></td></tr>').join('')||'<tr><td colspan="9" style="text-align:center;color:var(--tx3)">Aucune tournée</td></tr>';
+}
+
+function renderMaint(){
+  const urg=DB.maintenances.filter(m=>m.type==='Urgent'&&m.status==='En cours');
+  document.getElementById('mal').innerHTML=urg.map(m=>'<div class="al al-r">🔴 URGENT : <strong>'+m.equip+'</strong> — '+m.desc+'</div>').join('');
+  document.getElementById('tm').innerHTML=DB.maintenances.map(m=>'<tr><td class="mono">'+m.date+'</td><td><strong>'+m.equip+'</strong></td><td><span class="b '+(m.type==='Urgent'?'bg-r':m.type==='Curatif'?'bg-o':'bg-p')+'">'+m.type+'</span></td><td style="font-size:12px;max-width:200px">'+m.desc+'</td><td>'+m.resp+'</td><td>'+(m.cost>0?fmt(m.cost)+' FCFA':'—')+'</td><td><span class="b '+(m.status==='Terminé'?'bg-g':m.status==='En cours'?'bg-o':'bg-x')+'">'+m.status+'</span></td></tr>').join('')||'<tr><td colspan="7" style="text-align:center;color:var(--tx3)">Aucune intervention</td></tr>';
+}
+
+function renderReports(){
+  const tP=DB.productions.reduce((a,b)=>a+b.vol,0),tNC=DB.productions.reduce((a,b)=>a+b.nc,0);
+  const pct=Math.round(DB.trucks.filter(t=>t.status==='operational').length/18*100);
+  const tKm=DB.tours.reduce((a,b)=>a+b.km,0),tCost=DB.maintenances.reduce((a,b)=>a+b.cost,0);
+  const q=DB.quality,ncr=q.length?((q.filter(x=>!x.ok).length/q.length)*100).toFixed(1):0;
+  document.getElementById('r-p').innerHTML='<div style="font-family:var(--fh);font-size:30px;font-weight:800;color:var(--must2)">'+fmt(tP)+' m³</div><div style="font-size:12px;color:var(--tx3);margin-bottom:10px">Production totale</div><div style="font-size:13px;color:var(--tx2)">Jours saisis : <strong>'+DB.productions.length+'</strong></div><div style="font-size:13px;color:var(--tx2)">Non-conformités : <strong>'+tNC+' m³</strong></div><div style="font-size:13px;color:var(--tx2)">Taux NC : <strong>'+(tP>0?((tNC/tP)*100).toFixed(2):0)+'%</strong></div>';
+  document.getElementById('r-f').innerHTML='<div style="font-family:var(--fh);font-size:30px;font-weight:800;color:'+(pct>=85?'var(--must2)':'var(--rd2)')+'">'+pct+'%</div><div style="font-size:12px;color:var(--tx3);margin-bottom:10px">Disponibilité actuelle</div><div style="font-size:13px;color:var(--tx2)">Tournées : <strong>'+DB.tours.length+'</strong></div><div style="font-size:13px;color:var(--tx2)">Km parcourus : <strong>'+fmt(tKm)+'</strong></div><div style="font-size:13px;color:var(--tx2)">Volume livré : <strong>'+DB.tours.reduce((a,b)=>a+b.vol,0)+' m³</strong></div>';
+  document.getElementById('r-m').innerHTML='<div style="font-family:var(--fh);font-size:30px;font-weight:800;color:var(--or2)">'+fmt(tCost)+'</div><div style="font-size:12px;color:var(--tx3);margin-bottom:10px">FCFA — coût total</div><div style="font-size:13px;color:var(--tx2)">Interventions : <strong>'+DB.maintenances.length+'</strong></div><div style="font-size:13px;color:var(--tx2)">Urgentes : <strong style="color:var(--rd2)">'+DB.maintenances.filter(m=>m.type==='Urgent').length+'</strong></div><div style="font-size:13px;color:var(--tx2)">Terminées : <strong>'+DB.maintenances.filter(m=>m.status==='Terminé').length+'</strong></div>';
+  document.getElementById('r-s').innerHTML='<div class="tw"><table><thead><tr><th>KPI</th><th>Valeur</th><th>Objectif</th><th>Statut</th></tr></thead><tbody><tr><td>Disponibilité flotte</td><td><strong>'+pct+'%</strong></td><td>85%</td><td><span class="b '+(pct>=85?'bg-g':'bg-o')+'">'+(pct>=85?'✅ OK':'🟡 À améliorer')+'</span></td></tr><tr><td>Stock ciment</td><td><strong>'+DB.stocks.ciment.qty+'T</strong></td><td>≥ 80T</td><td><span class="b '+(DB.stocks.ciment.qty>=80?'bg-g':'bg-r')+'">'+(DB.stocks.ciment.qty>=80?'✅ OK':'🔴 Critique')+'</span></td></tr><tr><td>Taux non-conformité</td><td><strong>'+ncr+'%</strong></td><td>&lt; 2%</td><td><span class="b '+(ncr<2?'bg-g':'bg-r')+'">'+(ncr<2?'✅ OK':'⚠ Hors cible')+'</span></td></tr><tr><td>Tournées enregistrées</td><td><strong>'+DB.tours.length+'</strong></td><td>≥ 200/mois</td><td><span class="b bg-p">📊 En suivi</span></td></tr><tr><td>Coût maintenance total</td><td><strong>'+fmt(tCost)+' FCFA</strong></td><td>Budget annuel</td><td><span class="b bg-x">📊 Suivi</span></td></tr><tr><td>Contrôles qualité</td><td><strong>'+q.length+'</strong></td><td>1/jour</td><td><span class="b bg-m">📊 En cours</span></td></tr></tbody></table></div>';
+}
+
+function render(p){({dashboard:renderDash,production:renderProd,stocks:renderStocks,quality:renderQual,fleet:renderFleet,tours:renderTours,maintenance:renderMaint,reports:renderReports}[p]||renderDash)();}
+function renderAll(){renderDash();updateBadges();}
+
+function updateBadges(){
+  const sa=Object.values(DB.stocks).filter(s=>s.qty<=s.alert).length,fa=DB.trucks.filter(t=>t.status==='breakdown').length;
+  const ns=document.getElementById('nb-s');ns.textContent=sa;ns.style.display=sa?'':'none';
+  const nf=document.getElementById('nb-f');nf.textContent=fa;nf.style.display=fa?'':'none';
+}
+
+function tick(){const n=new Date();document.getElementById('clock').textContent=n.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'})+' · '+n.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});}
+setInterval(tick,1000);tick();
+
+function checkResp(){const b=document.getElementById('mbtn');if(window.innerWidth<900){b.style.display='flex';}else{b.style.display='none';document.getElementById('sb').classList.remove('open');}}
+window.addEventListener('resize',checkResp);checkResp();
+
+renderAll();
+</script>
+</body>
+</html>
