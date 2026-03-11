@@ -268,10 +268,15 @@ textarea{resize:vertical;min-height:70px}
     <div class="login-fg"><label>Mot de passe</label><input type="password" id="r-pass" placeholder="Min. 6 caractères"></div>
     <div class="login-fg"><label>Rôle</label>
       <select id="r-role">
-        <option value="responsable_centrale">Responsable Centrale à Béton</option>
-        <option value="responsable_flotte">Responsable Flotte</option>
+        <option value="dg">Directeur Général</option>
+        <option value="directeur">Directeur Opérations & Logistique</option>
         <option value="coordinatrice">Coordinatrice Holding</option>
-        <option value="directeur">Directeur des Opérations</option>
+        <option value="responsable_centrale">Responsable Centrale à Béton</option>
+        <option value="responsable_flotte">Responsable Flotte Camions</option>
+        <option value="comptabilite">Comptabilité</option>
+        <option value="rh">Ressources Humaines</option>
+        <option value="commercial">Commercial</option>
+        <option value="immobilier">Agence Immobilière</option>
       </select>
     </div>
     <div class="login-fg"><label>Code d'accès</label><input type="text" id="r-code" placeholder="Code fourni par le Directeur"></div>
@@ -474,6 +479,38 @@ textarea{resize:vertical;min-height:70px}
     <div class="g2" id="part-list"></div>
   </div>
 
+  <!-- RH -->
+  <div class="pg" id="pg-rh">
+    <div class="sh"><div><div class="stl">Employés & Ressources Humaines</div></div>
+      <button class="btn bm" onclick="openM('m-emp')">+ Employé</button>
+    </div>
+    <div class="kg" style="grid-template-columns:repeat(4,1fr)">
+      <div class="kc kc-p"><div class="kl">Total employés</div><div class="kv" id="rh-tot">—</div><div class="ks">actifs</div></div>
+      <div class="kc kc-g"><div class="kl">Centrale à Béton</div><div class="kv" id="rh-cb">—</div><div class="ks">employés</div></div>
+      <div class="kc kc-m"><div class="kl">Flotte Camions</div><div class="kv" id="rh-fl">—</div><div class="ks">employés</div></div>
+      <div class="kc kc-b"><div class="kl">Administration</div><div class="kv" id="rh-ad">—</div><div class="ks">employés</div></div>
+    </div>
+    <div class="card sp"><div class="ch"><div class="ct">👤 Registre des employés</div></div>
+      <div class="tw"><table><thead><tr><th>Nom</th><th>Prénom</th><th>Poste</th><th>Département</th><th>Tél.</th><th>Date embauche</th><th>Statut</th></tr></thead><tbody id="t-emp"></tbody></table></div>
+    </div>
+  </div>
+
+  <!-- FORMATION -->
+  <div class="pg" id="pg-formation">
+    <div class="sh"><div><div class="stl">Formations & Développement</div></div>
+      <button class="btn bm" onclick="openM('m-form')">+ Formation</button>
+    </div>
+    <div class="kg" style="grid-template-columns:repeat(4,1fr)">
+      <div class="kc kc-g"><div class="kl">Formations planifiées</div><div class="kv" id="form-plan">—</div><div class="ks">à venir</div></div>
+      <div class="kc kc-m"><div class="kl">En cours</div><div class="kv" id="form-cours">—</div><div class="ks">actives</div></div>
+      <div class="kc kc-b"><div class="kl">Terminées</div><div class="kv" id="form-done">—</div><div class="ks">ce mois</div></div>
+      <div class="kc kc-r"><div class="kl">Budget formations</div><div class="kv" id="form-budget">—</div><div class="ks">FCFA</div></div>
+    </div>
+    <div class="card sp"><div class="ch"><div class="ct">🎓 Registre formations</div></div>
+      <div class="tw"><table><thead><tr><th>Titre</th><th>Employé</th><th>Organisme</th><th>Début</th><th>Fin</th><th>Coût</th><th>Statut</th></tr></thead><tbody id="t-form"></tbody></table></div>
+    </div>
+  </div>
+
   <!-- FINANCES (Director only) -->
   <div class="pg" id="pg-finances">
     <div id="fin-content"></div>
@@ -609,6 +646,27 @@ textarea{resize:vertical;min-height:70px}
   <div class="mf"><button class="btn bg2" onclick="closeM('m-part')">Annuler</button><button class="btn bm" onclick="savPartenaire()">Enregistrer</button></div>
 </div></div>
 
+<div class="mo" id="m-emp"><div class="mdl">
+  <div class="mt2">👤 Nouvel employé</div>
+  <div class="fr"><div class="fg"><label>Nom</label><input type="text" id="emp-nom"></div><div class="fg"><label>Prénom</label><input type="text" id="emp-prenom"></div></div>
+  <div class="fr"><div class="fg"><label>Poste</label><input type="text" id="emp-poste" placeholder="Chauffeur, Opérateur…"></div><div class="fg"><label>Département</label><select id="emp-dept"><option>Centrale à Béton</option><option>Flotte Camions</option><option>Administration</option><option>Commercial</option><option>Comptabilité</option><option>RH</option><option>Agence Immobilière</option><option>Direction</option></select></div></div>
+  <div class="fr"><div class="fg"><label>Téléphone</label><input type="text" id="emp-tel"></div><div class="fg"><label>Email</label><input type="email" id="emp-email"></div></div>
+  <div class="fr"><div class="fg"><label>Date d'embauche</label><input type="date" id="emp-date"></div><div class="fg"><label>Salaire (FCFA)</label><input type="number" id="emp-sal" min="0"></div></div>
+  <div class="fg"><label>Statut</label><select id="emp-status"><option>Actif</option><option>En période d'essai</option><option>Suspendu</option><option>Parti</option></select></div>
+  <div class="fg"><label>Notes</label><textarea id="emp-notes"></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-emp')">Annuler</button><button class="btn bm" onclick="savEmploye()">Enregistrer</button></div>
+</div></div>
+
+<div class="mo" id="m-form"><div class="mdl">
+  <div class="mt2">🎓 Nouvelle formation</div>
+  <div class="fg"><label>Titre de la formation</label><input type="text" id="form-titre" placeholder="Ex: Recyclage permis PL…"></div>
+  <div class="fr"><div class="fg"><label>Employé concerné</label><input type="text" id="form-emp" placeholder="Nom de l'employé"></div><div class="fg"><label>Organisme</label><input type="text" id="form-org" placeholder="Centre de formation…"></div></div>
+  <div class="fr"><div class="fg"><label>Date début</label><input type="date" id="form-deb"></div><div class="fg"><label>Date fin</label><input type="date" id="form-fin"></div></div>
+  <div class="fr"><div class="fg"><label>Coût (FCFA)</label><input type="number" id="form-cout" min="0" value="0"></div><div class="fg"><label>Statut</label><select id="form-status"><option>Planifiée</option><option>En cours</option><option>Terminée</option><option>Annulée</option></select></div></div>
+  <div class="fg"><label>Observations</label><textarea id="form-obs"></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-form')">Annuler</button><button class="btn bm" onclick="savFormation()">Enregistrer</button></div>
+</div></div>
+
 <div class="mo" id="m-add-truck"><div class="mdl">
   <div class="mt2">🚛 Ajouter un camion</div>
   <div class="fr"><div class="fg"><label>Immatriculation</label><input type="text" id="trk-id" placeholder="SN-019-DK"></div><div class="fg"><label>Type</label><select id="trk-type"><option>Toupie 8m³</option><option>Toupie 6m³</option><option>Benne 10T</option><option>Plateau</option><option>Citerne</option><option>Autre</option></select></div></div>
@@ -641,7 +699,17 @@ textarea{resize:vertical;min-height:70px}
 <script>
 const SUPABASE_URL = 'https://ijnfostobsaaxdzdfoum.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlqbmZvc3RvYnNhYXhkemRmb3VtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyNDc2ODgsImV4cCI6MjA4ODgyMzY4OH0.Itb-chucTGkCOaLqCe4o8HO95NZTX3B0pDJoBj98xgI';
-const ACCESS_CODE = 'SARPA2026';
+const ROLE_CODES = {
+  dg: 'DG-SARPA-2026',
+  directeur: 'DIR-OPS-2026',
+  coordinatrice: 'COORD-SARPA-2026',
+  responsable_centrale: 'RESP-CB-2026',
+  responsable_flotte: 'RESP-FL-2026',
+  comptabilite: 'COMPTA-SARPA-2026',
+  rh: 'RH-SARPA-2026',
+  commercial: 'COMM-SARPA-2026',
+  immobilier: 'IMMO-SARPA-2026',
+};
 
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -651,11 +719,17 @@ let userRole = null;
 let userName = null;
 
 // ═══ ROLE CONFIG ═══
+const ALL_PAGES = ['dashboard','production','stocks','quality','fleet','tours','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','rh','formation'];
 const ROLES = {
-  directeur: { label: 'Directeur Opérations', badge: 'rb-director', pages: ['dashboard','production','stocks','quality','fleet','tours','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users'] },
-  responsable_centrale: { label: 'Resp. Centrale Béton', badge: 'rb-resp', pages: ['dashboard','production','stocks','quality','accidents'] },
-  responsable_flotte: { label: 'Resp. Flotte', badge: 'rb-resp', pages: ['dashboard','fleet','tours','maintenance','accidents'] },
-  coordinatrice: { label: 'Coordinatrice', badge: 'rb-coord', pages: ['dashboard','production','stocks','tours','fournisseurs','projets','partenaires','accidents'] },
+  dg:                  { label: 'Directeur Général',          badge: 'rb-director', pages: ALL_PAGES },
+  directeur:           { label: 'Dir. Opérations & Logistique', badge: 'rb-director', pages: ALL_PAGES },
+  coordinatrice:       { label: 'Coordinatrice Holding',      badge: 'rb-coord',    pages: ['dashboard','production','stocks','tours','fournisseurs','projets','partenaires','accidents'] },
+  responsable_centrale:{ label: 'Resp. Centrale à Béton',     badge: 'rb-resp',     pages: ['dashboard','production','stocks','quality','accidents'] },
+  responsable_flotte:  { label: 'Resp. Flotte Camions',       badge: 'rb-resp',     pages: ['dashboard','fleet','tours','maintenance','accidents'] },
+  comptabilite:        { label: 'Comptabilité',               badge: 'rb-resp',     pages: ['dashboard','finances','fournisseurs','rapports'] },
+  rh:                  { label: 'Ressources Humaines',        badge: 'rb-coord',    pages: ['dashboard','rh','formation','accidents'] },
+  commercial:          { label: 'Commercial',                 badge: 'rb-coord',    pages: ['dashboard','projets','fournisseurs','partenaires'] },
+  immobilier:          { label: 'Agence Immobilière',         badge: 'rb-coord',    pages: ['dashboard','projets','partenaires'] },
 };
 
 const NAV_ITEMS = [
@@ -674,7 +748,10 @@ const NAV_ITEMS = [
   { id: 'fournisseurs', icon: '🏭', label: 'Fournisseurs' },
   { id: 'projets', icon: '🏗', label: 'Projets & Chantiers' },
   { id: 'partenaires', icon: '🤝', label: 'Partenaires' },
-  { section: '🔒 Directeur uniquement' },
+  { section: 'RH & Administratif' },
+  { id: 'rh', icon: '👤', label: 'Employés' },
+  { id: 'formation', icon: '🎓', label: 'Formations' },
+  { section: '🔒 Direction uniquement' },
   { id: 'finances', icon: '💰', label: 'Finances & Budget', directorOnly: true },
   { id: 'evaluations', icon: '📊', label: 'Évaluations', directorOnly: true },
   { id: 'rapports', icon: '▣', label: 'Rapports consolidés', directorOnly: true },
@@ -742,7 +819,7 @@ async function initApp(user){
   buildNav();
   setupQuickGrid();
   
-  if(userRole === 'directeur'){
+  if(userRole === 'directeur' || userRole === 'dg'){
     document.getElementById('btn-add-truck').style.display='flex';
   }
   
@@ -757,7 +834,7 @@ function buildNav(){
   let html = '';
   NAV_ITEMS.forEach(item => {
     if(item.section){
-      if(item.section.includes('🔒') && userRole !== 'directeur') return;
+      if(item.section.includes('🔒') && userRole !== 'directeur' && userRole !== 'dg') return;
       html += `<div class="ns">${item.section}</div>`;
       return;
     }
@@ -848,7 +925,7 @@ function handleRealtimeUpdate(table, payload){
 }
 
 // ═══ NAV ═══
-const TITLES = {dashboard:'Tableau de bord',production:'Production béton',stocks:'Stocks & Approvisionnements',quality:'Contrôle qualité',fleet:'Flotte de Camions',tours:'Tournées & Livraisons',maintenance:'Maintenance',accidents:'Accidents & Sécurité',fournisseurs:'Fournisseurs',projets:'Projets & Chantiers',partenaires:'Partenaires',finances:'Finances & Budget',evaluations:'Évaluations',rapports:'Rapports consolidés',parametres:'Paramètres',users:'Utilisateurs'};
+const TITLES = {dashboard:'Tableau de bord',production:'Production béton',stocks:'Stocks & Approvisionnements',quality:'Contrôle qualité',fleet:'Flotte de Camions',tours:'Tournées & Livraisons',maintenance:'Maintenance',accidents:'Accidents & Sécurité',fournisseurs:'Fournisseurs',projets:'Projets & Chantiers',partenaires:'Partenaires',finances:'Finances & Budget',evaluations:'Évaluations',rapports:'Rapports consolidés',parametres:'Paramètres',users:'Utilisateurs',rh:'Employés & RH',formation:'Formations'};
 
 function go(p){
   const allowed = ROLES[userRole]?.pages || [];
@@ -986,7 +1063,7 @@ function stockRow(s){ const p=Math.min(100,Math.round(s.current_qty/s.max_qty*10
 
 // ═══ RENDERS ═══
 async function renderPage(p){
-  const renders={dashboard:renderDash,production:renderProd,stocks:renderStocks,quality:renderQual,fleet:renderFleet,tours:renderTours,maintenance:renderMaint,accidents:renderAccidents,fournisseurs:renderFournisseurs,projets:renderProjets,partenaires:renderPartenaires,finances:renderFinances,evaluations:renderEvals,rapports:renderRapports,parametres:renderParams,users:renderUsers};
+  const renders={dashboard:renderDash,production:renderProd,stocks:renderStocks,quality:renderQual,fleet:renderFleet,tours:renderTours,maintenance:renderMaint,accidents:renderAccidents,fournisseurs:renderFournisseurs,projets:renderProjets,partenaires:renderPartenaires,finances:renderFinances,evaluations:renderEvals,rapports:renderRapports,parametres:renderParams,users:renderUsers,rh:renderRH,formation:renderFormation};
   if(renders[p]) await renders[p]();
 }
 
@@ -1204,6 +1281,44 @@ async function updateBadges(){
   const fa=(trucks||[]).filter(t=>t.status==='breakdown').length;
   const aa=(accs||[]).length;
   ['nb-s','nb-f','nb-acc'].forEach((id,i)=>{const el=document.getElementById(id);if(el){const v=[sa,fa,aa][i];el.textContent=v;el.style.display=v>0?'':'none';}});
+}
+
+// RH uses localStorage since no separate table
+function getRHData(key){ try{ return JSON.parse(localStorage.getItem('sarpa_'+key)||'[]'); }catch(e){ return []; } }
+function setRHData(key,data){ try{ localStorage.setItem('sarpa_'+key,JSON.stringify(data)); }catch(e){} }
+
+async function savEmploye(){
+  const emp = {id:Date.now(),nom:document.getElementById('emp-nom').value,prenom:document.getElementById('emp-prenom').value,poste:document.getElementById('emp-poste').value,departement:document.getElementById('emp-dept').value,telephone:document.getElementById('emp-tel').value,email:document.getElementById('emp-email').value,date_embauche:document.getElementById('emp-date').value,salaire:+document.getElementById('emp-sal').value||0,statut:document.getElementById('emp-status').value,notes:document.getElementById('emp-notes').value,created_by:userName};
+  if(!emp.nom){toast('Nom requis');return;}
+  const emps = getRHData('employes'); emps.unshift(emp); setRHData('employes',emps);
+  closeM('m-emp'); toast('Employé enregistré ✓'); renderPage('rh');
+}
+
+async function savFormation(){
+  const f = {id:Date.now(),titre:document.getElementById('form-titre').value,employe:document.getElementById('form-emp').value,organisme:document.getElementById('form-org').value,date_debut:document.getElementById('form-deb').value,date_fin:document.getElementById('form-fin').value,cout:+document.getElementById('form-cout').value||0,statut:document.getElementById('form-status').value,observations:document.getElementById('form-obs').value,created_by:userName};
+  if(!f.titre){toast('Titre requis');return;}
+  const forms = getRHData('formations'); forms.unshift(f); setRHData('formations',forms);
+  closeM('m-form'); toast('Formation enregistrée ✓'); renderPage('formation');
+}
+
+async function renderRH(){
+  const emps = getRHData('employes');
+  const actifs = emps.filter(e=>e.statut==='Actif'||e.statut==="En période d'essai");
+  document.getElementById('rh-tot').textContent=actifs.length;
+  document.getElementById('rh-cb').textContent=actifs.filter(e=>e.departement==='Centrale à Béton').length;
+  document.getElementById('rh-fl').textContent=actifs.filter(e=>e.departement==='Flotte Camions').length;
+  document.getElementById('rh-ad').textContent=actifs.filter(e=>['Administration','Direction','Comptabilité','RH'].includes(e.departement)).length;
+  document.getElementById('t-emp').innerHTML=emps.length===0?'<tr><td colspan="7" style="text-align:center;color:var(--tx3)">Aucun employé enregistré</td></tr>':emps.map(e=>'<tr><td><strong>'+e.nom+'</strong></td><td>'+e.prenom+'</td><td>'+e.poste+'</td><td><span class="b bg-p">'+e.departement+'</span></td><td class="mono">'+e.telephone+'</td><td class="mono">'+(e.date_embauche||'—')+'</td><td><span class="b '+(e.statut==='Actif'?'bg-g':e.statut==='Parti'?'bg-r':'bg-o')+'">'+e.statut+'</span></td></tr>').join('');
+}
+
+async function renderFormation(){
+  const forms = getRHData('formations');
+  const m = new Date().toISOString().slice(0,7);
+  document.getElementById('form-plan').textContent=forms.filter(f=>f.statut==='Planifiée').length;
+  document.getElementById('form-cours').textContent=forms.filter(f=>f.statut==='En cours').length;
+  document.getElementById('form-done').textContent=forms.filter(f=>f.statut==='Terminée'&&f.date_fin?.startsWith(m)).length;
+  document.getElementById('form-budget').textContent=(forms.reduce((a,b)=>a+b.cout,0)).toLocaleString('fr-FR');
+  document.getElementById('t-form').innerHTML=forms.length===0?'<tr><td colspan="7" style="text-align:center;color:var(--tx3)">Aucune formation enregistrée</td></tr>':forms.map(f=>'<tr><td><strong>'+f.titre+'</strong></td><td>'+f.employe+'</td><td>'+f.organisme+'</td><td class="mono">'+(f.date_debut||'—')+'</td><td class="mono">'+(f.date_fin||'—')+'</td><td>'+f.cout.toLocaleString('fr-FR')+' FCFA</td><td><span class="b '+(f.statut==='Terminée'?'bg-g':f.statut==='En cours'?'bg-b':f.statut==='Annulée'?'bg-r':'bg-o')+'">'+f.statut+'</span></td></tr>').join('');
 }
 
 function tick(){const n=new Date();document.getElementById('clock').textContent=n.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'})+' · '+n.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});}
