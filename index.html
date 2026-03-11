@@ -246,44 +246,20 @@ textarea{resize:vertical;min-height:70px}
       <div class="login-title">Sarpa Ops V2</div>
       <div class="login-sub">Accès sécurisé</div>
     </div>
-    <!-- email replaced -->
-    <div class="login-fg"><label>Mot de passe</label><input type="password" id="l-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <div class="login-fg">
+      <label>Code d'accès</label>
+      <input type="text" id="l-code" placeholder="XXXXXXXX"
+        style="text-transform:uppercase;letter-spacing:.15em;font-family:monospace;font-size:18px;text-align:center"
+        maxlength="8" autocomplete="off" autocorrect="off" spellcheck="false">
+    </div>
     <button class="login-btn" id="login-btn">Accéder</button>
     <div class="login-err" id="l-err"></div>
-    <div class="login-register">Pas de compte ? <span onclick="showRegister()">Créer un accès</span></div>
+    <div style="text-align:center;margin-top:14px;font-size:11px;color:var(--tx3)">Code fourni par le Directeur des Opérations</div>
   </div>
 </div>
 
 <!-- REGISTER -->
-<div id="register-screen" style="display:none;position:fixed;inset:0;background:linear-gradient(135deg,#0D0620,#2D1B4E);align-items:center;justify-content:center;z-index:9999">
-  <div class="login-card" style="max-height:90vh;overflow-y:auto">
-    <div class="login-logo">
-      <div class="login-diamond">S</div>
-      <div class="login-title">Créer un accès</div>
-      <div class="login-sub">Sarpa Ops V2</div>
-    </div>
-    <div class="login-fg"><label>Nom complet</label><input type="text" id="r-name" placeholder="Prénom Nom"></div>
-    <div class="login-fg"><label>Email</label><input type="email" id="r-email" placeholder="votre@email.com"></div>
-    <div class="login-fg"><label>Mot de passe</label><input type="password" id="r-pass" placeholder="Min. 6 caractères"></div>
-    <div class="login-fg"><label>Rôle</label>
-      <select id="r-role">
-        <option value="dg">Directeur Général</option>
-        <option value="directeur">Directeur Opérations & Logistique</option>
-        <option value="coordinatrice">Coordinatrice Holding</option>
-        <option value="responsable_centrale">Responsable Centrale à Béton</option>
-        <option value="responsable_flotte">Responsable Flotte Camions</option>
-        <option value="comptabilite">Comptabilité</option>
-        <option value="rh">Ressources Humaines</option>
-        <option value="commercial">Commercial</option>
-        <option value="immobilier">Agence Immobilière</option>
-      </select>
-    </div>
-    <div class="login-fg"><label>Code d'accès</label><input type="text" id="r-code" placeholder="Code fourni par le Directeur"></div>
-    <button class="login-btn" onclick="doRegister()">Créer le compte</button>
-    <div class="login-err" id="r-err"></div>
-    <div class="login-register"><span onclick="showLogin()">← Retour connexion</span></div>
-  </div>
-</div>
+<div id="register-screen" style="display:none!important">
 
 <!-- APP -->
 <div id="app">
