@@ -247,8 +247,8 @@ textarea{resize:vertical;min-height:70px}
       <div class="login-title">Sarpa Ops V2</div>
       <div class="login-sub">Accès sécurisé</div>
     </div>
-    <div class="login-fg"><label>Code d'accès</label><input type="text" id="l-code" placeholder="Ex: OP7R3N8W" style="text-transform:uppercase;letter-spacing:.1em;font-family:var(--fm);font-size:16px;text-align:center" onkeydown="if(event.key==='Enter')doLogin()" maxlength="8"></div>
-    <button class="login-btn" onclick="doLogin()">Accéder</button>
+    <div class="login-fg"><label>Code d'accès</label><input type="text" id="l-code" placeholder="Ex: OP7R3N8W" style="text-transform:uppercase;letter-spacing:.1em;font-family:var(--fm);font-size:16px;text-align:center" maxlength="8" id="l-code-input"></div>
+    <button class="login-btn" id="login-btn" type="button">Accéder</button>
     <div class="login-err" id="l-err"></div>
     <div style="text-align:center;margin-top:14px;font-size:11px;color:var(--tx3);font-family:var(--fm)">Code fourni par le Directeur des Opérations</div>
   </div>
@@ -1248,6 +1248,14 @@ setInterval(tick,1000);tick();
 
 function checkResp(){const b=document.getElementById('mbtn');if(window.innerWidth<900){b.style.display='flex';}else{b.style.display='none';document.getElementById('sb').classList.remove('open');}}
 window.addEventListener('resize',checkResp);checkResp();
+
+// ═══ EVENT LISTENERS ═══
+document.addEventListener('DOMContentLoaded', function(){
+  const btn = document.getElementById('login-btn');
+  const inp = document.getElementById('l-code');
+  if(btn) btn.addEventListener('click', doLogin);
+  if(inp) inp.addEventListener('keydown', function(e){ if(e.key==='Enter') doLogin(); });
+});
 
 // ═══ INIT ═══
 const session = JSON.parse(localStorage.getItem('sarpa_session')||'null');
