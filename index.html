@@ -651,7 +651,7 @@ textarea{resize:vertical;min-height:70px}
   <div class="fr"><div class="fg"><label>Poste</label><input type="text" id="emp-poste" placeholder="Chauffeur, Opérateur…"></div><div class="fg"><label>Département</label><select id="emp-dept"><option>Centrale à Béton</option><option>Flotte Camions</option><option>Administration</option><option>Commercial</option><option>Comptabilité</option><option>RH</option><option>Agence Immobilière</option><option>Direction</option></select></div></div>
   <div class="fr"><div class="fg"><label>Téléphone</label><input type="text" id="emp-tel"></div><div class="fg"><label>Email</label><input type="email" id="emp-email"></div></div>
   <div class="fr"><div class="fg"><label>Date d'embauche</label><input type="date" id="emp-date"></div><div class="fg"><label>Salaire (FCFA)</label><input type="number" id="emp-sal" min="0"></div></div>
-  <div class="fg"><label>Statut</label><select id="emp-status"><option>Actif</option><option>En période d'essai</option><option>Suspendu</option><option>Parti</option></select></div>
+  <div class="fg"><label>Statut</label><select id="emp-status"><option>Actif</option><option>En periode essai</option><option>Suspendu</option><option>Parti</option></select></div>
   <div class="fg"><label>Notes</label><textarea id="emp-notes"></textarea></div>
   <div class="mf"><button class="btn bg2" onclick="closeM('m-emp')">Annuler</button><button class="btn bm" onclick="savEmploye()">Enregistrer</button></div>
 </div></div>
@@ -792,7 +792,7 @@ const NAV_ITEMS = [
 function doLogin(){
   const code = document.getElementById('l-code').value.trim().toUpperCase();
   const user = ACCESS_CODES[code];
-  if(!user){ document.getElementById('l-err').textContent='Code incorrect — vérifiez votre code d'accès'; return; }
+  if(!user){ document.getElementById('l-err').textContent='Code incorrect — vérifiez votre code'; return; }
   // Save session
   localStorage.setItem('sarpa_session', JSON.stringify({code, role:user.role, name:user.name, ts:Date.now()}));
   startApp(user.role, user.name);
@@ -1213,7 +1213,7 @@ async function renderUsers(){
 
 async function renderRH(){
   const emps=getRHData('employes');
-  const actifs=emps.filter(e=>e.statut==='Actif'||e.statut==="En période d'essai");
+  const actifs=emps.filter(e=>e.statut==='Actif'||e.statut==="En periode essai");
   document.getElementById('rh-tot').textContent=actifs.length;
   document.getElementById('rh-cb').textContent=actifs.filter(e=>e.departement==='Centrale à Béton').length;
   document.getElementById('rh-fl').textContent=actifs.filter(e=>e.departement==='Flotte Camions').length;
