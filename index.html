@@ -213,6 +213,7 @@ textarea{resize:vertical;min-height:70px}
 .fcard-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
 
 /* DIRECTOR LOCK */
+.psec{animation:fadeIn .2s ease}
 .director-lock{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;gap:12px;color:var(--tx3)}
 .lock-icon{font-size:48px;margin-bottom:8px}
 .lock-title{font-family:var(--fh);font-size:18px;font-weight:700;color:var(--tx2)}
@@ -242,7 +243,7 @@ textarea{resize:vertical;min-height:70px}
 <div id="login-screen">
   <div class="login-card">
     <div class="login-logo">
-      <div class="login-diamond">S</div>
+      <div class="login-diamond" id="sb-initial">S</div>
       <div class="login-title">Sarpa Ops V2</div>
       <div class="login-sub">Accès sécurisé</div>
     </div>
@@ -852,7 +853,9 @@ textarea{resize:vertical;min-height:70px}
   <div id="journal-content"></div>
 </div>
 
+
 <script>
+
 
 
 const ROLE_CODES = {
@@ -865,6 +868,8 @@ const ROLE_CODES = {
   'RH1K7N3E': { role:'rh',                     name:'Ressources Humaines'            },
   'CM4W9T2F': { role:'commercial',             name:'Commercial'                     },
   'IM8S5G1Y': { role:'immobilier',             name:'Agence Immobilière'             },
+  'GS1X4B7N': { role:'guest',                  name:'Invité 1'                       },
+  'GS2M9K3P': { role:'guest',                  name:'Invité 2'                       },
 };
 
 const SB_URL = 'https://ijnfostobsaaxdzdfoum.supabase.co';
@@ -953,6 +958,7 @@ const ROLES = {
   rh:                   { label:'Ressources Humaines',            badge:'rb-coord',    pages:['dashboard','rh','formation','accidents','conges','messages','annuaire'] },
   commercial:           { label:'Commercial',                     badge:'rb-coord',    pages:['dashboard','projets','fournisseurs','partenaires','partenariats','messages','annuaire'] },
   immobilier:           { label:'Agence Immobilière',             badge:'rb-coord',    pages:['dashboard','projets','partenaires','partenariats','messages','annuaire'] },
+  guest:                { label:'Invité',                          badge:'rb-guest',    pages:['dashboard','planning','projets','partenariats'] },
 };
 
 const TITLES = {
@@ -1038,6 +1044,7 @@ function startApp(role, name) {
   buildNav();
   buildQuickGrid();
   initGoogleSheets().then(() => seedData());
+  applyAppearance();
   go('dashboard');
   updateBadges();
   setTimeout(autoBackup, 5000);
@@ -1090,6 +1097,7 @@ function buildQuickGrid() {
 function go(p) {
   const allowed = ROLES[userRole]?.pages || [];
   if (!allowed.includes(p)) { toast('Accès non autorisé'); return; }
+  const isGuest = userRole === 'guest';
   document.querySelectorAll('.pg').forEach(x=>x.classList.remove('active'));
   document.querySelectorAll('.ni').forEach(x=>x.classList.remove('active'));
   const pg = document.getElementById('pg-'+p);
@@ -1896,35 +1904,303 @@ async function renderParams() {
     return;
   }
   const trucks = await db('trucks');
+  const cfg = getConfig();
+
   document.getElementById('param-content').innerHTML = `
-    <div class="sh">
-      <div><div class="stl">Paramètres</div><div class="sst">Configuration — Direction uniquement</div></div>
-      <button class="btn bm" onclick="openM('m-add-truck')">+ Camion</button>
+    <div class="sh"><div><div class="stl">Paramètres</div><div class="sst">Configuration complète — Direction uniquement</div></div></div>
+
+    <!-- TABS -->
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px" id="param-tabs">
+      ${[
+        ['flotte','🚛 Flotte'],['centrale','🏗 Centrale'],['stocks','📦 Stocks'],
+        ['rh','👷 RH'],['finances','💰 Finances'],['fournisseurs','🏭 Fournisseurs'],
+        ['projets','📋 Projets'],['carburant','⛽ Carburant'],['maintenance','🔧 Maintenance'],
+        ['objectifs','📊 Objectifs'],['notifications','🔔 Alertes'],['acces','🔐 Accès'],
+        ['apparence','🎨 Apparence']
+      ].map(([id,lb])=>`<button onclick="showParamTab('${id}')" id="ptab-${id}" class="btn" style="font-size:11px;padding:6px 10px">${lb}</button>`).join('')}
     </div>
-    <div class="card" style="margin-bottom:14px">
-      <div class="ch"><div class="ct">🔑 Codes par département</div></div>
-      <div class="tw"><table><thead><tr><th>Département</th><th>Code</th></tr></thead><tbody>
-        <tr><td>Directeur Général</td><td class="mono"><strong>DG4X9K2M</strong></td></tr>
-        <tr><td>Dir. Opérations</td><td class="mono"><strong>OP7R3N8W</strong></td></tr>
-        <tr><td>Coordinatrice</td><td class="mono"><strong>CR5T1P6Q</strong></td></tr>
-        <tr><td>Resp. Centrale Béton</td><td class="mono"><strong>CB2H8L4V</strong></td></tr>
-        <tr><td>Resp. Flotte</td><td class="mono"><strong>FL9M3D7J</strong></td></tr>
-        <tr><td>Comptabilité</td><td class="mono"><strong>CT6A2R5B</strong></td></tr>
-        <tr><td>RH</td><td class="mono"><strong>RH1K7N3E</strong></td></tr>
-        <tr><td>Commercial</td><td class="mono"><strong>CM4W9T2F</strong></td></tr>
-        <tr><td>Immobilier</td><td class="mono"><strong>IM8S5G1Y</strong></td></tr>
-      </tbody></table></div>
+
+    <!-- FLOTTE -->
+    <div id="psec-flotte" class="psec">
+      <div class="card sp" style="margin-bottom:12px">
+        <div class="ch"><div class="ct">🚛 Camions (${(trucks||[]).length})</div><button class="btn bm" onclick="openM('m-add-truck')" style="font-size:11px">+ Camion</button></div>
+        <div class="tw"><table><thead><tr><th>ID</th><th>Type</th><th>Km</th><th>Statut</th><th>Action</th></tr></thead>
+        <tbody>${(trucks||[]).map(t=>`<tr>
+          <td class="mono"><strong>${t.id}</strong></td><td>${t.type}</td>
+          <td>${fmt(t.km)} km</td><td>${stBadge(t.status)}</td>
+          <td><button onclick="openEditTruck('${t.id}')" class="btn bg2" style="font-size:10px;padding:3px 8px">✏️ Modifier</button></td>
+        </tr>`).join('')}</tbody></table></div>
+      </div>
+      <div class="card sp">
+        <div class="ch"><div class="ct">⚙️ Paramètres flotte</div></div>
+        <div class="fg"><label>Seuil disponibilité objectif (%)</label><input type="number" id="cfg-fleet-pct" value="${cfg.fleetTarget||85}" min="0" max="100"></div>
+        <div class="fg"><label>Alerte vidange (km)</label><input type="number" id="cfg-vidange-km" value="${cfg.vidangeKm||5000}"></div>
+        <div class="fg"><label>Types de camions disponibles</label><textarea id="cfg-truck-types" rows="4">${(cfg.truckTypes||['Toupie 8m³','Toupie 6m³','Benne 10T','Plateau','Citerne','Camion malaxeur','Camionnette']).join('\n')}</textarea></div>
+        <button class="btn bm" onclick="saveConfig('flotte')">💾 Enregistrer</button>
+      </div>
     </div>
-    <div class="card">
-      <div class="ch"><div class="ct">🚛 Flotte (${(trucks||[]).length} véhicules)</div></div>
-      <div class="tw"><table><thead><tr><th>ID</th><th>Type</th><th>Km</th><th>Statut</th></tr></thead>
-      <tbody>${(trucks||[]).map(t=>`<tr>
-        <td class="mono"><strong>${t.id}</strong></td>
-        <td>${t.type}</td>
-        <td>${fmt(t.km)} km</td>
-        <td>${stBadge(t.status)}</td>
-      </tr>`).join('')}</tbody></table></div>
-    </div>`;
+
+    <!-- CENTRALE -->
+    <div id="psec-centrale" class="psec" style="display:none">
+      <div class="card sp">
+        <div class="ch"><div class="ct">🏗 Centrale à Béton</div></div>
+        <div class="fg"><label>Capacité journalière max (m³)</label><input type="number" id="cfg-cap-max" value="${cfg.capaciteMax||400}"></div>
+        <div class="fg"><label>Objectif production journalier (m³)</label><input type="number" id="cfg-prod-obj" value="${cfg.prodObjectif||280}"></div>
+        <div class="fg"><label>Formulations disponibles</label><textarea id="cfg-formulations" rows="5">${(cfg.formulations||['C25/30','B25','B30','B35','B40','Béton maigre','Béton de propreté']).join('\n')}</textarea></div>
+        <button class="btn bm" onclick="saveConfig('centrale')">💾 Enregistrer</button>
+      </div>
+    </div>
+
+    <!-- STOCKS -->
+    <div id="psec-stocks" class="psec" style="display:none">
+      <div class="card sp">
+        <div class="ch"><div class="ct">📦 Stocks — Seuils d'alerte</div></div>
+        <p style="font-size:12px;color:var(--tx3);margin-bottom:12px">Modifiez directement dans l'onglet Stocks → bouton "Mettre à jour stock"</p>
+        <div class="fg"><label>Unités disponibles</label><textarea id="cfg-units" rows="4">${(cfg.units||['T','L','u','kg','m³','sac']).join('\n')}</textarea></div>
+        <button class="btn bm" onclick="saveConfig('stocks')">💾 Enregistrer</button>
+      </div>
+    </div>
+
+    <!-- RH -->
+    <div id="psec-rh" class="psec" style="display:none">
+      <div class="card sp">
+        <div class="ch"><div class="ct">👷 Ressources Humaines</div></div>
+        <div class="fg"><label>Départements</label><textarea id="cfg-depts" rows="6">${(cfg.departements||['Direction','Centrale à Béton','Flotte Camions','Comptabilité','RH','Commercial','Agence Immobilière']).join('\n')}</textarea></div>
+        <div class="fg"><label>Types de contrat</label><textarea id="cfg-contrats" rows="4">${(cfg.contrats||['CDI','CDD','Stage','Consultant','Journalier']).join('\n')}</textarea></div>
+        <div class="fg"><label>Types de congés</label><textarea id="cfg-conge-types" rows="4">${(cfg.congeTypes||['Congé annuel','Congé maladie','Absence justifiée','Absence injustifiée','Congé exceptionnel']).join('\n')}</textarea></div>
+        <button class="btn bm" onclick="saveConfig('rh')">💾 Enregistrer</button>
+      </div>
+    </div>
+
+    <!-- FINANCES -->
+    <div id="psec-finances" class="psec" style="display:none">
+      <div class="card sp">
+        <div class="ch"><div class="ct">💰 Finances</div></div>
+        <div class="fg"><label>Catégories de recettes</label><textarea id="cfg-recettes" rows="4">${(cfg.recettes||['Vente béton','Livraison','Location','Autre recette']).join('\n')}</textarea></div>
+        <div class="fg"><label>Catégories de charges</label><textarea id="cfg-charges" rows="5">${(cfg.charges||['Carburant','Maintenance','Salaires','Matières premières','Loyer','Charges diverses']).join('\n')}</textarea></div>
+        <div class="fg"><label>Budget mensuel total (FCFA)</label><input type="number" id="cfg-budget" value="${cfg.budgetMensuel||0}"></div>
+        <div class="fg"><label>Devise principale</label><select id="cfg-devise"><option ${cfg.devise==='FCFA'?'selected':''}>FCFA</option><option ${cfg.devise==='EUR'?'selected':''}>EUR</option><option ${cfg.devise==='USD'?'selected':''}>USD</option></select></div>
+        <button class="btn bm" onclick="saveConfig('finances')">💾 Enregistrer</button>
+      </div>
+    </div>
+
+    <!-- FOURNISSEURS -->
+    <div id="psec-fournisseurs" class="psec" style="display:none">
+      <div class="card sp">
+        <div class="ch"><div class="ct">🏭 Fournisseurs</div></div>
+        <div class="fg"><label>Catégories fournisseurs</label><textarea id="cfg-four-cats" rows="6">${(cfg.fourCats||['Ciment','Sable & Granulats','Adjuvants','Carburant','Pièces détachées','Pneus','Équipements','Services','Autre']).join('\n')}</textarea></div>
+        <div class="fg"><label>Conditions de paiement</label><textarea id="cfg-paiement" rows="3">${(cfg.paiement||['Comptant','30 jours','60 jours','À la livraison']).join('\n')}</textarea></div>
+        <button class="btn bm" onclick="saveConfig('fournisseurs')">💾 Enregistrer</button>
+      </div>
+    </div>
+
+    <!-- PROJETS -->
+    <div id="psec-projets" class="psec" style="display:none">
+      <div class="card sp">
+        <div class="ch"><div class="ct">📋 Projets & Chantiers</div></div>
+        <div class="fg"><label>Statuts de projet</label><textarea id="cfg-proj-status" rows="4">${(cfg.projStatus||['En cours','Terminé','Suspendu','En attente','Annulé']).join('\n')}</textarea></div>
+        <div class="fg"><label>Types de chantiers</label><textarea id="cfg-chantier-types" rows="4">${(cfg.chantierTypes||['Résidentiel','Commercial','Industriel','Infrastructure','Voirie','Autre']).join('\n')}</textarea></div>
+        <div class="fg"><label>Zones géographiques</label><textarea id="cfg-zones" rows="4">${(cfg.zones||['Dakar','Thiès','Saint-Louis','Ziguinchor','Kaolack','Autre']).join('\n')}</textarea></div>
+        <button class="btn bm" onclick="saveConfig('projets')">💾 Enregistrer</button>
+      </div>
+    </div>
+
+    <!-- CARBURANT -->
+    <div id="psec-carburant" class="psec" style="display:none">
+      <div class="card sp">
+        <div class="ch"><div class="ct">⛽ Carburant</div></div>
+        <div class="fg"><label>Prix référence / litre (FCFA)</label><input type="number" id="cfg-prix-carb" value="${cfg.prixCarburant||850}"></div>
+        <div class="fg"><label>Consommation standard Toupie (L/100km)</label><input type="number" id="cfg-conso-toupie" value="${cfg.consoToupie||35}"></div>
+        <div class="fg"><label>Consommation standard Benne (L/100km)</label><input type="number" id="cfg-conso-benne" value="${cfg.consoBenne||28}"></div>
+        <div class="fg"><label>Stations habituelles</label><textarea id="cfg-stations" rows="3">${(cfg.stations||['Total Energies','Shell','Oibia','Autre']).join('\n')}</textarea></div>
+        <button class="btn bm" onclick="saveConfig('carburant')">💾 Enregistrer</button>
+      </div>
+    </div>
+
+    <!-- MAINTENANCE -->
+    <div id="psec-maintenance" class="psec" style="display:none">
+      <div class="card sp">
+        <div class="ch"><div class="ct">🔧 Maintenance</div></div>
+        <div class="fg"><label>Types d'intervention</label><textarea id="cfg-maint-types" rows="5">${(cfg.maintTypes||['Préventif','Curatif','Urgent','Révision périodique','Contrôle technique']).join('\n')}</textarea></div>
+        <div class="fg"><label>Fréquence révision Toupie (km)</label><input type="number" id="cfg-rev-toupie" value="${cfg.revToupie||25000}"></div>
+        <div class="fg"><label>Fréquence révision Benne (km)</label><input type="number" id="cfg-rev-benne" value="${cfg.revBenne||20000}"></div>
+        <div class="fg"><label>Prestataires maintenance</label><textarea id="cfg-prestataires" rows="3">${(cfg.prestataires||['Garage Central','Mercedes Service','Atelier Interne']).join('\n')}</textarea></div>
+        <button class="btn bm" onclick="saveConfig('maintenance')">💾 Enregistrer</button>
+      </div>
+    </div>
+
+    <!-- OBJECTIFS -->
+    <div id="psec-objectifs" class="psec" style="display:none">
+      <div class="card sp">
+        <div class="ch"><div class="ct">📊 Objectifs globaux</div></div>
+        <div class="fg"><label>Objectif production mensuel (m³)</label><input type="number" id="cfg-obj-prod" value="${cfg.objProd||6000}"></div>
+        <div class="fg"><label>Objectif tournées mensuel</label><input type="number" id="cfg-obj-tours" value="${cfg.objTours||200}"></div>
+        <div class="fg"><label>Objectif disponibilité flotte (%)</label><input type="number" id="cfg-obj-fleet" value="${cfg.objFleet||85}"></div>
+        <div class="fg"><label>Objectif CA mensuel (FCFA)</label><input type="number" id="cfg-obj-ca" value="${cfg.objCA||0}"></div>
+        <button class="btn bm" onclick="saveConfig('objectifs')">💾 Enregistrer</button>
+      </div>
+    </div>
+
+    <!-- NOTIFICATIONS -->
+    <div id="psec-notifications" class="psec" style="display:none">
+      <div class="card sp">
+        <div class="ch"><div class="ct">🔔 Alertes & Notifications</div></div>
+        <div class="fg"><label>Alerte stock critique en dessous de (%)</label><input type="number" id="cfg-alert-stock" value="${cfg.alertStock||20}" min="0" max="100"></div>
+        <div class="fg"><label>Alerte km vidange (km sans vidange)</label><input type="number" id="cfg-alert-vidange" value="${cfg.alertVidange||5000}"></div>
+        <div class="fg" style="display:flex;align-items:center;gap:10px">
+          <input type="checkbox" id="cfg-alert-boot" ${cfg.alertBoot!==false?'checked':''}>
+          <label>Afficher alertes au démarrage</label>
+        </div>
+        <div class="fg" style="display:flex;align-items:center;gap:10px">
+          <input type="checkbox" id="cfg-alert-incident" ${cfg.alertIncident!==false?'checked':''}>
+          <label>Alerte incidents ouverts</label>
+        </div>
+        <button class="btn bm" onclick="saveConfig('notifications')">💾 Enregistrer</button>
+      </div>
+    </div>
+
+    <!-- ACCES -->
+    <div id="psec-acces" class="psec" style="display:none">
+      <div class="card sp" style="margin-bottom:12px">
+        <div class="ch"><div class="ct">🔐 Codes d'accès</div></div>
+        <div class="tw"><table><thead><tr><th>Département</th><th>Code</th><th>Rôle</th></tr></thead><tbody>
+          <tr><td><strong>Directeur Général</strong></td><td class="mono">DG4X9K2M</td><td><span class="b bg-m">Admin total</span></td></tr>
+          <tr><td><strong>Dir. Opérations (vous)</strong></td><td class="mono">OP7R3N8W</td><td><span class="b bg-m">Admin total</span></td></tr>
+          <tr><td>Coordinatrice</td><td class="mono">CR5T1P6Q</td><td><span class="b bg-p">Opérations</span></td></tr>
+          <tr><td>Resp. Centrale Béton</td><td class="mono">CB2H8L4V</td><td><span class="b bg-p">Centrale</span></td></tr>
+          <tr><td>Resp. Flotte</td><td class="mono">FL9M3D7J</td><td><span class="b bg-p">Flotte</span></td></tr>
+          <tr><td>Comptabilité</td><td class="mono">CT6A2R5B</td><td><span class="b bg-p">Finances</span></td></tr>
+          <tr><td>RH</td><td class="mono">RH1K7N3E</td><td><span class="b bg-p">RH</span></td></tr>
+          <tr><td>Commercial</td><td class="mono">CM4W9T2F</td><td><span class="b bg-p">Commercial</span></td></tr>
+          <tr><td>Immobilier</td><td class="mono">IM8S5G1Y</td><td><span class="b bg-p">Immobilier</span></td></tr>
+          <tr><td>Invité 1</td><td class="mono">GS1X4B7N</td><td><span class="b bg-x">Lecture</span></td></tr>
+          <tr><td>Invité 2</td><td class="mono">GS2M9K3P</td><td><span class="b bg-x">Lecture</span></td></tr>
+        </tbody></table></div>
+      </div>
+      <div class="card sp">
+        <div class="ch"><div class="ct">⏱ Session</div></div>
+        <div class="fg"><label>Durée session (jours)</label><select id="cfg-session">
+          <option value="1" ${cfg.sessionDays===1?'selected':''}>1 jour</option>
+          <option value="7" ${!cfg.sessionDays||cfg.sessionDays===7?'selected':''}>7 jours</option>
+          <option value="30" ${cfg.sessionDays===30?'selected':''}>30 jours</option>
+          <option value="90" ${cfg.sessionDays===90?'selected':''}>90 jours</option>
+        </select></div>
+        <button class="btn bm" onclick="saveConfig('acces')">💾 Enregistrer</button>
+      </div>
+    </div>
+
+    <!-- APPARENCE -->
+    <div id="psec-apparence" class="psec" style="display:none">
+      <div class="card sp">
+        <div class="ch"><div class="ct">🎨 Apparence</div></div>
+        <div class="fg"><label>Nom de l'entreprise</label><input type="text" id="cfg-company" value="${cfg.companyName||'Sarpa Group'}"></div>
+        <div class="fg"><label>Initiales / Logo</label><input type="text" id="cfg-initials" value="${cfg.initials||'S'}" maxlength="2"></div>
+        <div class="fg"><label>Sous-titre</label><input type="text" id="cfg-subtitle" value="${cfg.subtitle||'OPS & LOGISTIQUE V2'}"></div>
+        <div class="fg"><label>Couleur principale</label><input type="color" id="cfg-color" value="${cfg.primaryColor||'#D4A017'}"></div>
+        <button class="btn bm" onclick="saveConfig('apparence');applyAppearance()">💾 Enregistrer & Appliquer</button>
+      </div>
+    </div>
+  `;
+  showParamTab('flotte');
+}
+
+function showParamTab(tab) {
+  document.querySelectorAll('.psec').forEach(s=>s.style.display='none');
+  document.querySelectorAll('[id^="ptab-"]').forEach(b=>{b.style.background='';b.style.color='';});
+  const sec = document.getElementById('psec-'+tab);
+  const btn = document.getElementById('ptab-'+tab);
+  if (sec) sec.style.display='';
+  if (btn) { btn.style.background='var(--must)'; btn.style.color='var(--bg)'; }
+}
+
+function getConfig() {
+  try { return JSON.parse(localStorage.getItem('sarpa_config')||'{}'); } catch(e) { return {}; }
+}
+
+function saveConfig(section) {
+  const cfg = getConfig();
+  const toArr = id => (document.getElementById(id)?.value||'').split('\n').map(s=>s.trim()).filter(Boolean);
+  const toNum = id => +document.getElementById(id)?.value||0;
+  const toStr = id => document.getElementById(id)?.value||'';
+  const toBool = id => document.getElementById(id)?.checked||false;
+
+  if (section==='flotte') {
+    cfg.fleetTarget = toNum('cfg-fleet-pct');
+    cfg.vidangeKm = toNum('cfg-vidange-km');
+    cfg.truckTypes = toArr('cfg-truck-types');
+  } else if (section==='centrale') {
+    cfg.capaciteMax = toNum('cfg-cap-max');
+    cfg.prodObjectif = toNum('cfg-prod-obj');
+    cfg.formulations = toArr('cfg-formulations');
+  } else if (section==='stocks') {
+    cfg.units = toArr('cfg-units');
+  } else if (section==='rh') {
+    cfg.departements = toArr('cfg-depts');
+    cfg.contrats = toArr('cfg-contrats');
+    cfg.congeTypes = toArr('cfg-conge-types');
+  } else if (section==='finances') {
+    cfg.recettes = toArr('cfg-recettes');
+    cfg.charges = toArr('cfg-charges');
+    cfg.budgetMensuel = toNum('cfg-budget');
+    cfg.devise = toStr('cfg-devise');
+  } else if (section==='fournisseurs') {
+    cfg.fourCats = toArr('cfg-four-cats');
+    cfg.paiement = toArr('cfg-paiement');
+  } else if (section==='projets') {
+    cfg.projStatus = toArr('cfg-proj-status');
+    cfg.chantierTypes = toArr('cfg-chantier-types');
+    cfg.zones = toArr('cfg-zones');
+  } else if (section==='carburant') {
+    cfg.prixCarburant = toNum('cfg-prix-carb');
+    cfg.consoToupie = toNum('cfg-conso-toupie');
+    cfg.consoBenne = toNum('cfg-conso-benne');
+    cfg.stations = toArr('cfg-stations');
+  } else if (section==='maintenance') {
+    cfg.maintTypes = toArr('cfg-maint-types');
+    cfg.revToupie = toNum('cfg-rev-toupie');
+    cfg.revBenne = toNum('cfg-rev-benne');
+    cfg.prestataires = toArr('cfg-prestataires');
+  } else if (section==='objectifs') {
+    cfg.objProd = toNum('cfg-obj-prod');
+    cfg.objTours = toNum('cfg-obj-tours');
+    cfg.objFleet = toNum('cfg-obj-fleet');
+    cfg.objCA = toNum('cfg-obj-ca');
+  } else if (section==='notifications') {
+    cfg.alertStock = toNum('cfg-alert-stock');
+    cfg.alertVidange = toNum('cfg-alert-vidange');
+    cfg.alertBoot = toBool('cfg-alert-boot');
+    cfg.alertIncident = toBool('cfg-alert-incident');
+  } else if (section==='acces') {
+    cfg.sessionDays = +toStr('cfg-session');
+  } else if (section==='apparence') {
+    cfg.companyName = toStr('cfg-company');
+    cfg.initials = toStr('cfg-initials');
+    cfg.subtitle = toStr('cfg-subtitle');
+    cfg.primaryColor = toStr('cfg-color');
+  }
+  localStorage.setItem('sarpa_config', JSON.stringify(cfg));
+  logAction('update','config',{section});
+  toast(`✅ ${section} — paramètres enregistrés !`);
+}
+
+function applyAppearance() {
+  const cfg = getConfig();
+  if (cfg.companyName) {
+    const el = document.getElementById('sb-company');
+    if (el) el.textContent = cfg.companyName;
+  }
+  if (cfg.initials) {
+    const el = document.getElementById('sb-initial');
+    if (el) el.textContent = cfg.initials;
+  }
+  if (cfg.subtitle) {
+    const el = document.getElementById('sb-subtitle');
+    if (el) el.textContent = cfg.subtitle;
+  }
+  if (cfg.primaryColor) {
+    document.documentElement.style.setProperty('--must', cfg.primaryColor);
+    document.documentElement.style.setProperty('--must2', cfg.primaryColor);
+  }
 }
 
 async function renderUsers() {
@@ -2680,7 +2956,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
+
 </script>
+
 
 
 
