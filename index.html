@@ -669,7 +669,180 @@ textarea{resize:vertical;min-height:70px}
 </div></div>
 
 
+
+<!-- ═══ PLANNING ═══ -->
+<div class="pg" id="pg-planning">
+  <div class="sh"><div><div class="stl">Planning Opérationnel</div><div class="sst">Opérations de la semaine</div></div><button class="btn bm" onclick="openM('m-plan')">+ Planifier</button></div>
+  <div id="plan-week" style="margin-bottom:14px"></div>
+  <div class="card"><div class="ch"><div class="ct">📅 Toutes les opérations</div></div>
+  <div class="tw"><table><thead><tr><th>Date</th><th>Type</th><th>Lieu</th><th>Contact</th><th>Tél</th><th>Camion</th><th>Chauffeur</th><th>Volume</th><th>Client</th><th>Statut</th></tr></thead><tbody id="t-plan"></tbody></table></div></div>
+</div>
+
+<!-- ═══ ANNUAIRE ═══ -->
+<div class="pg" id="pg-annuaire">
+  <div class="sh"><div><div class="stl">Annuaire Sarpa</div><div class="sst">Contacts internes</div></div><button class="btn bm" onclick="openM('m-contact')">+ Contact</button></div>
+  <div id="annuaire-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:14px"></div>
+</div>
+
+<!-- ═══ MESSAGERIE ═══ -->
+<div class="pg" id="pg-messages">
+  <div class="sh"><div><div class="stl">Messages & Notes</div><div class="sst">Communication interne</div></div><button class="btn bm" onclick="openM('m-msg')">+ Message</button></div>
+  <div id="msg-list" style="display:flex;flex-direction:column;gap:10px;max-width:700px"></div>
+</div>
+
+<!-- ═══ CARBURANT ═══ -->
+<div class="pg" id="pg-carburant">
+  <div class="sh"><div><div class="stl">Suivi Carburant</div><div class="sst">Consommation par camion</div></div><button class="btn bm" onclick="openM('m-carb')">+ Plein</button></div>
+  <div class="kg" style="grid-template-columns:repeat(3,1fr);margin-bottom:14px">
+    <div class="kc kc-b"><div class="kl">Total ce mois</div><div class="kv" id="carb-tot">—</div><div class="ks">Litres</div></div>
+    <div class="kc kc-r"><div class="kl">Coût total</div><div class="kv" id="carb-cout">—</div><div class="ks">FCFA</div></div>
+    <div class="kc kc-g"><div class="kl">Camions suivis</div><div class="kv" id="carb-nb">—</div><div class="ks">véhicules</div></div>
+  </div>
+  <div class="card"><div class="ch"><div class="ct">⛽ Historique pleins</div></div>
+  <div class="tw"><table><thead><tr><th>Date</th><th>Camion</th><th>Chauffeur</th><th>Litres</th><th>Prix/L</th><th>Total</th><th>Km relevé</th><th>Station</th></tr></thead><tbody id="t-carb"></tbody></table></div></div>
+</div>
+
+<!-- ═══ OBJECTIFS ═══ -->
+<div class="pg" id="pg-objectifs">
+  <div class="sh"><div><div class="stl">Objectifs Mensuels</div><div class="sst">Suivi des performances</div></div><button class="btn bm" onclick="openM('m-obj')">+ Objectif</button></div>
+  <div id="obj-content"></div>
+</div>
+
+<!-- ═══ CONGES ═══ -->
+<div class="pg" id="pg-conges">
+  <div class="sh"><div><div class="stl">Congés & Absences</div><div class="sst">Planning RH</div></div><button class="btn bm" onclick="openM('m-conge')">+ Demande</button></div>
+  <div class="kg" style="grid-template-columns:repeat(4,1fr);margin-bottom:14px">
+    <div class="kc kc-g"><div class="kl">En poste</div><div class="kv" id="cng-ok">—</div><div class="ks">aujourd&#39;hui</div></div>
+    <div class="kc kc-m"><div class="kl">En congé</div><div class="kv" id="cng-off">—</div><div class="ks">aujourd&#39;hui</div></div>
+    <div class="kc kc-b"><div class="kl">En attente</div><div class="kv" id="cng-wait">—</div><div class="ks">demandes</div></div>
+    <div class="kc kc-r"><div class="kl">Absences</div><div class="kv" id="cng-abs">—</div><div class="ks">ce mois</div></div>
+  </div>
+  <div class="card"><div class="ch"><div class="ct">🗓 Demandes</div></div>
+  <div class="tw"><table><thead><tr><th>Employé</th><th>Département</th><th>Du</th><th>Au</th><th>Type</th><th>Motif</th><th>Statut</th></tr></thead><tbody id="t-conge"></tbody></table></div></div>
+</div>
+
+<!-- ═══ CHECKLIST ═══ -->
+<div class="pg" id="pg-checklist">
+  <div class="sh"><div><div class="stl">Checklist Préventive</div><div class="sst">Contrôles & rappels camions</div></div><button class="btn bm" onclick="openM('m-check')">+ Contrôle</button></div>
+  <div id="check-alerts" style="margin-bottom:14px"></div>
+  <div class="card"><div class="ch"><div class="ct">🔧 Historique contrôles</div></div>
+  <div class="tw"><table><thead><tr><th>Date</th><th>Camion</th><th>Type</th><th>Résultat</th><th>Prochain</th><th>Par</th><th>Notes</th></tr></thead><tbody id="t-check"></tbody></table></div></div>
+</div>
+
+<!-- ═══ PARTENARIATS ═══ -->
+<div class="pg" id="pg-partenariats">
+  <div class="sh"><div><div class="stl">Partenariats</div><div class="sst">Collaborations stratégiques</div></div><button class="btn bm" onclick="openM('m-partenariat')">+ Partenariat</button></div>
+  <div class="kg" style="grid-template-columns:repeat(3,1fr);margin-bottom:14px">
+    <div class="kc kc-g"><div class="kl">Actifs</div><div class="kv" id="prt-ok">—</div><div class="ks">partenariats</div></div>
+    <div class="kc kc-b"><div class="kl">En négociation</div><div class="kv" id="prt-neg">—</div><div class="ks">en cours</div></div>
+    <div class="kc kc-m"><div class="kl">Valeur totale</div><div class="kv" id="prt-val">—</div><div class="ks">FCFA</div></div>
+  </div>
+  <div id="prt-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px"></div>
+</div>
+
+<!-- MODALS NOUVEAUX -->
+<div class="mo" id="m-plan"><div class="md">
+  <div class="mh"><div class="mt">Planifier une opération</div><button class="mc" onclick="closeM('m-plan')">✕</button></div>
+  <div class="fg"><label>Date &amp; Heure</label><input type="datetime-local" id="plan-dt"></div>
+  <div class="fg"><label>Type</label><select id="plan-type"><option>Livraison</option><option>Ramasse</option><option>Production</option><option>Transfert</option><option>Maintenance</option><option>Autre</option></select></div>
+  <div class="fg"><label>Lieu / Adresse</label><input type="text" id="plan-lieu" placeholder="Adresse ou nom du chantier"></div>
+  <div class="fg"><label>Client / Chantier</label><input type="text" id="plan-client"></div>
+  <div class="fg"><label>Contact / Chef chantier</label><input type="text" id="plan-contact"></div>
+  <div class="fg"><label>Téléphone contact</label><input type="tel" id="plan-tel"></div>
+  <div class="fg"><label>Camion</label><select id="plan-truck"><option value="">— Sélectionner —</option></select></div>
+  <div class="fg"><label>Chauffeur</label><input type="text" id="plan-chauffeur"></div>
+  <div class="fg"><label>Volume / Quantité</label><input type="number" id="plan-vol" placeholder="m³ ou T"></div>
+  <div class="fg"><label>Formulation béton</label><input type="text" id="plan-form" placeholder="Ex: C25/30"></div>
+  <div class="fg"><label>Notes</label><textarea id="plan-notes" rows="2"></textarea></div>
+  <div class="fg"><label>Statut</label><select id="plan-status"><option>Planifié</option><option>Confirmé</option><option>En cours</option><option>Terminé</option><option>Annulé</option></select></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-plan')">Annuler</button><button class="btn bm" onclick="savPlanning()">Enregistrer</button></div>
+</div></div>
+
+<div class="mo" id="m-contact"><div class="md">
+  <div class="mh"><div class="mt">Ajouter un contact</div><button class="mc" onclick="closeM('m-contact')">✕</button></div>
+  <div class="fg"><label>Nom</label><input type="text" id="ct-nom"></div>
+  <div class="fg"><label>Prénom</label><input type="text" id="ct-prenom"></div>
+  <div class="fg"><label>Poste / Fonction</label><input type="text" id="ct-poste"></div>
+  <div class="fg"><label>Département</label><select id="ct-dept"><option>Direction</option><option>Centrale à Béton</option><option>Flotte Camions</option><option>Comptabilité</option><option>RH</option><option>Commercial</option><option>Agence Immobilière</option><option>Externe</option></select></div>
+  <div class="fg"><label>Téléphone</label><input type="tel" id="ct-tel"></div>
+  <div class="fg"><label>WhatsApp</label><input type="tel" id="ct-wa"></div>
+  <div class="fg"><label>Email</label><input type="email" id="ct-email"></div>
+  <div class="fg"><label>Site / Localisation</label><input type="text" id="ct-loc"></div>
+  <div class="fg"><label>Notes</label><textarea id="ct-notes" rows="2"></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-contact')">Annuler</button><button class="btn bm" onclick="savContact()">Enregistrer</button></div>
+</div></div>
+
+<div class="mo" id="m-msg"><div class="md">
+  <div class="mh"><div class="mt">Nouveau message</div><button class="mc" onclick="closeM('m-msg')">✕</button></div>
+  <div class="fg"><label>Destinataire</label><select id="msg-to"><option value="Tous">Toute l&#39;équipe</option><option value="Direction">Direction</option><option value="Centrale à Béton">Centrale à Béton</option><option value="Flotte Camions">Flotte Camions</option><option value="RH">RH</option><option value="Comptabilité">Comptabilité</option></select></div>
+  <div class="fg"><label>Priorité</label><select id="msg-prio"><option value="normal">Normal</option><option value="important">Important</option><option value="urgent">Urgent</option></select></div>
+  <div class="fg"><label>Message</label><textarea id="msg-body" rows="4" placeholder="Votre message..."></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-msg')">Annuler</button><button class="btn bm" onclick="savMessage()">Envoyer</button></div>
+</div></div>
+
+<div class="mo" id="m-carb"><div class="md">
+  <div class="mh"><div class="mt">Saisir un plein</div><button class="mc" onclick="closeM('m-carb')">✕</button></div>
+  <div class="fg"><label>Date</label><input type="date" id="carb-d"></div>
+  <div class="fg"><label>Camion</label><select id="carb-truck"></select></div>
+  <div class="fg"><label>Chauffeur</label><input type="text" id="carb-ch"></div>
+  <div class="fg"><label>Litres</label><input type="number" id="carb-l" placeholder="0"></div>
+  <div class="fg"><label>Prix / Litre (FCFA)</label><input type="number" id="carb-p" placeholder="0"></div>
+  <div class="fg"><label>Km relevé</label><input type="number" id="carb-km" placeholder="0"></div>
+  <div class="fg"><label>Station</label><input type="text" id="carb-station" placeholder="Nom de la station"></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-carb')">Annuler</button><button class="btn bm" onclick="savCarburant()">Enregistrer</button></div>
+</div></div>
+
+<div class="mo" id="m-obj"><div class="md">
+  <div class="mh"><div class="mt">Définir un objectif</div><button class="mc" onclick="closeM('m-obj')">✕</button></div>
+  <div class="fg"><label>Mois</label><input type="month" id="obj-mois"></div>
+  <div class="fg"><label>Catégorie</label><select id="obj-cat"><option>Production béton</option><option>Tournées</option><option>Disponibilité flotte</option><option>Chiffre d&#39;affaires</option><option>Km parcourus</option><option>Autre</option></select></div>
+  <div class="fg"><label>Objectif cible</label><input type="number" id="obj-val" placeholder="0"></div>
+  <div class="fg"><label>Unité</label><input type="text" id="obj-unit" placeholder="m³, %, FCFA..."></div>
+  <div class="fg"><label>Notes</label><textarea id="obj-notes" rows="2"></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-obj')">Annuler</button><button class="btn bm" onclick="savObjectif()">Enregistrer</button></div>
+</div></div>
+
+<div class="mo" id="m-conge"><div class="md">
+  <div class="mh"><div class="mt">Demande congé / absence</div><button class="mc" onclick="closeM('m-conge')">✕</button></div>
+  <div class="fg"><label>Employé</label><input type="text" id="cng-emp"></div>
+  <div class="fg"><label>Département</label><select id="cng-dept"><option>Direction</option><option>Centrale à Béton</option><option>Flotte Camions</option><option>Comptabilité</option><option>RH</option><option>Commercial</option><option>Autre</option></select></div>
+  <div class="fg"><label>Du</label><input type="date" id="cng-deb"></div>
+  <div class="fg"><label>Au</label><input type="date" id="cng-fin"></div>
+  <div class="fg"><label>Type</label><select id="cng-type"><option>Congé annuel</option><option>Congé maladie</option><option>Absence justifiée</option><option>Absence injustifiée</option><option>Congé exceptionnel</option></select></div>
+  <div class="fg"><label>Motif</label><textarea id="cng-motif" rows="2"></textarea></div>
+  <div class="fg"><label>Statut</label><select id="cng-status"><option>En attente</option><option>Approuvé</option><option>Refusé</option></select></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-conge')">Annuler</button><button class="btn bm" onclick="savConge()">Enregistrer</button></div>
+</div></div>
+
+<div class="mo" id="m-check"><div class="md">
+  <div class="mh"><div class="mt">Contrôle préventif</div><button class="mc" onclick="closeM('m-check')">✕</button></div>
+  <div class="fg"><label>Date</label><input type="date" id="chk-d"></div>
+  <div class="fg"><label>Camion</label><select id="chk-truck"></select></div>
+  <div class="fg"><label>Type de contrôle</label><select id="chk-type"><option>Vidange</option><option>Contrôle technique</option><option>Révision freins</option><option>Vérification pneus</option><option>Contrôle moteur</option><option>Contrôle bétonnière</option><option>Autre</option></select></div>
+  <div class="fg"><label>Résultat</label><select id="chk-res"><option>Conforme</option><option>À surveiller</option><option>Non conforme</option></select></div>
+  <div class="fg"><label>Prochain contrôle prévu</label><input type="date" id="chk-next"></div>
+  <div class="fg"><label>Effectué par</label><input type="text" id="chk-par"></div>
+  <div class="fg"><label>Notes</label><textarea id="chk-notes" rows="2"></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-check')">Annuler</button><button class="btn bm" onclick="savChecklist()">Enregistrer</button></div>
+</div></div>
+
+<div class="mo" id="m-partenariat"><div class="md">
+  <div class="mh"><div class="mt">Nouveau partenariat</div><button class="mc" onclick="closeM('m-partenariat')">✕</button></div>
+  <div class="fg"><label>Nom partenaire</label><input type="text" id="prt-nom"></div>
+  <div class="fg"><label>Type</label><select id="prt-type"><option>Fournisseur stratégique</option><option>Client régulier</option><option>Sous-traitant</option><option>Institution financière</option><option>Organisme public</option><option>Autre</option></select></div>
+  <div class="fg"><label>Contact principal</label><input type="text" id="prt-contact"></div>
+  <div class="fg"><label>Téléphone</label><input type="tel" id="prt-tel"></div>
+  <div class="fg"><label>Email</label><input type="email" id="prt-email"></div>
+  <div class="fg"><label>Valeur contrat (FCFA)</label><input type="number" id="prt-valeur" placeholder="0"></div>
+  <div class="fg"><label>Date début</label><input type="date" id="prt-deb"></div>
+  <div class="fg"><label>Date fin</label><input type="date" id="prt-fin"></div>
+  <div class="fg"><label>Description</label><textarea id="prt-desc" rows="2"></textarea></div>
+  <div class="fg"><label>Statut</label><select id="prt-status"><option>Actif</option><option>En négociation</option><option>Suspendu</option><option>Terminé</option></select></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-partenariat')">Annuler</button><button class="btn bm" onclick="savPartenariat()">Enregistrer</button></div>
+</div></div>
+
 <script>
+
 const ROLE_CODES = {
   'DG4X9K2M': { role:'dg',                    name:'Directeur Général'              },
   'OP7R3N8W': { role:'directeur',              name:'Directeur Opérations'           },
@@ -747,17 +920,17 @@ async function initGoogleSheets() {
 }
 
 // ═══ ROLES ═══
-const ALL = ['dashboard','production','stocks','quality','fleet','tours','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','rh','formation'];
+const ALL = ['dashboard','production','stocks','quality','fleet','tours','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','rh','formation','planning','carburant','checklist','messages','annuaire','conges','partenariats','objectifs'];
 const ROLES = {
   dg:                   { label:'Directeur Général',              badge:'rb-director', pages:ALL },
   directeur:            { label:'Dir. Opérations & Logistique',   badge:'rb-director', pages:ALL },
-  coordinatrice:        { label:'Coordinatrice Holding',          badge:'rb-coord',    pages:['dashboard','production','stocks','tours','fournisseurs','projets','partenaires','accidents'] },
-  responsable_centrale: { label:'Resp. Centrale à Béton',         badge:'rb-resp',     pages:['dashboard','production','stocks','quality','accidents'] },
-  responsable_flotte:   { label:'Resp. Flotte Camions',           badge:'rb-resp',     pages:['dashboard','fleet','tours','maintenance','accidents'] },
-  comptabilite:         { label:'Comptabilité',                   badge:'rb-resp',     pages:['dashboard','finances','fournisseurs','rapports'] },
-  rh:                   { label:'Ressources Humaines',            badge:'rb-coord',    pages:['dashboard','rh','formation','accidents'] },
-  commercial:           { label:'Commercial',                     badge:'rb-coord',    pages:['dashboard','projets','fournisseurs','partenaires'] },
-  immobilier:           { label:'Agence Immobilière',             badge:'rb-coord',    pages:['dashboard','projets','partenaires'] },
+  coordinatrice:        { label:'Coordinatrice Holding',          badge:'rb-coord',    pages:['dashboard','production','stocks','tours','fournisseurs','projets','partenaires','accidents','planning','messages','annuaire'] },
+  responsable_centrale: { label:'Resp. Centrale à Béton',         badge:'rb-resp',     pages:['dashboard','production','stocks','quality','accidents','planning','messages','annuaire'] },
+  responsable_flotte:   { label:'Resp. Flotte Camions',           badge:'rb-resp',     pages:['dashboard','fleet','tours','maintenance','accidents','planning','carburant','checklist','messages','annuaire'] },
+  comptabilite:         { label:'Comptabilité',                   badge:'rb-resp',     pages:['dashboard','finances','fournisseurs','rapports','messages','annuaire','objectifs'] },
+  rh:                   { label:'Ressources Humaines',            badge:'rb-coord',    pages:['dashboard','rh','formation','accidents','conges','messages','annuaire'] },
+  commercial:           { label:'Commercial',                     badge:'rb-coord',    pages:['dashboard','projets','fournisseurs','partenaires','partenariats','messages','annuaire'] },
+  immobilier:           { label:'Agence Immobilière',             badge:'rb-coord',    pages:['dashboard','projets','partenaires','partenariats','messages','annuaire'] },
 };
 
 const TITLES = {
@@ -794,6 +967,17 @@ const NAV = [
   { id:'rapports',    ic:'▣', lb:'Rapports consolidés',  dir:true },
   { id:'parametres',  ic:'⚙', lb:'Paramètres app.',      dir:true },
   { id:'users',       ic:'👥', lb:'Utilisateurs',         dir:true },
+  { s:'Planning & Terrain' },
+  { id:'planning',    ic:'📅', lb:'Planning opérationnel', bg:'nb-plan' },
+  { id:'carburant',   ic:'⛽', lb:'Suivi carburant' },
+  { id:'checklist',   ic:'🔧', lb:'Checklist préventive' },
+  { s:'Équipe & Communication' },
+  { id:'messages',    ic:'💬', lb:'Messages',               bg:'nb-msg' },
+  { id:'annuaire',    ic:'📒', lb:'Annuaire interne' },
+  { id:'conges',      ic:'🗓', lb:'Congés & Absences' },
+  { s:'Partenariats & Objectifs' },
+  { id:'partenariats',ic:'🤝', lb:'Partenariats' },
+  { id:'objectifs',   ic:'📊', lb:'Objectifs mensuels' },
 ];
 
 // ═══ AUTH ═══
@@ -890,12 +1074,15 @@ function toggleSB() { document.getElementById('sb').classList.toggle('open'); }
 function openM(id) {
   document.getElementById(id).classList.add('open');
   const today = new Date().toISOString().slice(0,10);
-  const df = {mp:'ip-d', mt:'it-d', mm:'im-d', mc:'ic-d', mq2:'iq-d', 'm-acc':'acc-dt', 'm-budget':'fin-d'};
+  const df = {mp:'ip-d', mt:'it-d', mm:'im-d', mc:'ic-d', mq2:'iq-d', 'm-acc':'acc-dt', 'm-budget':'fin-d', 'm-carb':'carb-d', 'm-check':'chk-d'};
   if (df[id]) {
     const el = document.getElementById(df[id]);
     if (el) el.value = df[id]==='acc-dt' ? new Date().toISOString().slice(0,16) : today;
   }
   if (id==='mf'||id==='mt') loadTrucks(document.getElementById(id==='mf'?'if-t':'it-t'), id==='mt');
+  if (id==='m-plan') loadTrucks(document.getElementById('plan-truck'), false);
+  if (id==='m-carb') loadTrucks(document.getElementById('carb-truck'), false);
+  if (id==='m-check') loadTrucks(document.getElementById('chk-truck'), false);
 }
 
 async function loadTrucks(sel, opOnly) {
@@ -1216,7 +1403,10 @@ async function render(p) {
     fleet:renderFleet, tours:renderTours, maintenance:renderMaint, accidents:renderAccidents,
     fournisseurs:renderFournisseurs, projets:renderProjets, partenaires:renderPartenaires,
     finances:renderFinances, evaluations:renderEvals, rapports:renderRapports,
-    parametres:renderParams, users:renderUsers, rh:renderRH, formation:renderFormation
+    parametres:renderParams, users:renderUsers, rh:renderRH, formation:renderFormation,
+    planning:renderPlanning, annuaire:renderAnnuaire, messages:renderMessages,
+    carburant:renderCarburant, objectifs:renderObjectifs, conges:renderConges,
+    checklist:renderChecklist, partenariats:renderPartenariats
   };
   if (map[p]) await map[p]();
 }
@@ -1787,6 +1977,358 @@ function checkResp() {
 window.addEventListener('resize', checkResp); checkResp();
 
 // ═══ INIT ═══
+
+// ═══ PLANNING ═══
+async function renderPlanning() {
+  const plans = await db('planning');
+  const today = new Date().toISOString().slice(0,10);
+  // Week view
+  const week = [];
+  for(let i=0;i<7;i++){const d=new Date();d.setDate(d.getDate()+i);week.push(d.toISOString().slice(0,10));}
+  const DAYS = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+  const typeColors = {Livraison:'var(--must2)',Ramasse:'var(--ac2)',Production:'var(--gn2)',Terminé:'var(--tx3)',Annulé:'var(--rd2)',Confirmé:'var(--or2)'};
+  document.getElementById('plan-week').innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px">
+      ${week.map(d=>{
+        const dp = (plans||[]).filter(p=>p.date_heure?.slice(0,10)===d);
+        const isToday = d===today;
+        return `<div style="background:${isToday?'var(--must)':'var(--sf2)'};border-radius:8px;padding:8px;min-height:80px;border:1px solid ${isToday?'var(--must2)':'var(--sf3)'}">
+          <div style="font-size:10px;color:${isToday?'var(--bg)':'var(--tx3)'};font-family:var(--fm)">${DAYS[new Date(d+'T12:00').getDay()]}</div>
+          <div style="font-size:12px;font-weight:700;color:${isToday?'var(--bg)':'var(--tx)'}">${new Date(d+'T12:00').getDate()}</div>
+          ${dp.map(p=>`<div style="font-size:9px;background:${typeColors[p.type]||'var(--ac2)'};color:var(--bg);border-radius:3px;padding:2px 4px;margin-top:3px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">${p.type}</div>`).join('')}
+        </div>`;
+      }).join('')}
+    </div>`;
+  document.getElementById('t-plan').innerHTML = (plans||[]).length===0
+    ? '<tr><td colspan="10" style="text-align:center;color:var(--tx3)">Aucune opération planifiée</td></tr>'
+    : (plans||[]).map(p=>`<tr>
+        <td class="mono">${p.date_heure?.slice(0,16)||'—'}</td>
+        <td><span class="b" style="background:${typeColors[p.type]||'var(--ac2)'}20;color:${typeColors[p.type]||'var(--ac2)'}">${p.type}</span></td>
+        <td>${p.lieu||'—'}</td>
+        <td>${p.contact||'—'}</td>
+        <td class="mono">${p.telephone||'—'}</td>
+        <td>${p.camion||'—'}</td>
+        <td>${p.chauffeur||'—'}</td>
+        <td>${p.volume?p.volume+' m³':'—'}</td>
+        <td>${p.client||'—'}</td>
+        <td><span class="b ${p.statut==='Terminé'?'bg-g':p.statut==='Annulé'?'bg-r':p.statut==='En cours'?'bg-b':'bg-x'}">${p.statut}</span></td>
+      </tr>`).join('');
+}
+
+async function savPlanning() {
+  const dt = document.getElementById('plan-dt').value;
+  if (!dt) { toast('Date requise'); return; }
+  await db('planning','POST',{
+    date_heure: dt, type: document.getElementById('plan-type').value,
+    lieu: document.getElementById('plan-lieu').value,
+    client: document.getElementById('plan-client').value,
+    contact: document.getElementById('plan-contact').value,
+    telephone: document.getElementById('plan-tel').value,
+    camion: document.getElementById('plan-truck').value,
+    chauffeur: document.getElementById('plan-chauffeur').value,
+    volume: document.getElementById('plan-vol').value,
+    formulation: document.getElementById('plan-form').value,
+    notes: document.getElementById('plan-notes').value,
+    statut: document.getElementById('plan-status').value,
+    created_by: userName
+  });
+  closeM('m-plan'); toast('Opération planifiée ✓'); render('planning');
+}
+
+// ═══ ANNUAIRE ═══
+async function renderAnnuaire() {
+  const contacts = await db('annuaire');
+  const deptColors = {Direction:'var(--must2)',Centrale:'var(--gn2)',Flotte:'var(--ac2)',RH:'var(--or2)',Comptabilité:'var(--rd2)',Commercial:'var(--p2)',Externe:'var(--tx3)'};
+  document.getElementById('annuaire-list').innerHTML = (contacts||[]).length===0
+    ? '<div style="color:var(--tx3)">Aucun contact enregistré</div>'
+    : (contacts||[]).map(c=>`
+      <div class="fcard" style="cursor:default">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <div style="width:40px;height:40px;border-radius:50%;background:var(--must);display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-weight:800;font-size:16px;color:var(--bg);flex-shrink:0">${(c.nom||'?')[0]}</div>
+          <div>
+            <div style="font-weight:700;color:var(--tx)">${c.nom} ${c.prenom||''}</div>
+            <div style="font-size:11px;color:var(--tx3)">${c.poste||'—'}</div>
+          </div>
+        </div>
+        <span class="b bg-p" style="margin-bottom:8px;display:inline-block">${c.departement||'—'}</span>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          ${c.telephone?`<a href="tel:${c.telephone}" style="font-size:12px;color:var(--ac2);text-decoration:none">📞 ${c.telephone}</a>`:''}
+          ${c.whatsapp?`<a href="https://wa.me/${c.whatsapp}" style="font-size:12px;color:var(--gn2);text-decoration:none">💬 ${c.whatsapp}</a>`:''}
+          ${c.email?`<a href="mailto:${c.email}" style="font-size:12px;color:var(--tx2);text-decoration:none">✉ ${c.email}</a>`:''}
+        </div>
+      </div>`).join('');
+}
+
+async function savContact() {
+  if (!document.getElementById('ct-nom').value) { toast('Nom requis'); return; }
+  await db('annuaire','POST',{
+    nom: document.getElementById('ct-nom').value,
+    prenom: document.getElementById('ct-prenom').value,
+    poste: document.getElementById('ct-poste').value,
+    departement: document.getElementById('ct-dept').value,
+    telephone: document.getElementById('ct-tel').value,
+    whatsapp: document.getElementById('ct-wa').value,
+    email: document.getElementById('ct-email').value,
+    localisation: document.getElementById('ct-loc').value,
+    notes: document.getElementById('ct-notes').value,
+    created_by: userName
+  });
+  closeM('m-contact'); toast('Contact ajouté ✓'); render('annuaire');
+}
+
+// ═══ MESSAGES ═══
+async function renderMessages() {
+  const msgs = await db('messages');
+  const prioColors = {urgent:'var(--rd2)',important:'var(--must2)',normal:'var(--tx2)'};
+  const prioIcons = {urgent:'🚨',important:'⚠️',normal:'💬'};
+  document.getElementById('msg-list').innerHTML = (msgs||[]).length===0
+    ? '<div class="al al-g">✅ Aucun message</div>'
+    : (msgs||[]).map(m=>`
+      <div class="card" style="border-left:3px solid ${prioColors[m.priorite]||'var(--tx3)'}">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span>${prioIcons[m.priorite]||'💬'}</span>
+            <strong style="color:var(--tx)">${m.de||'—'}</strong>
+            <span style="font-size:11px;color:var(--tx3)">→ ${m.destinataire}</span>
+          </div>
+          <span style="font-size:10px;color:var(--tx3)">${m.created_at?.slice(0,16)||'—'}</span>
+        </div>
+        <div style="color:var(--tx2);font-size:13px;line-height:1.5">${m.message}</div>
+      </div>`).join('');
+}
+
+async function savMessage() {
+  const body = document.getElementById('msg-body').value;
+  if (!body) { toast('Message vide'); return; }
+  await db('messages','POST',{
+    de: userName,
+    destinataire: document.getElementById('msg-to').value,
+    priorite: document.getElementById('msg-prio').value,
+    message: body,
+    created_by: userName
+  });
+  closeM('m-msg'); toast('Message envoyé ✓'); render('messages');
+}
+
+// ═══ CARBURANT ═══
+async function renderCarburant() {
+  const carbs = await db('carburant');
+  const m = new Date().toISOString().slice(0,7);
+  const mc = (carbs||[]).filter(c=>c.date?.startsWith(m));
+  const totL = mc.reduce((a,b)=>a+(+b.litres||0),0);
+  const totC = mc.reduce((a,b)=>a+(+b.litres||0)*(+b.prix_litre||0),0);
+  const trucks = [...new Set((carbs||[]).map(c=>c.camion).filter(Boolean))];
+  document.getElementById('carb-tot').textContent = fmt(totL);
+  document.getElementById('carb-cout').textContent = fmt(Math.round(totC));
+  document.getElementById('carb-nb').textContent = trucks.length;
+  document.getElementById('t-carb').innerHTML = (carbs||[]).length===0
+    ? '<tr><td colspan="8" style="text-align:center;color:var(--tx3)">Aucun plein enregistré</td></tr>'
+    : (carbs||[]).map(c=>`<tr>
+        <td class="mono">${c.date||'—'}</td>
+        <td><strong>${c.camion||'—'}</strong></td>
+        <td>${c.chauffeur||'—'}</td>
+        <td><strong>${c.litres||0} L</strong></td>
+        <td>${fmt(c.prix_litre||0)} FCFA</td>
+        <td><strong>${fmt(Math.round((+c.litres||0)*(+c.prix_litre||0)))} FCFA</strong></td>
+        <td>${fmt(c.km_releve||0)} km</td>
+        <td>${c.station||'—'}</td>
+      </tr>`).join('');
+  // Load trucks for modal
+  loadTrucks(document.getElementById('carb-truck'), false);
+}
+
+async function savCarburant() {
+  await db('carburant','POST',{
+    date: document.getElementById('carb-d').value,
+    camion: document.getElementById('carb-truck').value,
+    chauffeur: document.getElementById('carb-ch').value,
+    litres: +document.getElementById('carb-l').value||0,
+    prix_litre: +document.getElementById('carb-p').value||0,
+    km_releve: +document.getElementById('carb-km').value||0,
+    station: document.getElementById('carb-station').value,
+    created_by: userName
+  });
+  closeM('m-carb'); toast('Plein enregistré ✓'); render('carburant');
+}
+
+// ═══ OBJECTIFS ═══
+async function renderObjectifs() {
+  const objs = await db('objectifs');
+  const [prods,tours,trucks] = await Promise.all([db('productions'),db('tours'),db('trucks')]);
+  const m = new Date().toISOString().slice(0,7);
+  const mo = (objs||[]).filter(o=>o.mois===m);
+  if (mo.length===0) {
+    document.getElementById('obj-content').innerHTML = `
+      <div class="al al-m">Aucun objectif défini pour ce mois. Cliquez "+ Objectif" pour en créer.</div>
+      <div class="g2 g3" style="margin-top:14px">${(objs||[]).map(o=>`
+        <div class="card"><div class="kl">${o.categorie}</div>
+        <div style="font-size:11px;color:var(--tx3)">${o.mois}</div>
+        <div style="font-size:22px;font-weight:800;font-family:var(--fh);color:var(--must2);margin:8px 0">${fmt(o.valeur)} <span style="font-size:13px">${o.unite||''}</span></div>
+        ${o.notes?`<div style="font-size:11px;color:var(--tx3)">${o.notes}</div>`:''}
+        </div>`).join('')}
+      </div>`;
+    return;
+  }
+  // Calculate actuals
+  const actuals = {
+    'Production béton': (prods||[]).filter(p=>p.date?.startsWith(m)).reduce((a,b)=>a+b.volume,0),
+    'Tournées': (tours||[]).filter(t=>t.date?.startsWith(m)).length,
+    'Disponibilité flotte': Math.round((trucks||[]).filter(t=>t.status==='operational').length/Math.max((trucks||[]).length,1)*100),
+  };
+  document.getElementById('obj-content').innerHTML = `
+    <div class="g2 g3">${mo.map(o=>{
+      const actual = actuals[o.categorie]||0;
+      const target = +o.valeur||1;
+      const pct = Math.min(100, Math.round(actual/target*100));
+      const c = pct>=100?'var(--gn2)':pct>=70?'var(--must2)':'var(--rd2)';
+      return `<div class="card">
+        <div class="kl">${o.categorie}</div>
+        <div style="display:flex;justify-content:space-between;margin:8px 0">
+          <span style="font-size:22px;font-weight:800;font-family:var(--fh);color:${c}">${fmt(actual)}</span>
+          <span style="font-size:13px;color:var(--tx3);align-self:flex-end">/ ${fmt(target)} ${o.unite||''}</span>
+        </div>
+        <div class="pb"><div class="pf" style="width:${pct}%;background:${c}"></div></div>
+        <div style="display:flex;justify-content:space-between;margin-top:4px">
+          <span style="font-size:10px;color:var(--tx3)">${pct}%</span>
+          <span style="font-size:10px;color:${c}">${pct>=100?'✅ Atteint':pct>=70?'🟡 En route':'🔴 Retard'}</span>
+        </div>
+      </div>`;
+    }).join('')}
+    </div>`;
+}
+
+async function savObjectif() {
+  await db('objectifs','POST',{
+    mois: document.getElementById('obj-mois').value,
+    categorie: document.getElementById('obj-cat').value,
+    valeur: +document.getElementById('obj-val').value||0,
+    unite: document.getElementById('obj-unit').value,
+    notes: document.getElementById('obj-notes').value,
+    created_by: userName
+  });
+  closeM('m-obj'); toast('Objectif défini ✓'); render('objectifs');
+}
+
+// ═══ CONGES ═══
+async function renderConges() {
+  const conges = await db('conges');
+  const today = new Date().toISOString().slice(0,10);
+  const m = new Date().toISOString().slice(0,7);
+  const enConge = (conges||[]).filter(c=>c.statut==='Approuvé'&&c.date_debut<=today&&c.date_fin>=today).length;
+  const attente = (conges||[]).filter(c=>c.statut==='En attente').length;
+  const abs = (conges||[]).filter(c=>c.date_debut?.startsWith(m)&&c.type_conge==='Absence injustifiée').length;
+  document.getElementById('cng-ok').textContent = '—';
+  document.getElementById('cng-off').textContent = enConge;
+  document.getElementById('cng-wait').textContent = attente;
+  document.getElementById('cng-abs').textContent = abs;
+  document.getElementById('t-conge').innerHTML = (conges||[]).length===0
+    ? '<tr><td colspan="7" style="text-align:center;color:var(--tx3)">Aucune demande</td></tr>'
+    : (conges||[]).map(c=>`<tr>
+        <td><strong>${c.employe||'—'}</strong></td>
+        <td><span class="b bg-p">${c.departement||'—'}</span></td>
+        <td class="mono">${c.date_debut||'—'}</td>
+        <td class="mono">${c.date_fin||'—'}</td>
+        <td>${c.type_conge||'—'}</td>
+        <td style="font-size:11px">${c.motif||'—'}</td>
+        <td><span class="b ${c.statut==='Approuvé'?'bg-g':c.statut==='Refusé'?'bg-r':'bg-o'}">${c.statut}</span></td>
+      </tr>`).join('');
+}
+
+async function savConge() {
+  await db('conges','POST',{
+    employe: document.getElementById('cng-emp').value,
+    departement: document.getElementById('cng-dept').value,
+    date_debut: document.getElementById('cng-deb').value,
+    date_fin: document.getElementById('cng-fin').value,
+    type_conge: document.getElementById('cng-type').value,
+    motif: document.getElementById('cng-motif').value,
+    statut: document.getElementById('cng-status').value,
+    created_by: userName
+  });
+  closeM('m-conge'); toast('Demande enregistrée ✓'); render('conges');
+}
+
+// ═══ CHECKLIST ═══
+async function renderChecklist() {
+  const checks = await db('checklist');
+  const today = new Date().toISOString().slice(0,10);
+  const overdue = (checks||[]).filter(c=>c.prochain_controle&&c.prochain_controle<today&&c.resultat!=='Conforme');
+  document.getElementById('check-alerts').innerHTML = overdue.length===0
+    ? '<div class="al al-g">✅ Tous les contrôles sont à jour</div>'
+    : overdue.map(c=>`<div class="al al-r">🔴 ${c.camion} — ${c.type_controle} dépassé depuis le ${c.prochain_controle}</div>`).join('');
+  document.getElementById('t-check').innerHTML = (checks||[]).length===0
+    ? '<tr><td colspan="7" style="text-align:center;color:var(--tx3)">Aucun contrôle enregistré</td></tr>'
+    : (checks||[]).map(c=>`<tr>
+        <td class="mono">${c.date||'—'}</td>
+        <td><strong>${c.camion||'—'}</strong></td>
+        <td>${c.type_controle||'—'}</td>
+        <td><span class="b ${c.resultat==='Conforme'?'bg-g':c.resultat==='Non conforme'?'bg-r':'bg-o'}">${c.resultat}</span></td>
+        <td class="mono">${c.prochain_controle||'—'}</td>
+        <td>${c.effectue_par||'—'}</td>
+        <td style="font-size:11px">${c.notes||'—'}</td>
+      </tr>`).join('');
+  loadTrucks(document.getElementById('chk-truck'), false);
+}
+
+async function savChecklist() {
+  await db('checklist','POST',{
+    date: document.getElementById('chk-d').value,
+    camion: document.getElementById('chk-truck').value,
+    type_controle: document.getElementById('chk-type').value,
+    resultat: document.getElementById('chk-res').value,
+    prochain_controle: document.getElementById('chk-next').value,
+    effectue_par: document.getElementById('chk-par').value,
+    notes: document.getElementById('chk-notes').value,
+    created_by: userName
+  });
+  closeM('m-check'); toast('Contrôle enregistré ✓'); render('checklist');
+}
+
+// ═══ PARTENARIATS ═══
+async function renderPartenariats() {
+  const parts = await db('partenariats');
+  const actifs = (parts||[]).filter(p=>p.statut==='Actif').length;
+  const neg = (parts||[]).filter(p=>p.statut==='En négociation').length;
+  const val = (parts||[]).reduce((a,b)=>a+(+b.valeur_contrat||0),0);
+  document.getElementById('prt-ok').textContent = actifs;
+  document.getElementById('prt-neg').textContent = neg;
+  document.getElementById('prt-val').textContent = fmt(val);
+  document.getElementById('prt-list').innerHTML = (parts||[]).length===0
+    ? '<div style="color:var(--tx3)">Aucun partenariat enregistré</div>'
+    : (parts||[]).map(p=>`
+      <div class="fcard">
+        <div style="display:flex;justify-content:space-between">
+          <div class="fcard-title">${p.nom}</div>
+          <span class="b ${p.statut==='Actif'?'bg-g':p.statut==='En négociation'?'bg-o':p.statut==='Suspendu'?'bg-r':'bg-x'}">${p.statut}</span>
+        </div>
+        <div class="fcard-sub">${p.type_partenariat}</div>
+        <div class="fcard-tags">
+          ${p.valeur_contrat?`<span class="b bg-m">${fmt(p.valeur_contrat)} FCFA</span>`:''}
+          ${p.date_fin?`<span class="b bg-p">Fin: ${p.date_fin}</span>`:''}
+        </div>
+        ${p.contact?`<div style="font-size:11px;color:var(--tx2);margin-top:6px">👤 ${p.contact} ${p.telephone?'· 📞 '+p.telephone:''}</div>`:''}
+        ${p.description?`<div style="font-size:11px;color:var(--tx3);margin-top:4px">${p.description}</div>`:''}
+      </div>`).join('');
+}
+
+async function savPartenariat() {
+  if (!document.getElementById('prt-nom').value) { toast('Nom requis'); return; }
+  await db('partenariats','POST',{
+    nom: document.getElementById('prt-nom').value,
+    type_partenariat: document.getElementById('prt-type').value,
+    contact: document.getElementById('prt-contact').value,
+    telephone: document.getElementById('prt-tel').value,
+    email: document.getElementById('prt-email').value,
+    valeur_contrat: +document.getElementById('prt-valeur').value||0,
+    date_debut: document.getElementById('prt-deb').value,
+    date_fin: document.getElementById('prt-fin').value,
+    description: document.getElementById('prt-desc').value,
+    statut: document.getElementById('prt-status').value,
+    created_by: userName
+  });
+  closeM('m-partenariat'); toast('Partenariat enregistré ✓'); render('partenariats');
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('login-btn').addEventListener('click', doLogin);
   document.getElementById('l-code').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
@@ -1799,7 +2341,9 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
+
 </script>
+
 
 </body>
 </html>
