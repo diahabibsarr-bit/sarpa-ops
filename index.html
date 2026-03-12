@@ -689,47 +689,61 @@ let userRole = null, userName = null;
 const fmt = n => Number(n||0).toLocaleString('fr-FR');
 
 // ═══ DB ═══
-// ═══ LOCAL STORAGE DB ═══
-function lsGet(table) {
-  try { return JSON.parse(localStorage.getItem('sarpa_db_'+table) || '[]'); } catch(e) { return []; }
-}
-function lsSet(table, data) {
-  try { localStorage.setItem('sarpa_db_'+table, JSON.stringify(data)); } catch(e) {}
-}
+// ═══ GOOGLE SHEETS DB ═══
+const API_URL = 'https://script.google.com/macros/s/AKfycbzGDWHkSJlDQ3Ycs5QlyIwIfG7yGqXHoYv6FVWrC3WtK50lYuGkd6PDB7Zk28wmgcwn7w/exec';
+
+// Cache pour éviter trop de requêtes
+const _cache = {};
+const _cacheTime = {};
+const CACHE_TTL = 30000; // 30 secondes
+
 async function db(table, method='GET', data=null, filters={}) {
   if (method === 'GET') {
-    let rows = lsGet(table);
-    // Apply filters
-    for (const [k,v] of Object.entries(filters)) {
-      rows = rows.filter(r => String(r[k]) === String(v));
+    // Check cache
+    const cacheKey = table + JSON.stringify(filters);
+    if (_cache[cacheKey] && Date.now() - _cacheTime[cacheKey] < CACHE_TTL) {
+      return _cache[cacheKey];
     }
-    // Sort newest first
-    return rows.slice().reverse();
+    try {
+      const params = new URLSearchParams({table, action:'get', ...filters});
+      const r = await fetch(API_URL + '?' + params);
+      const j = await r.json();
+      const result = Array.isArray(j.data) ? j.data : [];
+      _cache[cacheKey] = result;
+      _cacheTime[cacheKey] = Date.now();
+      return result;
+    } catch(e) { console.warn('GET error', table, e); return []; }
   }
   if (method === 'POST') {
-    const rows = lsGet(table);
-    const items = Array.isArray(data) ? data : [data];
-    items.forEach(item => {
-      if (!item.id) item.id = Date.now() + Math.random();
-      if (!item.created_at) item.created_at = new Date().toISOString();
-      rows.push(item);
-    });
-    lsSet(table, rows);
+    // Invalidate cache
+    Object.keys(_cache).forEach(k => { if(k.startsWith(table)) delete _cache[k]; });
+    try {
+      await fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify({table, action:'post', data})
+      });
+    } catch(e) { console.warn('POST error', table, e); }
     return [];
   }
   if (method === 'PATCH') {
-    const rows = lsGet(table);
-    const updated = rows.map(row => {
-      let match = true;
-      for (const [k,v] of Object.entries(filters)) {
-        if (String(row[k]) !== String(v)) match = false;
-      }
-      return match ? {...row, ...data} : row;
-    });
-    lsSet(table, updated);
+    Object.keys(_cache).forEach(k => { if(k.startsWith(table)) delete _cache[k]; });
+    try {
+      await fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify({table, action:'patch', data, filters})
+      });
+    } catch(e) { console.warn('PATCH error', table, e); }
     return [];
   }
   return [];
+}
+
+// Init Google Sheets structure on first load
+async function initGoogleSheets() {
+  try {
+    await fetch(API_URL + '?action=init');
+    console.log('Google Sheets initialized');
+  } catch(e) { console.warn('Init error', e); }
 }
 
 // ═══ ROLES ═══
@@ -814,7 +828,7 @@ function startApp(role, name) {
   }
   buildNav();
   buildQuickGrid();
-  seedData();
+  initGoogleSheets().then(() => seedData());
   go('dashboard');
   updateBadges();
   document.getElementById('rt-status').textContent = 'Connecté';
