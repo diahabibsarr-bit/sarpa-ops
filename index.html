@@ -841,7 +841,19 @@ textarea{resize:vertical;min-height:70px}
   <div class="mf"><button class="btn bg2" onclick="closeM('m-partenariat')">Annuler</button><button class="btn bm" onclick="savPartenariat()">Enregistrer</button></div>
 </div></div>
 
+
+<!-- ═══ GRAPHIQUES ═══ -->
+<div class="pg" id="pg-graphiques">
+  <div id="graph-content"></div>
+</div>
+
+<!-- ═══ JOURNAL ═══ -->
+<div class="pg" id="pg-journal">
+  <div id="journal-content"></div>
+</div>
+
 <script>
+
 
 const ROLE_CODES = {
   'DG4X9K2M': { role:'dg',                    name:'Directeur Général'              },
@@ -930,7 +942,7 @@ async function initGoogleSheets() {
 }
 
 // ═══ ROLES ═══
-const ALL = ['dashboard','production','stocks','quality','fleet','tours','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','rh','formation','planning','carburant','checklist','messages','annuaire','conges','partenariats','objectifs'];
+const ALL = ['dashboard','production','stocks','quality','fleet','tours','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','rh','formation','planning','carburant','checklist','messages','annuaire','conges','partenariats','objectifs','graphiques','journal'];
 const ROLES = {
   dg:                   { label:'Directeur Général',              badge:'rb-director', pages:ALL },
   directeur:            { label:'Dir. Opérations & Logistique',   badge:'rb-director', pages:ALL },
@@ -988,6 +1000,9 @@ const NAV = [
   { s:'Partenariats & Objectifs' },
   { id:'partenariats',ic:'🤝', lb:'Partenariats' },
   { id:'objectifs',   ic:'📊', lb:'Objectifs mensuels' },
+  { s:'🔒 Direction — Analyses' },
+  { id:'graphiques',  ic:'📈', lb:'Graphiques & Analyses', dir:true },
+  { id:'journal',     ic:'🔍', lb:'Journal modifications',  dir:true },
 ];
 
 // ═══ AUTH ═══
@@ -1025,6 +1040,14 @@ function startApp(role, name) {
   initGoogleSheets().then(() => seedData());
   go('dashboard');
   updateBadges();
+  setTimeout(autoBackup, 5000);
+  setTimeout(async () => {
+    const alerts = await checkVidangeAlerts();
+    if (alerts.length > 0) {
+      setTimeout(() => toast(`🔧 ${alerts.length} camion(s) nécessitent un contrôle`), 2000);
+    }
+    syncOfflineQueue();
+  }, 3000);
   document.getElementById('rt-status').textContent = 'Connecté';
 }
 
@@ -1095,6 +1118,12 @@ function openM(id) {
   if (id==='m-check') loadTrucks(document.getElementById('chk-truck'), false);
 }
 
+function showActionBtn(module) {
+  const btns = document.querySelectorAll('.action-btn-' + module);
+  const ok = canEdit(module);
+  btns.forEach(b => b.style.display = ok ? '' : 'none');
+}
+
 async function loadTrucks(sel, opOnly) {
   if (!sel) return;
   const data = await db('trucks');
@@ -1152,7 +1181,7 @@ async function savProd() {
     remarques: document.getElementById('ip-r').value,
     created_by: userName
   });
-  closeM('mp'); toast(`Production : ${v} m³ enregistrés ✓`); render('production'); render('dashboard');
+  closeM('mp'); logAction('insert','productions',{volume:v,date:document.getElementById('ip-d').value}); toast(`Production : ${v} m³ enregistrés ✓`); render('production'); render('dashboard');
 }
 
 async function savFleet() {
@@ -1162,7 +1191,7 @@ async function savFleet() {
     km: +document.getElementById('if-k').value||0,
     description: document.getElementById('if-d').value
   }, {id});
-  closeM('mf'); toast(`Camion ${id} mis à jour ✓`); render('fleet'); render('dashboard'); updateBadges();
+  closeM('mf'); logAction('update','trucks',{id}); toast(`Camion ${id} mis à jour ✓`); render('fleet'); render('dashboard'); updateBadges();
 }
 
 async function savTour() {
@@ -1178,7 +1207,7 @@ async function savTour() {
     ponctuel: document.getElementById('it-p').value==='1',
     created_by: userName
   });
-  closeM('mt'); toast('Tournée enregistrée ✓'); render('tours'); render('dashboard');
+  closeM('mt'); logAction('insert','tours',{truck:document.getElementById('it-t').value}); toast('Tournée enregistrée ✓'); render('tours'); render('dashboard');
 }
 
 async function savMaint() {
@@ -1192,7 +1221,7 @@ async function savMaint() {
     statut: document.getElementById('im-s').value,
     created_by: userName
   });
-  closeM('mm'); toast('Intervention enregistrée ✓'); render('maintenance');
+  closeM('mm'); logAction('insert','maintenances',{equipement:document.getElementById('im-e').value}); toast('Intervention enregistrée ✓'); render('maintenance');
 }
 
 async function savStock() {
@@ -1241,7 +1270,7 @@ async function savAccident() {
     statut: document.getElementById('acc-status').value,
     created_by: userName
   });
-  closeM('m-acc'); toast('Incident déclaré ✓'); render('accidents'); render('dashboard'); updateBadges();
+  closeM('m-acc'); logAction('insert','accidents',{type:document.getElementById('acc-type').value,gravite:document.getElementById('acc-grav').value}); toast('Incident déclaré ✓'); render('accidents'); render('dashboard'); updateBadges();
 }
 
 async function savFournisseur() {
@@ -1416,7 +1445,8 @@ async function render(p) {
     parametres:renderParams, users:renderUsers, rh:renderRH, formation:renderFormation,
     planning:renderPlanning, annuaire:renderAnnuaire, messages:renderMessages,
     carburant:renderCarburant, objectifs:renderObjectifs, conges:renderConges,
-    checklist:renderChecklist, partenariats:renderPartenariats
+    checklist:renderChecklist, partenariats:renderPartenariats,
+    graphiques:renderGraphiques, journal:renderJournal
   };
   if (map[p]) await map[p]();
 }
@@ -1601,11 +1631,15 @@ async function renderFleet() {
   document.getElementById('f-dn').textContent = dn;
   document.getElementById('f-mn').textContent = mn;
   document.getElementById('f-pc').textContent = `${pct}%`;
+  const canEditFleet = canEdit('fleet');
   document.getElementById('trg').innerHTML = (trucks||[]).map(t=>`
     <div class="tc ${t.status}">
       <div style="display:flex;justify-content:space-between;align-items:flex-start">
         <div class="tc-id">${t.id}</div>
-        <button onclick="openEditTruck('${t.id}')" style="background:none;border:none;cursor:pointer;color:var(--tx3);font-size:16px;padding:0" title="Modifier">✏️</button>
+        <div style="display:flex;gap:4px">
+          <button onclick="generateQR('${t.id}')" style="background:none;border:none;cursor:pointer;font-size:14px;padding:0" title="QR Code">📱</button>
+          ${canEditFleet ? `<button onclick="openEditTruck('${t.id}')" style="background:none;border:none;cursor:pointer;font-size:14px;padding:0" title="Modifier">✏️</button>` : ''}
+        </div>
       </div>
       <div class="tc-t">${t.type}</div>
       <div style="margin-top:7px">${stBadge(t.status)}</div>
@@ -2384,9 +2418,252 @@ async function deleteTruck() {
   const id = document.getElementById('etk-id-orig').value;
   if (!confirm('Supprimer le camion ' + id + ' ? Cette action est irréversible.')) return;
   await db('trucks','DELETE',null,{id});
+  logAction('delete','trucks',{id});
   closeM('m-edit-truck');
   toast('Camion supprimé');
   render('fleet');
+}
+
+
+// ═══ PERMISSIONS ═══
+function canEdit(module) {
+  const isDir = userRole === 'dg' || userRole === 'directeur';
+  const perms = {
+    production:'responsable_centrale', stocks:'responsable_centrale', quality:'responsable_centrale',
+    fleet:'responsable_flotte', tours:'responsable_flotte', maintenance:'responsable_flotte',
+    carburant:'responsable_flotte', checklist:'responsable_flotte',
+    finances:'comptabilite', rh:'rh', formation:'rh', conges:'rh',
+    projets:'commercial', partenaires:'commercial', partenariats:'commercial',
+    fournisseurs:null, accidents:null, planning:null, messages:null,
+    objectifs:'directeur', evaluations:'directeur', rapports:'directeur',
+  };
+  if (perms[module] === null) return true;
+  if (perms[module] === 'directeur') return isDir;
+  return isDir || userRole === perms[module];
+}
+
+async function logAction(action, table, details) {
+  try {
+    await db('journal', 'POST', {
+      action, table_modifiee: table,
+      details: typeof details === 'string' ? details : JSON.stringify(details),
+      utilisateur: userName, role: userRole, created_by: userName
+    });
+  } catch(e) {}
+}
+
+// ═══ JOURNAL ═══
+async function renderJournal() {
+  if (userRole !== 'directeur' && userRole !== 'dg') {
+    document.getElementById('journal-content').innerHTML = '<div class="director-lock"><div class="lock-icon">🔒</div><div class="lock-title">Réservé Direction uniquement</div></div>';
+    return;
+  }
+  const logs = await db('journal');
+  const aIc = {insert:'➕',update:'✏️',delete:'🗑️',login:'🔑'};
+  const aC = {insert:'var(--gn2)',update:'var(--must2)',delete:'var(--rd2)',login:'var(--ac2)'};
+  document.getElementById('journal-content').innerHTML = `
+    <div class="sh"><div><div class="stl">Journal des modifications</div><div class="sst">Historique complet — Direction uniquement</div></div></div>
+    <div class="card">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        ${(logs||[]).length===0
+          ? '<div style="color:var(--tx3);text-align:center;padding:20px">Aucune modification enregistrée</div>'
+          : (logs||[]).map(l=>{
+              let d={};try{d=JSON.parse(l.details||'{}');}catch(e){}
+              return `<div style="display:flex;gap:12px;align-items:flex-start;padding:10px;background:var(--sf2);border-radius:8px;border-left:3px solid ${aC[l.action]||'var(--tx3)'}">
+                <span style="font-size:18px">${aIc[l.action]||'📝'}</span>
+                <div style="flex:1">
+                  <div style="display:flex;justify-content:space-between">
+                    <strong style="color:var(--tx)">${l.utilisateur||'—'}</strong>
+                    <span style="font-size:10px;color:var(--tx3)">${l.created_at?.slice(0,16)||'—'}</span>
+                  </div>
+                  <div style="font-size:12px;color:var(--tx2);margin-top:2px">
+                    <span class="b" style="background:${aC[l.action]||'var(--tx3)'}20;color:${aC[l.action]||'var(--tx3)'}">${l.action}</span>
+                    <span style="margin-left:6px">→ <strong>${l.table_modifiee}</strong></span>
+                    <span style="margin-left:6px;color:var(--tx3)">${d.id||d.nom||d.date||d.volume||''}</span>
+                  </div>
+                </div>
+              </div>`;
+            }).join('')
+        }
+      </div>
+    </div>`;
+}
+
+// ═══ GRAPHIQUES ═══
+async function renderGraphiques() {
+  const [prods,carbs,maint,trucks] = await Promise.all([db('productions'),db('carburant'),db('maintenances'),db('trucks')]);
+  const months=[];for(let i=5;i>=0;i--){const d=new Date();d.setMonth(d.getMonth()-i);months.push(d.toISOString().slice(0,7));}
+  const prodByMonth=months.map(m=>({label:m.slice(5)+'/'+m.slice(2,4),val:(prods||[]).filter(p=>p.date?.startsWith(m)).reduce((a,b)=>a+(+b.volume||0),0)}));
+  const maxP=Math.max(...prodByMonth.map(x=>x.val),1);
+  const truckCosts=(trucks||[]).map(t=>({id:t.id,carb:(carbs||[]).filter(c=>c.camion===t.id).reduce((a,b)=>a+(+b.litres||0)*(+b.prix_litre||0),0),maint:(maint||[]).filter(m=>m.equipement===t.id).reduce((a,b)=>a+(+b.cout||0),0)})).map(t=>({...t,total:t.carb+t.maint})).filter(t=>t.total>0).sort((a,b)=>b.total-a.total).slice(0,8);
+  const maxC=Math.max(...truckCosts.map(x=>x.total),1);
+  document.getElementById('graph-content').innerHTML = `
+    <div class="sh"><div class="stl">Graphiques & Analyses</div></div>
+    <div class="card" style="margin-bottom:14px">
+      <div class="ch"><div class="ct">📈 Production béton — 6 derniers mois (m³)</div></div>
+      <div style="display:flex;align-items:flex-end;gap:6px;height:130px;padding:10px 0 0">
+        ${prodByMonth.map(m=>`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px">
+          <div style="font-size:9px;color:var(--must2);font-weight:700">${m.val||''}</div>
+          <div style="width:100%;background:${m.val>0?'var(--must)':'var(--sf3)'};border-radius:4px 4px 0 0;height:${Math.max(Math.round(m.val/maxP*90),m.val>0?4:2)}px"></div>
+          <div style="font-size:9px;color:var(--tx3)">${m.label}</div>
+        </div>`).join('')}
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:14px">
+      <div class="ch"><div class="ct">🚛 Coût total par camion</div></div>
+      ${truckCosts.length===0?'<div style="color:var(--tx3);text-align:center;padding:16px">Saisissez des données carburant et maintenance pour voir les coûts</div>':
+        truckCosts.map(t=>`<div style="margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+            <span style="font-size:12px;font-family:var(--fm)">${t.id}</span>
+            <span style="font-size:11px;color:var(--must2);font-weight:700">${fmt(Math.round(t.total))} FCFA</span>
+          </div>
+          <div class="pb" style="position:relative">
+            <div style="position:absolute;left:0;width:${Math.round(t.carb/maxC*100)}%;background:var(--or2);height:100%;border-radius:4px 0 0 4px"></div>
+            <div style="position:absolute;left:${Math.round(t.carb/maxC*100)}%;width:${Math.round(t.maint/maxC*100)}%;background:var(--rd2);height:100%;border-radius:0 4px 4px 0"></div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:2px">
+            <span style="font-size:9px;color:var(--or2)">⛽ ${fmt(Math.round(t.carb))}</span>
+            <span style="font-size:9px;color:var(--rd2)">🔧 ${fmt(Math.round(t.maint))}</span>
+          </div>
+        </div>`).join('')}
+    </div>
+    <div class="g2">
+      <div class="card">
+        <div class="ch"><div class="ct">📊 Statuts flotte</div></div>
+        ${['operational','maintenance','breakdown'].map(s=>{
+          const n=(trucks||[]).filter(t=>t.status===s).length;
+          const pct=Math.round(n/Math.max((trucks||[]).length,1)*100);
+          const c=s==='operational'?'var(--gn2)':s==='maintenance'?'var(--must2)':'var(--rd2)';
+          const lb=s==='operational'?'Opérationnels':s==='maintenance'?'Maintenance':'En panne';
+          return `<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:12px">${lb}</span><span style="font-size:11px;color:${c};font-weight:700">${n} (${pct}%)</span></div><div class="pb"><div class="pf" style="width:${pct}%;background:${c}"></div></div></div>`;
+        }).join('')}
+      </div>
+      <div class="card">
+        <div class="ch"><div class="ct">⛽ Carburant par mois</div></div>
+        ${months.map(m=>{const l=(carbs||[]).filter(c=>c.date?.startsWith(m)).reduce((a,b)=>a+(+b.litres||0),0);const co=(carbs||[]).filter(c=>c.date?.startsWith(m)).reduce((a,b)=>a+(+b.litres||0)*(+b.prix_litre||0),0);return `<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--sf3)"><span style="font-size:11px;color:var(--tx3)">${m}</span><span style="font-size:11px;color:var(--or2)">${fmt(l)} L</span><span style="font-size:11px;color:var(--must2)">${fmt(Math.round(co))} F</span></div>`;}).join('')}
+      </div>
+    </div>`;
+}
+
+// ═══ PDF EXPORT ═══
+async function exportPDF() {
+  toast('Génération PDF...');
+  const [prods,trucks,tours,accs] = await Promise.all([db('productions'),db('trucks'),db('tours'),db('accidents')]);
+  const today = new Date().toLocaleDateString('fr-FR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const m = new Date().toISOString().slice(0,7);
+  const tP = (prods||[]).filter(p=>p.date?.startsWith(m)).reduce((a,b)=>a+(+b.volume||0),0);
+  const pct = Math.round((trucks||[]).filter(t=>t.status==='operational').length/Math.max((trucks||[]).length,1)*100);
+  const win = window.open('','_blank');
+  if (!win) { toast('Autorisez les popups pour exporter'); return; }
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Rapport Sarpa</title>
+  <style>body{font-family:Arial,sans-serif;color:#1a1a2e;margin:40px;font-size:13px}h1{color:#1E1035;border-bottom:3px solid #D4A017;padding-bottom:10px}h2{color:#1E1035;margin-top:24px;font-size:15px}table{width:100%;border-collapse:collapse;margin-top:10px}th{background:#1E1035;color:#fff;padding:8px;text-align:left;font-size:11px}td{padding:7px;border-bottom:1px solid #eee;font-size:11px}tr:nth-child(even){background:#f9f9f9}.kpi{display:inline-block;background:#f4f0ff;border-radius:8px;padding:12px 20px;margin:6px;text-align:center}.kv{font-size:24px;font-weight:800;color:#1E1035}.kl{font-size:10px;color:#666;margin-top:4px}@media print{button{display:none}}</style>
+  </head><body>
+  <div style="display:flex;justify-content:space-between;margin-bottom:20px">
+    <div><div style="font-size:24px;font-weight:800;color:#1E1035">SARPA GROUP</div><div style="font-size:11px;color:#666">Ops & Logistique V2</div></div>
+    <div style="text-align:right"><div style="font-weight:700">Rapport opérationnel</div><div style="font-size:11px;color:#666">${today}</div><div style="font-size:11px;color:#666">Par: ${userName}</div></div>
+  </div>
+  <button onclick="window.print()" style="background:#1E1035;color:#fff;border:none;padding:10px 20px;border-radius:6px;cursor:pointer;margin-bottom:20px">🖨️ Imprimer / PDF</button>
+  <h1>Tableau de bord — ${m}</h1>
+  <div>
+    <div class="kpi"><div class="kv">${tP} m³</div><div class="kl">Production</div></div>
+    <div class="kpi"><div class="kv">${(trucks||[]).filter(t=>t.status==='operational').length}/${(trucks||[]).length}</div><div class="kl">Flotte op.</div></div>
+    <div class="kpi"><div class="kv">${pct}%</div><div class="kl">Disponibilité</div></div>
+    <div class="kpi"><div class="kv">${(tours||[]).filter(t=>t.date?.startsWith(m)).length}</div><div class="kl">Tournées</div></div>
+    <div class="kpi"><div class="kv">${(accs||[]).filter(a=>a.statut==='Ouvert').length}</div><div class="kl">Incidents</div></div>
+  </div>
+  <h2>Productions (${(prods||[]).filter(p=>p.date?.startsWith(m)).length} entrées)</h2>
+  <table><thead><tr><th>Date</th><th>Formulation</th><th>Volume m³</th><th>Opérateur</th><th>NC</th><th>Remarques</th></tr></thead>
+  <tbody>${(prods||[]).filter(p=>p.date?.startsWith(m)).map(p=>`<tr><td>${p.date}</td><td>${p.formulation||'—'}</td><td><strong>${p.volume}</strong></td><td>${p.operateur||'—'}</td><td>${p.non_conformites||0}</td><td>${p.remarques||'—'}</td></tr>`).join('')}</tbody></table>
+  <h2>Flotte (${(trucks||[]).length} véhicules)</h2>
+  <table><thead><tr><th>ID</th><th>Type</th><th>Statut</th><th>Km</th><th>Notes</th></tr></thead>
+  <tbody>${(trucks||[]).map(t=>`<tr><td>${t.id}</td><td>${t.type}</td><td>${t.status}</td><td>${t.km} km</td><td>${t.description||'—'}</td></tr>`).join('')}</tbody></table>
+  <h2>Tournées récentes</h2>
+  <table><thead><tr><th>Date</th><th>Camion</th><th>Chauffeur</th><th>Destination</th><th>Volume</th><th>Km</th></tr></thead>
+  <tbody>${(tours||[]).slice(0,20).map(t=>`<tr><td>${t.date}</td><td>${t.truck_id}</td><td>${t.chauffeur}</td><td>${t.destination}</td><td>${t.volume} m³</td><td>${t.km} km</td></tr>`).join('')}</tbody></table>
+  </body></html>`);
+  win.document.close();
+  logAction('export','rapport',{mois:m});
+}
+
+// ═══ QR CODE ═══
+function generateQR(truckId) {
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent('SARPA:'+truckId)}`;
+  const win = window.open('','_blank','width=420,height=520');
+  if (!win) { toast('Autorisez les popups'); return; }
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>QR ${truckId}</title>
+  <style>body{font-family:Arial;text-align:center;padding:30px;background:#1E1035;color:#fff}h2{color:#D4A017}img{border:6px solid #fff;border-radius:10px;background:#fff;padding:8px}p{color:#aaa;font-size:12px}button{background:#D4A017;border:none;padding:10px 24px;border-radius:6px;cursor:pointer;font-weight:700;font-size:14px;margin-top:14px}@media print{button{display:none}}</style></head>
+  <body><h2>🚛 ${truckId}</h2><br><img src="${qrUrl}" width="250" height="250"><br>
+  <button onclick="window.print()">🖨️ Imprimer</button>
+  <p>Scanner pour identifier ce camion<br>dans Sarpa Ops</p></body></html>`);
+  win.document.close();
+}
+
+// ═══ MODE HORS LIGNE ═══
+let offlineQueue = JSON.parse(localStorage.getItem('sarpa_offline_q')||'[]');
+function saveOfflineQueue() { localStorage.setItem('sarpa_offline_q', JSON.stringify(offlineQueue)); }
+
+async function syncOfflineQueue() {
+  if (!offlineQueue.length || !navigator.onLine) return;
+  toast(`Sync ${offlineQueue.length} opération(s)...`);
+  const toProcess = [...offlineQueue];
+  offlineQueue = []; saveOfflineQueue();
+  for (const op of toProcess) {
+    try { await db(op.table, op.method, op.data, op.filters); }
+    catch(e) { offlineQueue.push(op); }
+  }
+  saveOfflineQueue();
+  toast(offlineQueue.length===0 ? '✅ Sync terminée !' : `⚠️ ${offlineQueue.length} en attente`);
+}
+
+// Cache GET results for offline use
+const _dbOrig = db;
+window.db = async function(table, method='GET', data=null, filters={}) {
+  if (method==='GET') {
+    if (!navigator.onLine) {
+      const c = localStorage.getItem('sarpa_cache_'+table);
+      return c ? JSON.parse(c) : [];
+    }
+    const r = await _dbOrig(table, method, data, filters);
+    if (Array.isArray(r) && r.length >= 0) localStorage.setItem('sarpa_cache_'+table, JSON.stringify(r));
+    return r;
+  }
+  if (!navigator.onLine) {
+    offlineQueue.push({table,method,data,filters}); saveOfflineQueue();
+    toast('📴 Hors ligne — sauvegardé, sera sync au retour'); return [];
+  }
+  return _dbOrig(table, method, data, filters);
+};
+
+window.addEventListener('online', () => { document.getElementById('rt-status').textContent='Connecté'; syncOfflineQueue(); });
+window.addEventListener('offline', () => { document.getElementById('rt-status').textContent='📴 Hors ligne'; });
+
+// ═══ BACKUP AUTO ═══
+async function autoBackup() {
+  const last = localStorage.getItem('sarpa_last_bk');
+  if (last && Date.now()-parseInt(last) < 86400000) return;
+  try {
+    const backup={};
+    for (const t of ['trucks','productions','tours','stocks','accidents']) backup[t]=await _dbOrig(t,'GET');
+    const key = 'sarpa_bk_'+new Date().toISOString().slice(0,10);
+    localStorage.setItem(key, JSON.stringify(backup));
+    localStorage.setItem('sarpa_last_bk', String(Date.now()));
+    const keys = Object.keys(localStorage).filter(k=>k.startsWith('sarpa_bk_')).sort();
+    while(keys.length>7) localStorage.removeItem(keys.shift());
+    console.log('Backup auto OK');
+  } catch(e) {}
+}
+
+// ═══ VIDANGE ALERTS ═══
+async function checkVidangeAlerts() {
+  const [trucks,checks] = await Promise.all([db('trucks'),db('checklist')]);
+  const alerts=[];
+  (trucks||[]).forEach(t=>{
+    const last=(checks||[]).filter(c=>c.camion===t.id&&c.type_controle==='Vidange').sort((a,b)=>(b.date||'').localeCompare(a.date||''))[0];
+    if (last&&(+t.km||0)-(+last.km_releve||0)>=5000) alerts.push({truck:t.id,type:'Vidange'});
+    const ct=(checks||[]).filter(c=>c.camion===t.id&&c.type_controle==='Contrôle technique').sort((a,b)=>(b.date||'').localeCompare(a.date||''))[0];
+    if (ct?.prochain_controle&&ct.prochain_controle<=new Date().toISOString().slice(0,10)) alerts.push({truck:t.id,type:'CT dépassé'});
+  });
+  return alerts;
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -2402,7 +2679,9 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
+
 </script>
+
 
 
 
