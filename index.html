@@ -901,6 +901,7 @@ textarea{resize:vertical;min-height:70px}
 
 
 
+
 const ROLE_CODES = {
   'DG4X9K2M': { role:'dg',                    name:'Directeur Général'              },
   'OP7R3N8W': { role:'directeur',              name:'Directeur Opérations'           },
@@ -2229,15 +2230,46 @@ function saveConfig(section) {
     cfg.initials = toStr('cfg-initials');
     cfg.subtitle = toStr('cfg-subtitle');
     cfg.primaryColor = toStr('cfg-color');
+    // Save apparence to Google Sheets so all users see it
+    saveAppearanceGlobal(cfg.companyName, cfg.initials, cfg.subtitle, cfg.primaryColor);
   }
   localStorage.setItem('sarpa_config', JSON.stringify(cfg));
   logAction('update','config',{section});
   toast(`✅ ${section} — paramètres enregistrés !`);
 }
 
-function applyAppearance() {
+async function saveAppearanceGlobal(companyName, initials, subtitle, primaryColor) {
+  // Delete existing config row then insert new one
+  await db('config','DELETE',null,{key:'apparence'});
+  await db('config','POST',{
+    key: 'apparence',
+    value: JSON.stringify({companyName, initials, subtitle, primaryColor}),
+    created_by: userName
+  });
+}
+
+async function applyAppearance() {
+  // First try to load from Google Sheets (shared across all users)
+  try {
+    const rows = await db('config');
+    const row = (rows||[]).find(r=>r.key==='apparence');
+    if (row && row.value) {
+      const remote = JSON.parse(row.value);
+      // Merge remote into local config
+      const cfg = getConfig();
+      Object.assign(cfg, remote);
+      localStorage.setItem('sarpa_config', JSON.stringify(cfg));
+      applyAppearanceValues(remote);
+      return;
+    }
+  } catch(e) {}
+  // Fallback to local config
   const cfg = getConfig();
-  if (!cfg || Object.keys(cfg).length === 0) return;
+  if (cfg && Object.keys(cfg).length > 0) applyAppearanceValues(cfg);
+}
+
+function applyAppearanceValues(cfg) {
+  if (!cfg) return;
   if (cfg.companyName) {
     document.querySelectorAll('.logo-n, #sb-company').forEach(el => el.textContent = cfg.companyName);
   }
@@ -3010,7 +3042,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
+
 </script>
+
 
 
 
