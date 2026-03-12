@@ -854,7 +854,11 @@ textarea{resize:vertical;min-height:70px}
 </div>
 
 
+
+
 <script>
+
+
 
 
 
@@ -2185,17 +2189,15 @@ function saveConfig(section) {
 
 function applyAppearance() {
   const cfg = getConfig();
+  if (!cfg || Object.keys(cfg).length === 0) return;
   if (cfg.companyName) {
-    const el = document.getElementById('sb-company');
-    if (el) el.textContent = cfg.companyName;
+    document.querySelectorAll('.logo-n, #sb-company').forEach(el => el.textContent = cfg.companyName);
   }
   if (cfg.initials) {
-    const el = document.getElementById('sb-initial');
-    if (el) el.textContent = cfg.initials;
+    document.querySelectorAll('.logo-d, .login-diamond, #sb-initial').forEach(el => el.textContent = cfg.initials);
   }
   if (cfg.subtitle) {
-    const el = document.getElementById('sb-subtitle');
-    if (el) el.textContent = cfg.subtitle;
+    document.querySelectorAll('.logo-t, #sb-subtitle').forEach(el => el.textContent = cfg.subtitle);
   }
   if (cfg.primaryColor) {
     document.documentElement.style.setProperty('--must', cfg.primaryColor);
@@ -2957,7 +2959,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
+
+
 </script>
+
+
 
 
 
