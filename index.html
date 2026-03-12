@@ -694,18 +694,24 @@ const fmt = n => Number(n||0).toLocaleString('fr-FR');
 // ═══ DB ═══
 async function db(table, method='GET', data=null, filters={}) {
   try {
-    const h = { 'apikey': SB_KEY, 'Authorization': 'Bearer '+SB_KEY, 'Content-Type': 'application/json' };
+    const h = { 'apikey': SB_KEY, 'Authorization': 'Bearer '+SB_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=representation' };
     let url = SB_URL+'/rest/v1/'+table;
     if (method==='GET') {
-      url += '?select=*&order=created_at.desc&limit=200';
+      url += '?select=*&limit=500';
       for (const [k,v] of Object.entries(filters)) url += `&${k}=eq.${encodeURIComponent(v)}`;
-      const r = await fetch(url, {headers:h}); return await r.json();
+      const r = await fetch(url, {headers:h});
+      if (!r.ok) { console.warn('DB', table, r.status); return []; }
+      const d = await r.json();
+      return Array.isArray(d) ? d : [];
     } else if (method==='POST') {
       h['Prefer'] = 'return=minimal';
-      await fetch(url, {method:'POST', headers:h, body:JSON.stringify(data)});
+      const r = await fetch(url, {method:'POST', headers:h, body:JSON.stringify(data)});
+      if (!r.ok) console.warn('POST', table, r.status);
     } else if (method==='PATCH') {
       url += '?'+Object.entries(filters).map(([k,v])=>`${k}=eq.${encodeURIComponent(v)}`).join('&');
-      await fetch(url, {method:'PATCH', headers:h, body:JSON.stringify(data)});
+      h['Prefer'] = 'return=minimal';
+      const r = await fetch(url, {method:'PATCH', headers:h, body:JSON.stringify(data)});
+      if (!r.ok) console.warn('PATCH', table, r.status);
     }
     return [];
   } catch(e) { console.error(e); return []; }
@@ -854,6 +860,8 @@ function toggleSB() { document.getElementById('sb').classList.toggle('open'); }
 // ═══ MODALS ═══
 function openM(id) {
   document.getElementById(id).classList.add('open');
+  trucks=[].concat(trucks||[]); prods=[].concat(prods||[]); tours=[].concat(tours||[]);
+  stocks=[].concat(stocks||[]); accidents=[].concat(accidents||[]); projets=[].concat(projets||[]);
   const today = new Date().toISOString().slice(0,10);
   const df = {mp:'ip-d', mt:'it-d', mm:'im-d', mc:'ic-d', mq2:'iq-d', 'm-acc':'acc-dt', 'm-budget':'fin-d'};
   if (df[id]) {
@@ -1141,7 +1149,7 @@ async function savFormation() {
 // ═══ SEED ═══
 async function seedData() {
   const trucks = await db('trucks');
-  if (trucks && trucks.length > 0) return;
+  if (trucks.length > 0) return;
   await db('trucks','POST',[
     {id:'SN-001-DK',type:'Toupie 8m³',km:87420,status:'operational',description:''},
     {id:'SN-002-DK',type:'Toupie 8m³',km:64100,status:'operational',description:''},
@@ -1187,7 +1195,7 @@ async function render(p) {
 }
 
 async function renderDash() {
-  const [trucks,prods,tours,stocks,accidents,projets] = await Promise.all([
+  let [trucks,prods,tours,stocks,accidents,projets] = await Promise.all([
     db('trucks'), db('productions'), db('tours'), db('stocks'),
     db('accidents','GET',null,{statut:'Ouvert'}), db('projets','GET',null,{statut:'En cours'})
   ]);
