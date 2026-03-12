@@ -235,6 +235,16 @@ textarea{resize:vertical;min-height:70px}
   .fr,.fr3{grid-template-columns:1fr}
   .kg{grid-template-columns:repeat(2,1fr)}
 }
+
+/* New modal aliases */
+.md{background:var(--sf);border:1px solid var(--bd2);border-radius:var(--r);padding:20px;width:90%;max-width:480px;max-height:90vh;overflow-y:auto;position:relative}
+.mh{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.mc{background:none;border:none;color:var(--tx3);font-size:20px;cursor:pointer;padding:0;line-height:1}
+/* KPI colors */
+.kpi{display:inline-block;background:var(--sf2);border-radius:8px;padding:12px 20px;margin:6px;text-align:center;min-width:100px}
+/* Sidebar overlay */
+#sb-overlay{display:none;position:fixed;inset:0;z-index:199;background:rgba(0,0,0,.4)}
+#sb-overlay.show{display:block}
 </style>
 </head>
 <body>
@@ -263,6 +273,7 @@ textarea{resize:vertical;min-height:70px}
 <div id="app">
 
 <!-- SIDEBAR -->
+<div id="sb-overlay" onclick="closeSB()"></div>
 <aside id="sb">
   <div class="logo-block">
     <div class="logo-row">
@@ -856,7 +867,35 @@ textarea{resize:vertical;min-height:70px}
 
 
 
+
+<!-- Modal modifier camion -->
+<div class="mo" id="m-edit-truck"><div class="md">
+  <div class="mh"><div class="mt">Modifier le camion</div><button class="mc" onclick="closeM('m-edit-truck')">✕</button></div>
+  <input type="hidden" id="etk-id-orig">
+  <div class="fg"><label>ID / Immatriculation</label><input type="text" id="etk-id" placeholder="SN-001-DK"></div>
+  <div class="fg"><label>Type</label><select id="etk-type">
+    <option>Toupie 8m³</option><option>Toupie 6m³</option><option>Benne 10T</option>
+    <option>Plateau</option><option>Citerne</option><option>Camion malaxeur</option>
+    <option>Camionnette</option><option>Autre</option>
+  </select></div>
+  <div class="fg"><label>Type personnalisé</label><input type="text" id="etk-type-custom" placeholder="Laisser vide si choix ci-dessus"></div>
+  <div class="fg"><label>Km au compteur</label><input type="number" id="etk-km" placeholder="0"></div>
+  <div class="fg"><label>Statut</label><select id="etk-status">
+    <option value="operational">✅ Opérationnel</option>
+    <option value="maintenance">🟡 Maintenance</option>
+    <option value="breakdown">🔴 Panne</option>
+  </select></div>
+  <div class="fg"><label>Description / Notes</label><input type="text" id="etk-desc"></div>
+  <div class="mf" style="justify-content:space-between">
+    <button class="btn" style="background:var(--rd2);color:#fff" onclick="deleteTruck()">🗑 Supprimer</button>
+    <div style="display:flex;gap:8px">
+      <button class="btn bg2" onclick="closeM('m-edit-truck')">Annuler</button>
+      <button class="btn bm" onclick="saveEditTruck()">Enregistrer</button>
+    </div>
+  </div>
+</div></div>
 <script>
+
 
 
 
@@ -1113,7 +1152,16 @@ function go(p) {
   if (window.innerWidth<900) document.getElementById('sb').classList.remove('open');
 }
 
-function toggleSB() { document.getElementById('sb').classList.toggle('open'); }
+function toggleSB() {
+  const sb = document.getElementById('sb');
+  const ov = document.getElementById('sb-overlay');
+  sb.classList.toggle('open');
+  ov.classList.toggle('show');
+}
+function closeSB() {
+  document.getElementById('sb').classList.remove('open');
+  document.getElementById('sb-overlay').classList.remove('show');
+}
 
 // ═══ MODALS ═══
 function openM(id) {
@@ -2961,6 +3009,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
+
 </script>
 
 
@@ -2969,31 +3018,5 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-<!-- Modal modifier camion -->
-<div class="mo" id="m-edit-truck"><div class="md">
-  <div class="mh"><div class="mt">Modifier le camion</div><button class="mc" onclick="closeM('m-edit-truck')">✕</button></div>
-  <input type="hidden" id="etk-id-orig">
-  <div class="fg"><label>ID / Immatriculation</label><input type="text" id="etk-id" placeholder="SN-001-DK"></div>
-  <div class="fg"><label>Type</label><select id="etk-type">
-    <option>Toupie 8m³</option><option>Toupie 6m³</option><option>Benne 10T</option>
-    <option>Plateau</option><option>Citerne</option><option>Camion malaxeur</option>
-    <option>Camionnette</option><option>Autre</option>
-  </select></div>
-  <div class="fg"><label>Type personnalisé</label><input type="text" id="etk-type-custom" placeholder="Laisser vide si choix ci-dessus"></div>
-  <div class="fg"><label>Km au compteur</label><input type="number" id="etk-km" placeholder="0"></div>
-  <div class="fg"><label>Statut</label><select id="etk-status">
-    <option value="operational">✅ Opérationnel</option>
-    <option value="maintenance">🟡 Maintenance</option>
-    <option value="breakdown">🔴 Panne</option>
-  </select></div>
-  <div class="fg"><label>Description / Notes</label><input type="text" id="etk-desc"></div>
-  <div class="mf" style="justify-content:space-between">
-    <button class="btn" style="background:var(--rd2);color:#fff" onclick="deleteTruck()">🗑 Supprimer</button>
-    <div style="display:flex;gap:8px">
-      <button class="btn bg2" onclick="closeM('m-edit-truck')">Annuler</button>
-      <button class="btn bm" onclick="saveEditTruck()">Enregistrer</button>
-    </div>
-  </div>
-</div></div>
 </body>
 </html>
