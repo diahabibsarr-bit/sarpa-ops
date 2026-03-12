@@ -908,6 +908,16 @@ async function db(table, method='GET', data=null, filters={}) {
     } catch(e) { console.warn('PATCH error', table, e); }
     return [];
   }
+  if (method === 'DELETE') {
+    Object.keys(_cache).forEach(k => { if(k.startsWith(table)) delete _cache[k]; });
+    try {
+      await fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify({table, action:'delete', filters})
+      });
+    } catch(e) { console.warn('DELETE error', table, e); }
+    return [];
+  }
   return [];
 }
 
@@ -1592,8 +1602,11 @@ async function renderFleet() {
   document.getElementById('f-mn').textContent = mn;
   document.getElementById('f-pc').textContent = `${pct}%`;
   document.getElementById('trg').innerHTML = (trucks||[]).map(t=>`
-    <div class="tc ${t.status}" onclick="editTruck('${t.id}')">
-      <div class="tc-id">${t.id}</div>
+    <div class="tc ${t.status}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div class="tc-id">${t.id}</div>
+        <button onclick="openEditTruck('${t.id}')" style="background:none;border:none;cursor:pointer;color:var(--tx3);font-size:16px;padding:0" title="Modifier">✏️</button>
+      </div>
       <div class="tc-t">${t.type}</div>
       <div style="margin-top:7px">${stBadge(t.status)}</div>
       <div class="tc-k">📏 ${fmt(t.km)} km</div>
@@ -2329,6 +2342,53 @@ async function savPartenariat() {
   closeM('m-partenariat'); toast('Partenariat enregistré ✓'); render('partenariats');
 }
 
+
+async function openEditTruck(id) {
+  const trucks = await db('trucks');
+  const t = (trucks||[]).find(x=>x.id===id);
+  if (!t) return;
+  document.getElementById('etk-id-orig').value = id;
+  document.getElementById('etk-id').value = t.id;
+  const types = ['Toupie 8m³','Toupie 6m³','Benne 10T','Plateau','Citerne','Camion malaxeur','Camionnette','Autre'];
+  const sel = document.getElementById('etk-type');
+  if (types.includes(t.type)) {
+    sel.value = t.type;
+    document.getElementById('etk-type-custom').value = '';
+  } else {
+    sel.value = 'Autre';
+    document.getElementById('etk-type-custom').value = t.type;
+  }
+  document.getElementById('etk-km').value = t.km||0;
+  document.getElementById('etk-status').value = t.status||'operational';
+  document.getElementById('etk-desc').value = t.description||'';
+  openM('m-edit-truck');
+}
+
+async function saveEditTruck() {
+  const origId = document.getElementById('etk-id-orig').value;
+  const custom = document.getElementById('etk-type-custom').value.trim();
+  const type = custom || document.getElementById('etk-type').value;
+  await db('trucks','PATCH',{
+    id: document.getElementById('etk-id').value,
+    type: type,
+    km: +document.getElementById('etk-km').value||0,
+    status: document.getElementById('etk-status').value,
+    description: document.getElementById('etk-desc').value
+  }, {id: origId});
+  closeM('m-edit-truck');
+  toast('Camion mis à jour ✓');
+  render('fleet');
+}
+
+async function deleteTruck() {
+  const id = document.getElementById('etk-id-orig').value;
+  if (!confirm('Supprimer le camion ' + id + ' ? Cette action est irréversible.')) return;
+  await db('trucks','DELETE',null,{id});
+  closeM('m-edit-truck');
+  toast('Camion supprimé');
+  render('fleet');
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('login-btn').addEventListener('click', doLogin);
   document.getElementById('l-code').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
@@ -2345,5 +2405,32 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 
+
+<!-- Modal modifier camion -->
+<div class="mo" id="m-edit-truck"><div class="md">
+  <div class="mh"><div class="mt">Modifier le camion</div><button class="mc" onclick="closeM('m-edit-truck')">✕</button></div>
+  <input type="hidden" id="etk-id-orig">
+  <div class="fg"><label>ID / Immatriculation</label><input type="text" id="etk-id" placeholder="SN-001-DK"></div>
+  <div class="fg"><label>Type</label><select id="etk-type">
+    <option>Toupie 8m³</option><option>Toupie 6m³</option><option>Benne 10T</option>
+    <option>Plateau</option><option>Citerne</option><option>Camion malaxeur</option>
+    <option>Camionnette</option><option>Autre</option>
+  </select></div>
+  <div class="fg"><label>Type personnalisé</label><input type="text" id="etk-type-custom" placeholder="Laisser vide si choix ci-dessus"></div>
+  <div class="fg"><label>Km au compteur</label><input type="number" id="etk-km" placeholder="0"></div>
+  <div class="fg"><label>Statut</label><select id="etk-status">
+    <option value="operational">✅ Opérationnel</option>
+    <option value="maintenance">🟡 Maintenance</option>
+    <option value="breakdown">🔴 Panne</option>
+  </select></div>
+  <div class="fg"><label>Description / Notes</label><input type="text" id="etk-desc"></div>
+  <div class="mf" style="justify-content:space-between">
+    <button class="btn" style="background:var(--rd2);color:#fff" onclick="deleteTruck()">🗑 Supprimer</button>
+    <div style="display:flex;gap:8px">
+      <button class="btn bg2" onclick="closeM('m-edit-truck')">Annuler</button>
+      <button class="btn bm" onclick="saveEditTruck()">Enregistrer</button>
+    </div>
+  </div>
+</div></div>
 </body>
 </html>
