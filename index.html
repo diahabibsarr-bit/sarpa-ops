@@ -520,6 +520,96 @@ textarea{resize:vertical;min-height:70px}
     <div id="users-content"></div>
   </div>
 
+
+
+
+<!-- ═══ PLANNING ═══ -->
+<div class="pg" id="pg-planning">
+  <div class="sh"><div><div class="stl">Planning Opérationnel</div><div class="sst">Opérations de la semaine</div></div><button class="btn bm" onclick="openM('m-plan')">+ Planifier</button></div>
+  <div id="plan-week" style="margin-bottom:14px"></div>
+  <div class="card"><div class="ch"><div class="ct">📅 Toutes les opérations</div></div>
+  <div class="tw"><table><thead><tr><th>Date</th><th>Type</th><th>Lieu</th><th>Contact</th><th>Tél</th><th>Camion</th><th>Chauffeur</th><th>Volume</th><th>Client</th><th>Statut</th></tr></thead><tbody id="t-plan"></tbody></table></div></div>
+</div>
+
+<!-- ═══ ANNUAIRE ═══ -->
+<div class="pg" id="pg-annuaire">
+  <div class="sh"><div><div class="stl">Annuaire Sarpa</div><div class="sst">Contacts internes</div></div><button class="btn bm" onclick="openM('m-contact')">+ Contact</button></div>
+  <div id="annuaire-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:14px"></div>
+</div>
+
+<!-- ═══ MESSAGERIE ═══ -->
+<div class="pg" id="pg-messages">
+  <div class="sh"><div><div class="stl">Messages & Notes</div><div class="sst">Communication interne</div></div><button class="btn bm" onclick="openM('m-msg')">+ Message</button></div>
+  <div id="msg-list" style="display:flex;flex-direction:column;gap:10px;max-width:700px"></div>
+</div>
+
+<!-- ═══ CARBURANT ═══ -->
+<div class="pg" id="pg-carburant">
+  <div class="sh"><div><div class="stl">Suivi Carburant</div><div class="sst">Consommation par camion</div></div><button class="btn bm" onclick="openM('m-carb')">+ Plein</button></div>
+  <div class="kg" style="grid-template-columns:repeat(3,1fr);margin-bottom:14px">
+    <div class="kc kc-b"><div class="kl">Total ce mois</div><div class="kv" id="carb-tot">—</div><div class="ks">Litres</div></div>
+    <div class="kc kc-r"><div class="kl">Coût total</div><div class="kv" id="carb-cout">—</div><div class="ks">FCFA</div></div>
+    <div class="kc kc-g"><div class="kl">Camions suivis</div><div class="kv" id="carb-nb">—</div><div class="ks">véhicules</div></div>
+  </div>
+  <div class="card"><div class="ch"><div class="ct">⛽ Historique pleins</div></div>
+  <div class="tw"><table><thead><tr><th>Date</th><th>Camion</th><th>Chauffeur</th><th>Litres</th><th>Prix/L</th><th>Total</th><th>Km relevé</th><th>Station</th></tr></thead><tbody id="t-carb"></tbody></table></div></div>
+</div>
+
+<!-- ═══ OBJECTIFS ═══ -->
+<div class="pg" id="pg-objectifs">
+  <div class="sh"><div><div class="stl">Objectifs Mensuels</div><div class="sst">Suivi des performances</div></div><button class="btn bm" onclick="openM('m-obj')">+ Objectif</button></div>
+  <div id="obj-content"></div>
+</div>
+
+<!-- ═══ CONGES ═══ -->
+<div class="pg" id="pg-conges">
+  <div class="sh"><div><div class="stl">Congés & Absences</div><div class="sst">Planning RH</div></div><button class="btn bm" onclick="openM('m-conge')">+ Demande</button></div>
+  <div class="kg" style="grid-template-columns:repeat(4,1fr);margin-bottom:14px">
+    <div class="kc kc-g"><div class="kl">En poste</div><div class="kv" id="cng-ok">—</div><div class="ks">aujourd&#39;hui</div></div>
+    <div class="kc kc-m"><div class="kl">En congé</div><div class="kv" id="cng-off">—</div><div class="ks">aujourd&#39;hui</div></div>
+    <div class="kc kc-b"><div class="kl">En attente</div><div class="kv" id="cng-wait">—</div><div class="ks">demandes</div></div>
+    <div class="kc kc-r"><div class="kl">Absences</div><div class="kv" id="cng-abs">—</div><div class="ks">ce mois</div></div>
+  </div>
+  <div class="card"><div class="ch"><div class="ct">🗓 Demandes</div></div>
+  <div class="tw"><table><thead><tr><th>Employé</th><th>Département</th><th>Du</th><th>Au</th><th>Type</th><th>Motif</th><th>Statut</th></tr></thead><tbody id="t-conge"></tbody></table></div></div>
+</div>
+
+<!-- ═══ CHECKLIST ═══ -->
+<div class="pg" id="pg-checklist">
+  <div class="sh"><div><div class="stl">Checklist Préventive</div><div class="sst">Contrôles & rappels camions</div></div><button class="btn bm" onclick="openM('m-check')">+ Contrôle</button></div>
+  <div id="check-alerts" style="margin-bottom:14px"></div>
+  <div class="card"><div class="ch"><div class="ct">🔧 Historique contrôles</div></div>
+  <div class="tw"><table><thead><tr><th>Date</th><th>Camion</th><th>Type</th><th>Résultat</th><th>Prochain</th><th>Par</th><th>Notes</th></tr></thead><tbody id="t-check"></tbody></table></div></div>
+</div>
+
+<!-- ═══ PARTENARIATS ═══ -->
+<div class="pg" id="pg-partenariats">
+  <div class="sh"><div><div class="stl">Partenariats</div><div class="sst">Collaborations stratégiques</div></div><button class="btn bm" onclick="openM('m-partenariat')">+ Partenariat</button></div>
+  <div class="kg" style="grid-template-columns:repeat(3,1fr);margin-bottom:14px">
+    <div class="kc kc-g"><div class="kl">Actifs</div><div class="kv" id="prt-ok">—</div><div class="ks">partenariats</div></div>
+    <div class="kc kc-b"><div class="kl">En négociation</div><div class="kv" id="prt-neg">—</div><div class="ks">en cours</div></div>
+    <div class="kc kc-m"><div class="kl">Valeur totale</div><div class="kv" id="prt-val">—</div><div class="ks">FCFA</div></div>
+  </div>
+  <div id="prt-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px"></div>
+</div>
+
+
+<!-- ═══ GRAPHIQUES ═══ -->
+<div class="pg" id="pg-graphiques">
+  <div class="sh"><div><div class="stl">Graphiques &amp; Analyses</div><div class="sst">Statistiques opérationnelles</div></div><button class="btn bm" onclick="exportPDF()">📄 Export PDF</button></div>
+  <div id="graph-content"></div>
+</div>
+
+<!-- ═══ JOURNAL ═══ -->
+<div class="pg" id="pg-journal">
+  <div class="sh"><div><div class="stl">Journal des modifications</div><div class="sst">Historique complet — Direction uniquement</div></div></div>
+  <div id="journal-content"></div>
+</div>
+
+
+
+
+
 </div><!-- /mn -->
 </div><!-- /app -->
 
@@ -682,75 +772,6 @@ textarea{resize:vertical;min-height:70px}
 
 
 
-<!-- ═══ PLANNING ═══ -->
-<div class="pg" id="pg-planning">
-  <div class="sh"><div><div class="stl">Planning Opérationnel</div><div class="sst">Opérations de la semaine</div></div><button class="btn bm" onclick="openM('m-plan')">+ Planifier</button></div>
-  <div id="plan-week" style="margin-bottom:14px"></div>
-  <div class="card"><div class="ch"><div class="ct">📅 Toutes les opérations</div></div>
-  <div class="tw"><table><thead><tr><th>Date</th><th>Type</th><th>Lieu</th><th>Contact</th><th>Tél</th><th>Camion</th><th>Chauffeur</th><th>Volume</th><th>Client</th><th>Statut</th></tr></thead><tbody id="t-plan"></tbody></table></div></div>
-</div>
-
-<!-- ═══ ANNUAIRE ═══ -->
-<div class="pg" id="pg-annuaire">
-  <div class="sh"><div><div class="stl">Annuaire Sarpa</div><div class="sst">Contacts internes</div></div><button class="btn bm" onclick="openM('m-contact')">+ Contact</button></div>
-  <div id="annuaire-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:14px"></div>
-</div>
-
-<!-- ═══ MESSAGERIE ═══ -->
-<div class="pg" id="pg-messages">
-  <div class="sh"><div><div class="stl">Messages & Notes</div><div class="sst">Communication interne</div></div><button class="btn bm" onclick="openM('m-msg')">+ Message</button></div>
-  <div id="msg-list" style="display:flex;flex-direction:column;gap:10px;max-width:700px"></div>
-</div>
-
-<!-- ═══ CARBURANT ═══ -->
-<div class="pg" id="pg-carburant">
-  <div class="sh"><div><div class="stl">Suivi Carburant</div><div class="sst">Consommation par camion</div></div><button class="btn bm" onclick="openM('m-carb')">+ Plein</button></div>
-  <div class="kg" style="grid-template-columns:repeat(3,1fr);margin-bottom:14px">
-    <div class="kc kc-b"><div class="kl">Total ce mois</div><div class="kv" id="carb-tot">—</div><div class="ks">Litres</div></div>
-    <div class="kc kc-r"><div class="kl">Coût total</div><div class="kv" id="carb-cout">—</div><div class="ks">FCFA</div></div>
-    <div class="kc kc-g"><div class="kl">Camions suivis</div><div class="kv" id="carb-nb">—</div><div class="ks">véhicules</div></div>
-  </div>
-  <div class="card"><div class="ch"><div class="ct">⛽ Historique pleins</div></div>
-  <div class="tw"><table><thead><tr><th>Date</th><th>Camion</th><th>Chauffeur</th><th>Litres</th><th>Prix/L</th><th>Total</th><th>Km relevé</th><th>Station</th></tr></thead><tbody id="t-carb"></tbody></table></div></div>
-</div>
-
-<!-- ═══ OBJECTIFS ═══ -->
-<div class="pg" id="pg-objectifs">
-  <div class="sh"><div><div class="stl">Objectifs Mensuels</div><div class="sst">Suivi des performances</div></div><button class="btn bm" onclick="openM('m-obj')">+ Objectif</button></div>
-  <div id="obj-content"></div>
-</div>
-
-<!-- ═══ CONGES ═══ -->
-<div class="pg" id="pg-conges">
-  <div class="sh"><div><div class="stl">Congés & Absences</div><div class="sst">Planning RH</div></div><button class="btn bm" onclick="openM('m-conge')">+ Demande</button></div>
-  <div class="kg" style="grid-template-columns:repeat(4,1fr);margin-bottom:14px">
-    <div class="kc kc-g"><div class="kl">En poste</div><div class="kv" id="cng-ok">—</div><div class="ks">aujourd&#39;hui</div></div>
-    <div class="kc kc-m"><div class="kl">En congé</div><div class="kv" id="cng-off">—</div><div class="ks">aujourd&#39;hui</div></div>
-    <div class="kc kc-b"><div class="kl">En attente</div><div class="kv" id="cng-wait">—</div><div class="ks">demandes</div></div>
-    <div class="kc kc-r"><div class="kl">Absences</div><div class="kv" id="cng-abs">—</div><div class="ks">ce mois</div></div>
-  </div>
-  <div class="card"><div class="ch"><div class="ct">🗓 Demandes</div></div>
-  <div class="tw"><table><thead><tr><th>Employé</th><th>Département</th><th>Du</th><th>Au</th><th>Type</th><th>Motif</th><th>Statut</th></tr></thead><tbody id="t-conge"></tbody></table></div></div>
-</div>
-
-<!-- ═══ CHECKLIST ═══ -->
-<div class="pg" id="pg-checklist">
-  <div class="sh"><div><div class="stl">Checklist Préventive</div><div class="sst">Contrôles & rappels camions</div></div><button class="btn bm" onclick="openM('m-check')">+ Contrôle</button></div>
-  <div id="check-alerts" style="margin-bottom:14px"></div>
-  <div class="card"><div class="ch"><div class="ct">🔧 Historique contrôles</div></div>
-  <div class="tw"><table><thead><tr><th>Date</th><th>Camion</th><th>Type</th><th>Résultat</th><th>Prochain</th><th>Par</th><th>Notes</th></tr></thead><tbody id="t-check"></tbody></table></div></div>
-</div>
-
-<!-- ═══ PARTENARIATS ═══ -->
-<div class="pg" id="pg-partenariats">
-  <div class="sh"><div><div class="stl">Partenariats</div><div class="sst">Collaborations stratégiques</div></div><button class="btn bm" onclick="openM('m-partenariat')">+ Partenariat</button></div>
-  <div class="kg" style="grid-template-columns:repeat(3,1fr);margin-bottom:14px">
-    <div class="kc kc-g"><div class="kl">Actifs</div><div class="kv" id="prt-ok">—</div><div class="ks">partenariats</div></div>
-    <div class="kc kc-b"><div class="kl">En négociation</div><div class="kv" id="prt-neg">—</div><div class="ks">en cours</div></div>
-    <div class="kc kc-m"><div class="kl">Valeur totale</div><div class="kv" id="prt-val">—</div><div class="ks">FCFA</div></div>
-  </div>
-  <div id="prt-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px"></div>
-</div>
 
 <!-- MODALS NOUVEAUX -->
 <div class="mo" id="m-plan"><div class="md">
@@ -852,22 +873,6 @@ textarea{resize:vertical;min-height:70px}
   <div class="fg"><label>Statut</label><select id="prt-status"><option>Actif</option><option>En négociation</option><option>Suspendu</option><option>Terminé</option></select></div>
   <div class="mf"><button class="btn bg2" onclick="closeM('m-partenariat')">Annuler</button><button class="btn bm" onclick="savPartenariat()">Enregistrer</button></div>
 </div></div>
-
-
-<!-- ═══ GRAPHIQUES ═══ -->
-<div class="pg" id="pg-graphiques">
-  <div class="sh"><div><div class="stl">Graphiques &amp; Analyses</div><div class="sst">Statistiques opérationnelles</div></div><button class="btn bm" onclick="exportPDF()">📄 Export PDF</button></div>
-  <div id="graph-content"></div>
-</div>
-
-<!-- ═══ JOURNAL ═══ -->
-<div class="pg" id="pg-journal">
-  <div class="sh"><div><div class="stl">Journal des modifications</div><div class="sst">Historique complet — Direction uniquement</div></div></div>
-  <div id="journal-content"></div>
-</div>
-
-
-
 
 
 <!-- Modal modifier camion -->
