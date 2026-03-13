@@ -902,6 +902,7 @@ textarea{resize:vertical;min-height:70px}
 
 
 
+
 const ROLE_CODES = {
   'DG4X9K2M': { role:'dg',                    name:'Directeur Général'              },
   'OP7R3N8W': { role:'directeur',              name:'Directeur Opérations'           },
@@ -1424,9 +1425,7 @@ const rh_set = (k,d) => { try { localStorage.setItem('sarpa_'+k, JSON.stringify(
 
 async function savEmploye() {
   if (!document.getElementById('emp-nom').value) { toast('Nom requis'); return; }
-  const emps = rh_get('employes');
-  emps.unshift({
-    id: Date.now(),
+  await db('employes','POST',{
     nom: document.getElementById('emp-nom').value,
     prenom: document.getElementById('emp-prenom').value,
     poste: document.getElementById('emp-poste').value,
@@ -1436,17 +1435,16 @@ async function savEmploye() {
     date_embauche: document.getElementById('emp-date').value,
     salaire: +document.getElementById('emp-sal').value||0,
     statut: document.getElementById('emp-status').value,
-    notes: document.getElementById('emp-notes').value
+    notes: document.getElementById('emp-notes').value,
+    created_by: userName
   });
-  rh_set('employes', emps);
+  logAction('insert','employes',{nom:document.getElementById('emp-nom').value});
   closeM('m-emp'); toast('Employé enregistré ✓'); render('rh');
 }
 
 async function savFormation() {
   if (!document.getElementById('form-titre').value) { toast('Titre requis'); return; }
-  const forms = rh_get('formations');
-  forms.unshift({
-    id: Date.now(),
+  await db('formations','POST',{
     titre: document.getElementById('form-titre').value,
     employe: document.getElementById('form-emp').value,
     organisme: document.getElementById('form-org').value,
@@ -1454,9 +1452,10 @@ async function savFormation() {
     date_fin: document.getElementById('form-fin').value,
     cout: +document.getElementById('form-cout').value||0,
     statut: document.getElementById('form-status').value,
-    observations: document.getElementById('form-obs').value
+    observations: document.getElementById('form-obs').value,
+    created_by: userName
   });
-  rh_set('formations', forms);
+  logAction('insert','formations',{titre:document.getElementById('form-titre').value});
   closeM('m-form'); toast('Formation enregistrée ✓'); render('formation');
 }
 
@@ -2310,42 +2309,42 @@ async function renderUsers() {
 }
 
 async function renderRH() {
-  const emps = rh_get('employes');
-  const actifs = emps.filter(e=>e.statut==='Actif');
+  const emps = await db('employes');
+  const actifs = (emps||[]).filter(e=>e.statut==='Actif');
   document.getElementById('rh-tot').textContent = actifs.length;
   document.getElementById('rh-cb').textContent  = actifs.filter(e=>e.departement==='Centrale à Béton').length;
   document.getElementById('rh-fl').textContent  = actifs.filter(e=>e.departement==='Flotte Camions').length;
   document.getElementById('rh-ad').textContent  = actifs.filter(e=>['Administration','Direction','Comptabilité','RH'].includes(e.departement)).length;
-  document.getElementById('t-emp').innerHTML = emps.length===0
+  document.getElementById('t-emp').innerHTML = (emps||[]).length===0
     ? '<tr><td colspan="7" style="text-align:center;color:var(--tx3)">Aucun employé enregistré</td></tr>'
-    : emps.map(e=>`<tr>
-        <td><strong>${e.nom}</strong></td>
-        <td>${e.prenom}</td>
-        <td>${e.poste}</td>
-        <td><span class="b bg-p">${e.departement}</span></td>
-        <td class="mono">${e.telephone}</td>
+    : (emps||[]).map(e=>`<tr>
+        <td><strong>${e.nom||'—'}</strong></td>
+        <td>${e.prenom||'—'}</td>
+        <td>${e.poste||'—'}</td>
+        <td><span class="b bg-p">${e.departement||'—'}</span></td>
+        <td class="mono">${e.telephone||'—'}</td>
         <td class="mono">${e.date_embauche||'—'}</td>
-        <td><span class="b ${e.statut==='Actif'?'bg-g':e.statut==='Parti'?'bg-r':'bg-o'}">${e.statut}</span></td>
+        <td><span class="b ${e.statut==='Actif'?'bg-g':e.statut==='Parti'?'bg-r':'bg-o'}">${e.statut||'—'}</span></td>
       </tr>`).join('');
 }
 
 async function renderFormation() {
-  const forms = rh_get('formations');
+  const forms = await db('formations');
   const m = new Date().toISOString().slice(0,7);
-  document.getElementById('form-plan').textContent   = forms.filter(f=>f.statut==='Planifiée').length;
-  document.getElementById('form-cours').textContent  = forms.filter(f=>f.statut==='En cours').length;
-  document.getElementById('form-done').textContent   = forms.filter(f=>f.statut==='Terminée'&&f.date_fin?.startsWith(m)).length;
-  document.getElementById('form-budget').textContent = fmt(forms.reduce((a,b)=>a+b.cout,0));
-  document.getElementById('t-form').innerHTML = forms.length===0
+  document.getElementById('form-plan').textContent   = (forms||[]).filter(f=>f.statut==='Planifiée').length;
+  document.getElementById('form-cours').textContent  = (forms||[]).filter(f=>f.statut==='En cours').length;
+  document.getElementById('form-done').textContent   = (forms||[]).filter(f=>f.statut==='Terminée'&&f.date_fin?.startsWith(m)).length;
+  document.getElementById('form-budget').textContent = fmt((forms||[]).reduce((a,b)=>a+(+b.cout||0),0));
+  document.getElementById('t-form').innerHTML = (forms||[]).length===0
     ? '<tr><td colspan="7" style="text-align:center;color:var(--tx3)">Aucune formation enregistrée</td></tr>'
-    : forms.map(f=>`<tr>
-        <td><strong>${f.titre}</strong></td>
-        <td>${f.employe}</td>
-        <td>${f.organisme}</td>
+    : (forms||[]).map(f=>`<tr>
+        <td><strong>${f.titre||'—'}</strong></td>
+        <td>${f.employe||'—'}</td>
+        <td>${f.organisme||'—'}</td>
         <td class="mono">${f.date_debut||'—'}</td>
         <td class="mono">${f.date_fin||'—'}</td>
-        <td>${fmt(f.cout)} FCFA</td>
-        <td><span class="b ${f.statut==='Terminée'?'bg-g':f.statut==='En cours'?'bg-b':f.statut==='Annulée'?'bg-r':'bg-o'}">${f.statut}</span></td>
+        <td>${fmt(f.cout||0)} FCFA</td>
+        <td><span class="b ${f.statut==='Terminée'?'bg-g':f.statut==='En cours'?'bg-b':f.statut==='Annulée'?'bg-r':'bg-o'}">${f.statut||'—'}</span></td>
       </tr>`).join('');
 }
 
@@ -3047,7 +3046,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
+
 </script>
+
 
 
 
