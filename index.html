@@ -73,7 +73,7 @@ nav{flex:1;padding:8px 0;overflow-y:auto}
 .sf-logout:hover{color:var(--rd2)}
 
 /* TOPBAR */
-#mn{margin-left:248px;min-height:100vh;display:flex;flex-direction:column}
+#mn{margin-left:248px;min-height:100vh;display:flex;flex-direction:column;width:calc(100% - 248px)}
 .topbar{position:sticky;top:0;z-index:100;height:54px;padding:0 24px;background:rgba(22,11,46,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .ttl{font-family:var(--fh);font-size:17px;font-weight:700;color:#fff}
 .tba{display:flex;gap:8px;align-items:center}
@@ -83,7 +83,7 @@ nav{flex:1;padding:8px 0;overflow-y:auto}
 .rb-coord{background:rgba(27,168,122,.15);color:var(--gn2);border:1px solid rgba(27,168,122,.3)}
 
 /* PAGES */
-.pg{display:none;padding:20px 24px 48px;flex:1}
+.pg{display:none;padding:20px 24px 48px;flex:1;box-sizing:border-box;overflow-x:hidden}
 .pg.active{display:block;animation:fu .2s ease}
 @keyframes fu{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
@@ -230,7 +230,7 @@ textarea{resize:vertical;min-height:70px}
 @media(max-width:900px){
   #sb{transform:translateX(-100%)}
   #sb.open{transform:translateX(0);box-shadow:4px 0 40px rgba(0,0,0,.6)}
-  #mn{margin-left:0}
+  #mn{margin-left:0;width:100%}
   .g2,.g3,.g4{grid-template-columns:1fr}
   .fr,.fr3{grid-template-columns:1fr}
   .kg{grid-template-columns:repeat(2,1fr)}
