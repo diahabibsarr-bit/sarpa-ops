@@ -43,8 +43,8 @@ html,body{height:100%;font-family:var(--fb);background:var(--bg);color:var(--tx)
 #register-screen{position:fixed;inset:0;background:linear-gradient(135deg,#0D0620 0%,#1E1035 50%,#2D1B4E 100%);display:none;align-items:center;justify-content:center;z-index:9999}
 
 /* APP */
-#app{display:none;height:100vh;flex-direction:column}
-#app.visible{display:flex}
+#app{display:none;height:100vh}
+#app.visible{display:flex;flex-direction:column}
 
 /* SIDEBAR */
 #sb{position:fixed;left:0;top:0;bottom:0;width:248px;background:var(--sf);border-right:1px solid var(--bd);display:flex;flex-direction:column;z-index:200;transition:transform .3s}
@@ -73,7 +73,7 @@ nav{flex:1;padding:8px 0;overflow-y:auto}
 .sf-logout:hover{color:var(--rd2)}
 
 /* TOPBAR */
-#mn{margin-left:248px;min-height:100vh;display:flex;flex-direction:column;width:calc(100% - 248px)}
+#mn{margin-left:248px;flex:1;min-height:100vh;display:flex;flex-direction:column;width:calc(100% - 248px);max-width:calc(100% - 248px);overflow-x:hidden}
 .topbar{position:sticky;top:0;z-index:100;height:54px;padding:0 24px;background:rgba(22,11,46,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .ttl{font-family:var(--fh);font-size:17px;font-weight:700;color:#fff}
 .tba{display:flex;gap:8px;align-items:center}
@@ -83,7 +83,7 @@ nav{flex:1;padding:8px 0;overflow-y:auto}
 .rb-coord{background:rgba(27,168,122,.15);color:var(--gn2);border:1px solid rgba(27,168,122,.3)}
 
 /* PAGES */
-.pg{display:none;padding:20px 24px 48px;flex:1;box-sizing:border-box;overflow-x:hidden}
+.pg{display:none;padding:20px 24px 48px;flex:1;box-sizing:border-box;overflow-x:hidden;width:100%;max-width:100%}
 .pg.active{display:block;animation:fu .2s ease}
 @keyframes fu{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
@@ -230,7 +230,7 @@ textarea{resize:vertical;min-height:70px}
 @media(max-width:900px){
   #sb{transform:translateX(-100%)}
   #sb.open{transform:translateX(0);box-shadow:4px 0 40px rgba(0,0,0,.6)}
-  #mn{margin-left:0;width:100%}
+  #mn{margin-left:0;width:100%;max-width:100%}
   .g2,.g3,.g4{grid-template-columns:1fr}
   .fr,.fr3{grid-template-columns:1fr}
   .kg{grid-template-columns:repeat(2,1fr)}
@@ -856,11 +856,13 @@ textarea{resize:vertical;min-height:70px}
 
 <!-- ═══ GRAPHIQUES ═══ -->
 <div class="pg" id="pg-graphiques">
+  <div class="sh"><div><div class="stl">Graphiques &amp; Analyses</div><div class="sst">Statistiques opérationnelles</div></div><button class="btn bm" onclick="exportPDF()">📄 Export PDF</button></div>
   <div id="graph-content"></div>
 </div>
 
 <!-- ═══ JOURNAL ═══ -->
 <div class="pg" id="pg-journal">
+  <div class="sh"><div><div class="stl">Journal des modifications</div><div class="sst">Historique complet — Direction uniquement</div></div></div>
   <div id="journal-content"></div>
 </div>
 
@@ -2827,7 +2829,6 @@ async function renderJournal() {
   const aIc = {insert:'➕',update:'✏️',delete:'🗑️',login:'🔑'};
   const aC = {insert:'var(--gn2)',update:'var(--must2)',delete:'var(--rd2)',login:'var(--ac2)'};
   document.getElementById('journal-content').innerHTML = `
-    <div class="sh"><div><div class="stl">Journal des modifications</div><div class="sst">Historique complet — Direction uniquement</div></div></div>
     <div class="card">
       <div style="display:flex;flex-direction:column;gap:8px">
         ${(logs||[]).length===0
@@ -2863,7 +2864,6 @@ async function renderGraphiques() {
   const truckCosts=(trucks||[]).map(t=>({id:t.id,carb:(carbs||[]).filter(c=>c.camion===t.id).reduce((a,b)=>a+(+b.litres||0)*(+b.prix_litre||0),0),maint:(maint||[]).filter(m=>m.equipement===t.id).reduce((a,b)=>a+(+b.cout||0),0)})).map(t=>({...t,total:t.carb+t.maint})).filter(t=>t.total>0).sort((a,b)=>b.total-a.total).slice(0,8);
   const maxC=Math.max(...truckCosts.map(x=>x.total),1);
   document.getElementById('graph-content').innerHTML = `
-    <div class="sh"><div class="stl">Graphiques & Analyses</div></div>
     <div class="card" style="margin-bottom:14px">
       <div class="ch"><div class="ct">📈 Production béton — 6 derniers mois (m³)</div></div>
       <div style="display:flex;align-items:flex-end;gap:6px;height:130px;padding:10px 0 0">
