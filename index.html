@@ -903,6 +903,7 @@ textarea{resize:vertical;min-height:70px}
 
 
 
+
 const ROLE_CODES = {
   'DG4X9K2M': { role:'dg',                    name:'Directeur Général'              },
   'OP7R3N8W': { role:'directeur',              name:'Directeur Opérations'           },
@@ -1628,6 +1629,7 @@ async function renderProd() {
         <td>${p.non_conformites>0?`<span class="b bg-r">${p.non_conformites}m³</span>`:'<span class="b bg-g">0</span>'}</td>
         <td style="font-size:11px">${p.remarques||'—'}</td>
         <td style="font-size:10px;color:var(--tx3)">${p.created_by||'—'}</td>
+        ${canEdit('production')?`<td><button onclick="editRow('productions','${p.id}','production')" style="background:none;border:none;cursor:pointer;font-size:13px" title="Modifier">✏️</button></td>`:'<td></td>'}
       </tr>`).join('');
 }
 
@@ -2325,6 +2327,7 @@ async function renderRH() {
         <td class="mono">${e.telephone||'—'}</td>
         <td class="mono">${e.date_embauche||'—'}</td>
         <td><span class="b ${e.statut==='Actif'?'bg-g':e.statut==='Parti'?'bg-r':'bg-o'}">${e.statut||'—'}</span></td>
+        ${canEdit('rh')?`<td><button onclick="editRow('employes','${e.id}','rh')" style="background:none;border:none;cursor:pointer;font-size:13px">✏️</button></td>`:'<td></td>'}
       </tr>`).join('');
 }
 
@@ -2345,6 +2348,7 @@ async function renderFormation() {
         <td class="mono">${f.date_fin||'—'}</td>
         <td>${fmt(f.cout||0)} FCFA</td>
         <td><span class="b ${f.statut==='Terminée'?'bg-g':f.statut==='En cours'?'bg-b':f.statut==='Annulée'?'bg-r':'bg-o'}">${f.statut||'—'}</span></td>
+        ${canEdit('formation')?`<td><button onclick="editRow('formations','${f.id}','formation')" style="background:none;border:none;cursor:pointer;font-size:13px">✏️</button></td>`:'<td></td>'}
       </tr>`).join('');
 }
 
@@ -2416,6 +2420,7 @@ async function renderPlanning() {
         <td>${p.volume?p.volume+' m³':'—'}</td>
         <td>${p.client||'—'}</td>
         <td><span class="b ${p.statut==='Terminé'?'bg-g':p.statut==='Annulé'?'bg-r':p.statut==='En cours'?'bg-b':'bg-x'}">${p.statut}</span></td>
+        <td><button onclick="editRow('planning','${p.id}','planning')" style="background:none;border:none;cursor:pointer;font-size:13px">✏️</button></td>
       </tr>`).join('');
 }
 
@@ -2536,6 +2541,7 @@ async function renderCarburant() {
         <td><strong>${fmt(Math.round((+c.litres||0)*(+c.prix_litre||0)))} FCFA</strong></td>
         <td>${fmt(c.km_releve||0)} km</td>
         <td>${c.station||'—'}</td>
+        ${canEdit('carburant')?`<td><button onclick="editRow('carburant','${c.id}','carburant')" style="background:none;border:none;cursor:pointer;font-size:13px">✏️</button></td>`:'<td></td>'}
       </tr>`).join('');
   // Load trucks for modal
   loadTrucks(document.getElementById('carb-truck'), false);
@@ -2635,6 +2641,7 @@ async function renderConges() {
         <td>${c.type_conge||'—'}</td>
         <td style="font-size:11px">${c.motif||'—'}</td>
         <td><span class="b ${c.statut==='Approuvé'?'bg-g':c.statut==='Refusé'?'bg-r':'bg-o'}">${c.statut}</span></td>
+        ${canEdit('conges')?`<td><button onclick="editRow('conges','${c.id}','conges')" style="background:none;border:none;cursor:pointer;font-size:13px">✏️</button></td>`:'<td></td>'}
       </tr>`).join('');
 }
 
@@ -2670,6 +2677,7 @@ async function renderChecklist() {
         <td class="mono">${c.prochain_controle||'—'}</td>
         <td>${c.effectue_par||'—'}</td>
         <td style="font-size:11px">${c.notes||'—'}</td>
+        ${canEdit('checklist')?`<td><button onclick="editRow('checklist','${c.id}','checklist')" style="background:none;border:none;cursor:pointer;font-size:13px">✏️</button></td>`:'<td></td>'}
       </tr>`).join('');
   loadTrucks(document.getElementById('chk-truck'), false);
 }
@@ -3027,6 +3035,179 @@ async function checkVidangeAlerts() {
   return alerts;
 }
 
+
+// ═══ GENERIC EDIT/DELETE SYSTEM ═══
+let _editMode = false;
+let _editId = null;
+let _editTable = null;
+let _editPage = null;
+
+async function editRow(table, id, page) {
+  const rows = await db(table);
+  const row = (rows||[]).find(r => String(r.id) === String(id));
+  if (!row) { toast('Entrée introuvable'); return; }
+  _editMode = true;
+  _editId = id;
+  _editTable = table;
+  _editPage = page;
+
+  const modalMap = {
+    productions: 'mp', tours: 'mt', maintenances: 'mm', stocks: 'mc',
+    quality: 'mq2', accidents: 'm-acc', fournisseurs: 'm-four',
+    projets: 'm-proj', partenaires: 'm-part', finances: 'm-budget',
+    evaluations: 'm-eval', employes: 'm-emp', formations: 'm-form',
+    planning: 'm-plan', annuaire: 'm-contact', messages: 'm-msg',
+    carburant: 'm-carb', conges: 'm-conge', checklist: 'm-check',
+    partenariats: 'm-partenariat', objectifs: 'm-obj',
+    commandes: 'mc'
+  };
+  const modal = modalMap[table];
+  if (!modal) { toast('Modification non disponible'); return; }
+
+  // Pre-fill modal fields
+  prefillModal(table, row);
+  openM(modal);
+
+  // Update modal title and button
+  const mEl = document.getElementById(modal);
+  if (mEl) {
+    const titleEl = mEl.querySelector('.mt, .mt2');
+    if (titleEl) titleEl.textContent = '✏️ Modifier';
+    const savBtn = mEl.querySelector('.btn.bm');
+    if (savBtn) { savBtn.textContent = 'Enregistrer modifications'; savBtn.style.background = 'var(--or2)'; }
+    // Add delete button if not already present
+    const mf = mEl.querySelector('.mf');
+    if (mf && !mEl.querySelector('.del-btn')) {
+      const delBtn = document.createElement('button');
+      delBtn.className = 'btn del-btn';
+      delBtn.style.cssText = 'background:var(--rd2);color:#fff';
+      delBtn.textContent = '🗑 Supprimer';
+      delBtn.onclick = () => deleteRow(table, id, page, modal);
+      mf.insertBefore(delBtn, mf.firstChild);
+    }
+  }
+}
+
+function prefillModal(table, row) {
+  const set = (id, val) => { const el = document.getElementById(id); if(el) el.value = val||''; };
+  if (table === 'productions') {
+    set('ip-d', row.date); set('ip-f', row.formulation); set('ip-v', row.volume);
+    set('ip-o', row.operateur); set('ip-nc', row.non_conformites); set('ip-r', row.remarques);
+  } else if (table === 'tours') {
+    set('it-d', row.date); set('it-t', row.truck_id); set('it-c', row.chauffeur);
+    set('it-dest', row.destination); set('it-v', row.volume); set('it-k', row.km); set('it-n', row.notes);
+  } else if (table === 'maintenances') {
+    set('im-d', row.date); set('im-e', row.equipement); set('im-ty', row.type_intervention);
+    set('im-desc', row.description); set('im-c', row.cout); set('im-st', row.statut);
+  } else if (table === 'quality') {
+    set('iq-d', row.date); set('iq-f', row.formulation); set('iq-r', row.resultat);
+    set('iq-obs', row.observations);
+  } else if (table === 'accidents') {
+    set('acc-dt', row.date_heure); set('acc-type', row.type_accident);
+    set('acc-grav', row.gravite); set('acc-lieu', row.lieu);
+    set('acc-desc', row.description); set('acc-status', row.statut);
+  } else if (table === 'fournisseurs') {
+    set('if-nom', row.nom); set('if-cat', row.categorie); set('if-prod', row.produit);
+    set('if-qte', row.quantite); set('if-pu', row.prix_unitaire);
+    set('if-dl', row.date_livraison); set('if-st', row.statut); set('if-n', row.notes);
+  } else if (table === 'projets') {
+    set('ip-nom', row.nom); set('ip-cl', row.client); set('ip-loc', row.localisation);
+    set('ip-vol', row.volume_beton); set('ip-deb', row.date_debut);
+    set('ip-fin', row.date_fin); set('ip-st', row.statut); set('ip-n', row.notes);
+  } else if (table === 'partenaires') {
+    set('ipt-nom', row.nom); set('ipt-type', row.type);
+    set('ipt-contact', row.contact); set('ipt-tel', row.telephone);
+    set('ipt-email', row.email); set('ipt-desc', row.description); set('ipt-st', row.statut);
+  } else if (table === 'finances') {
+    set('fin-d', row.date); set('fin-cat', row.categorie);
+    set('fin-m', row.montant); set('fin-type', row.type_mouvement); set('fin-desc', row.description);
+  } else if (table === 'evaluations') {
+    set('ev-nom', row.nom_responsable); set('ev-per', row.periode);
+    set('ev-perf', row.score_performance); set('ev-ponc', row.score_ponctualite);
+    set('ev-qual', row.score_qualite); set('ev-com', row.commentaire); set('ev-rec', row.recommandation);
+  } else if (table === 'employes') {
+    set('emp-nom', row.nom); set('emp-prenom', row.prenom); set('emp-poste', row.poste);
+    set('emp-dept', row.departement); set('emp-tel', row.telephone);
+    set('emp-email', row.email); set('emp-date', row.date_embauche);
+    set('emp-sal', row.salaire); set('emp-status', row.statut); set('emp-notes', row.notes);
+  } else if (table === 'formations') {
+    set('form-titre', row.titre); set('form-emp', row.employe); set('form-org', row.organisme);
+    set('form-deb', row.date_debut); set('form-fin', row.date_fin);
+    set('form-cout', row.cout); set('form-status', row.statut); set('form-obs', row.observations);
+  } else if (table === 'planning') {
+    set('plan-dt', row.date_heure?.slice(0,16)); set('plan-type', row.type);
+    set('plan-lieu', row.lieu); set('plan-client', row.client); set('plan-contact', row.contact);
+    set('plan-tel', row.telephone); set('plan-chauffeur', row.chauffeur);
+    set('plan-vol', row.volume); set('plan-form', row.formulation);
+    set('plan-notes', row.notes); set('plan-status', row.statut);
+  } else if (table === 'annuaire') {
+    set('ct-nom', row.nom); set('ct-prenom', row.prenom); set('ct-poste', row.poste);
+    set('ct-dept', row.departement); set('ct-tel', row.telephone);
+    set('ct-wa', row.whatsapp); set('ct-email', row.email);
+    set('ct-loc', row.localisation); set('ct-notes', row.notes);
+  } else if (table === 'carburant') {
+    set('carb-d', row.date); set('carb-truck', row.camion); set('carb-ch', row.chauffeur);
+    set('carb-l', row.litres); set('carb-p', row.prix_litre);
+    set('carb-km', row.km_releve); set('carb-station', row.station);
+  } else if (table === 'conges') {
+    set('cng-emp', row.employe); set('cng-dept', row.departement);
+    set('cng-deb', row.date_debut); set('cng-fin', row.date_fin);
+    set('cng-type', row.type_conge); set('cng-motif', row.motif); set('cng-status', row.statut);
+  } else if (table === 'checklist') {
+    set('chk-d', row.date); set('chk-truck', row.camion); set('chk-type', row.type_controle);
+    set('chk-res', row.resultat); set('chk-next', row.prochain_controle);
+    set('chk-par', row.effectue_par); set('chk-notes', row.notes);
+  } else if (table === 'partenariats') {
+    set('prt-nom', row.nom); set('prt-type', row.type_partenariat);
+    set('prt-contact', row.contact); set('prt-tel', row.telephone); set('prt-email', row.email);
+    set('prt-valeur', row.valeur_contrat); set('prt-deb', row.date_debut);
+    set('prt-fin', row.date_fin); set('prt-desc', row.description); set('prt-status', row.statut);
+  } else if (table === 'objectifs') {
+    set('obj-mois', row.mois); set('obj-cat', row.categorie);
+    set('obj-val', row.valeur); set('obj-unit', row.unite); set('obj-notes', row.notes);
+  }
+}
+
+async function deleteRow(table, id, page, modal) {
+  if (!confirm('Supprimer cette entrée ? Cette action est irréversible.')) return;
+  await db(table, 'DELETE', null, {id});
+  logAction('delete', table, {id});
+  closeM(modal);
+  _editMode = false; _editId = null;
+  toast('Entrée supprimée ✓');
+  render(page);
+}
+
+function resetEditMode(modal) {
+  _editMode = false; _editId = null; _editTable = null; _editPage = null;
+  const mEl = document.getElementById(modal);
+  if (mEl) {
+    const delBtn = mEl.querySelector('.del-btn');
+    if (delBtn) delBtn.remove();
+    const savBtn = mEl.querySelector('.btn.bm');
+    if (savBtn) { savBtn.textContent = 'Enregistrer'; savBtn.style.background = ''; }
+    const titleEl = mEl.querySelector('.mt, .mt2');
+    // reset title from data attr if available
+  }
+}
+
+// ═══ EDIT MODE INTERCEPTOR ═══
+async function dbSave(table, data, modal, page, successMsg) {
+  if (_editMode && _editId) {
+    await db(table, 'PATCH', data, {id: _editId});
+    logAction('update', table, {id: _editId});
+    closeM(modal);
+    toast(successMsg + ' (modifié)');
+    render(page);
+  } else {
+    await db(table, 'POST', {...data, created_by: userName});
+    logAction('insert', table, data);
+    closeM(modal);
+    toast(successMsg);
+    render(page);
+  }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('login-btn').addEventListener('click', doLogin);
   document.getElementById('l-code').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
@@ -3047,7 +3228,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
+
 </script>
+
 
 
 
