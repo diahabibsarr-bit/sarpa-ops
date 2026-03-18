@@ -1102,8 +1102,27 @@ textarea{resize:vertical;min-height:70px}
   <div class="fr">
     <div class="fg"><label>N° Facture</label><input type="text" id="fac-numero" placeholder="Ex: FAC-2026-001"></div>
     <div class="fg"><label>Type</label><select id="fac-type">
-      <option>Facture fournisseur</option><option>Facture client</option>
-      <option>Avoir</option><option>Proforma</option>
+      <option>Achat matières premières</option>
+      <option>Vente / Livraison client</option>
+      <option>Maintenance & Réparation</option>
+      <option>Salaires & RH</option>
+      <option>Carburant</option>
+      <option>Loyer & Charges fixes</option>
+      <option>Facture fournisseur</option>
+      <option>Avoir</option>
+      <option>Proforma</option>
+      <option>Autre</option>
+    </select></div>
+  </div>
+  <div class="fr">
+    <div class="fg"><label>Sens</label><select id="fac-sens">
+      <option value="depense">💸 Dépense (sortie)</option>
+      <option value="recette">💰 Recette (entrée)</option>
+    </select></div>
+    <div class="fg"><label>Département concerné</label><select id="fac-dept">
+      <option>Direction</option><option>Centrale à Béton</option><option>Flotte Camions</option>
+      <option>Comptabilité</option><option>RH</option><option>Commercial</option>
+      <option>Agence Immobilière</option><option>Général</option>
     </select></div>
   </div>
   <div class="fr">
@@ -1111,7 +1130,6 @@ textarea{resize:vertical;min-height:70px}
     <div class="fg"><label>Date facture</label><input type="date" id="fac-date"></div>
     <div class="fg"><label>Date échéance</label><input type="date" id="fac-echeance"></div>
   </div>
-
   <!-- LIGNES ARTICLES -->
   <div style="margin:12px 0 6px;font-weight:700;font-size:12px;color:var(--tx2)">📦 Articles / Produits</div>
   <div id="fac-lignes">
@@ -1123,7 +1141,6 @@ textarea{resize:vertical;min-height:70px}
     </div>
   </div>
   <button onclick="addFactureLigne()" class="btn bg2" style="font-size:11px;margin-bottom:12px">+ Ajouter une ligne</button>
-
   <!-- TOTAUX -->
   <div class="fr">
     <div class="fg"><label>Remise (%)</label><input type="number" id="fac-remise" value="0" min="0" max="100" oninput="updateFactureTotal()"></div>
@@ -1131,7 +1148,6 @@ textarea{resize:vertical;min-height:70px}
     <div class="fg"><label>Montant total (FCFA)</label><input type="number" id="fac-montant" readonly style="background:var(--sf2);color:var(--must2);font-weight:800;font-size:14px"></div>
   </div>
   <div id="fac-total-display" style="background:var(--sf2);border-radius:8px;padding:12px;margin-bottom:12px;font-size:12px;display:flex;flex-direction:column;gap:4px"></div>
-
   <div class="fr">
     <div class="fg"><label>Mode de paiement</label><select id="fac-mode">
       <option value="">— Non défini —</option>
@@ -1147,6 +1163,9 @@ textarea{resize:vertical;min-height:70px}
   <div class="mf"><button class="btn bg2" onclick="closeM('m-facture')">Annuler</button><button class="btn bm" onclick="savFacture()">Enregistrer</button></div>
 </div></div>
 <script>
+
+
+
 
 
 
@@ -1254,13 +1273,13 @@ const ALL = ['dashboard','production','stocks','quality','fleet','maintenance','
 const ROLES = {
   dg:                   { label:'Directeur Général',              badge:'rb-director', pages:ALL },
   directeur:            { label:'Dir. Opérations & Logistique',   badge:'rb-director', pages:ALL },
-  coordinatrice:        { label:'Coordinatrice Holding',          badge:'rb-coord',    pages:['dashboard','production','stocks','fournisseurs','projets','partenaires','accidents','planning','messages','annuaire','livraisons'] },
-  responsable_centrale: { label:'Resp. Centrale à Béton',         badge:'rb-resp',     pages:['dashboard','production','stocks','quality','accidents','planning','messages','annuaire'] },
-  responsable_flotte:   { label:'Resp. Flotte Camions',           badge:'rb-resp',     pages:['dashboard','fleet','maintenance','accidents','planning','carburant','checklist','messages','annuaire','livraisons'] },
+  coordinatrice:        { label:'Coordinatrice Holding',          badge:'rb-coord',    pages:['dashboard','production','stocks','fournisseurs','projets','partenaires','accidents','planning','messages','annuaire','livraisons','factures'] },
+  responsable_centrale: { label:'Resp. Centrale à Béton',         badge:'rb-resp',     pages:['dashboard','production','stocks','quality','accidents','planning','messages','annuaire','livraisons','factures'] },
+  responsable_flotte:   { label:'Resp. Flotte Camions',           badge:'rb-resp',     pages:['dashboard','fleet','maintenance','accidents','planning','carburant','checklist','messages','annuaire','livraisons','factures'] },
   comptabilite:         { label:'Comptabilité',                   badge:'rb-resp',     pages:['dashboard','finances','fournisseurs','rapports','messages','annuaire','objectifs','factures','livraisons','stocks'] },
-  rh:                   { label:'Ressources Humaines',            badge:'rb-coord',    pages:['dashboard','rh','formation','accidents','conges','messages','annuaire'] },
-  commercial:           { label:'Commercial',                     badge:'rb-coord',    pages:['dashboard','projets','fournisseurs','partenaires','partenariats','messages','annuaire'] },
-  immobilier:           { label:'Agence Immobilière',             badge:'rb-coord',    pages:['dashboard','projets','partenaires','partenariats','messages','annuaire'] },
+  rh:                   { label:'Ressources Humaines',            badge:'rb-coord',    pages:['dashboard','rh','formation','accidents','conges','messages','annuaire','factures','livraisons'] },
+  commercial:           { label:'Commercial',                     badge:'rb-coord',    pages:['dashboard','projets','fournisseurs','partenaires','partenariats','messages','annuaire','livraisons','factures'] },
+  immobilier:           { label:'Agence Immobilière',             badge:'rb-coord',    pages:['dashboard','projets','partenaires','partenariats','messages','annuaire','factures'] },
   guest:                { label:'Invité',                          badge:'rb-guest',    pages:['dashboard','planning','projets','partenariats'] },
 };
 
@@ -1293,6 +1312,7 @@ const NAV = [
   { id:'fournisseurs',ic:'🏭', lb:'Fournisseurs' },
   { id:'projets',     ic:'📋', lb:'Projets & Chantiers' },
   { id:'partenaires', ic:'🤝', lb:'Partenaires' },
+  { id:'factures',    ic:'🧾', lb:'Factures' },
   { s:'Équipe & Communication' },
   { id:'messages',    ic:'💬', lb:'Messages',              bg:'nb-msg' },
   { id:'annuaire',    ic:'📒', lb:'Annuaire interne' },
@@ -1304,7 +1324,6 @@ const NAV = [
   { id:'objectifs',   ic:'📊', lb:'Objectifs mensuels' },
   { s:'🔒 Direction uniquement' },
   { id:'finances',    ic:'💰', lb:'Finances & Budget',    dir:true },
-  { id:'factures',    ic:'🧾', lb:'Factures',               dir:false },
   { id:'evaluations', ic:'📊', lb:'Évaluations',           dir:true },
   { id:'rapports',    ic:'▣', lb:'Rapports consolidés',   dir:true },
   { id:'graphiques',  ic:'📈', lb:'Graphiques & Analyses', dir:true },
@@ -1391,6 +1410,7 @@ function buildQuickGrid() {
     {m:'mc',   ic:'📋', lb:'Commande',    pg:'stocks'},
     {m:'m-liv',ic:'🚚', lb:'Livraison',   pg:'livraisons'},
     {m:'m-acc',ic:'🚨', lb:'Incident',    pg:'accidents'},
+    {m:'m-facture',ic:'🧾', lb:'Facture',    pg:'factures'},
   ].filter(i => allowed.includes(i.pg));
   document.getElementById('quick-grid').innerHTML = items.map(i =>
     `<button class="btn bg2" style="justify-content:center;padding:14px;flex-direction:column;gap:4px;font-size:12px" onclick="sw('mq','${i.m}')">${i.ic}<br>${i.lb}</button>`
@@ -1441,6 +1461,7 @@ function openM(id) {
   if (id==='m-visite') loadTrucks(document.getElementById('vt-truck'), false);
   if (id==='m-entretien') loadTrucks(document.getElementById('ent-truck'), false);
   if (id==='m-doc-flotte') loadTrucks(document.getElementById('doc-truck'), false);
+  if (id==='m-facture') { document.getElementById('fac-date').value=new Date().toISOString().slice(0,10); updateFactureTotal(); }
   if (id==='m-liv') { loadTrucks(document.getElementById('liv-truck'), false); document.getElementById('liv-date').value=new Date().toISOString().slice(0,10); }
 }
 
@@ -3348,6 +3369,7 @@ async function editRow(table, id, page) {
     projets: 'm-proj', partenaires: 'm-part', finances: 'm-budget',
     evaluations: 'm-eval', employes: 'm-emp', formations: 'm-form',
     livraisons: 'm-liv',
+    factures: 'm-facture',
     planning: 'm-plan', annuaire: 'm-contact', messages: 'm-msg',
     carburant: 'm-carb', conges: 'm-conge', checklist: 'm-check',
     partenariats: 'm-partenariat', objectifs: 'm-obj',
@@ -3454,6 +3476,34 @@ function prefillModal(table, row) {
     set('prt-contact', row.contact); set('prt-tel', row.telephone); set('prt-email', row.email);
     set('prt-valeur', row.valeur_contrat); set('prt-deb', row.date_debut);
     set('prt-fin', row.date_fin); set('prt-desc', row.description); set('prt-status', row.statut);
+  } else if (table === 'factures') {
+    set('fac-numero', row.numero_facture); set('fac-type', row.type_facture);
+    set('fac-sens', row.sens); set('fac-dept', row.departement);
+    set('fac-nom', row.nom); set('fac-date', row.date_facture);
+    set('fac-echeance', row.date_echeance); set('fac-remise', row.remise||0);
+    set('fac-tva', row.tva||0); set('fac-mode', row.mode_paiement);
+    set('fac-statut', row.statut); set('fac-notes', row.notes);
+    set('fac-montant', row.montant_total);
+    // Load lignes if any
+    try {
+      const lignes = JSON.parse(row.lignes||'[]');
+      const container = document.getElementById('fac-lignes');
+      if (container && lignes.length > 0) {
+        container.innerHTML = '';
+        lignes.forEach((l,i)=>{
+          const n = i+1;
+          const div = document.createElement('div');
+          div.className = 'fac-ligne fr';
+          div.style.cssText = 'gap:6px;align-items:flex-end;margin-bottom:8px';
+          div.innerHTML = `<div class="fg" style="flex:3"><label>Article</label><input type="text" id="fac-ligne-${n}-desc" value="${l.desc||''}"></div>
+            <div class="fg" style="flex:1"><label>Qté</label><input type="number" id="fac-ligne-${n}-qty" value="${l.qty||1}" oninput="updateFactureTotal()"></div>
+            <div class="fg" style="flex:2"><label>P.U.</label><input type="number" id="fac-ligne-${n}-pu" value="${l.pu||0}" oninput="updateFactureTotal()"></div>
+            <div class="fg" style="flex:2"><label>Total</label><input type="text" id="fac-ligne-${n}-tot" readonly style="background:var(--sf2);color:var(--must2);font-weight:700"></div>`;
+          container.appendChild(div);
+        });
+        updateFactureTotal();
+      }
+    } catch(e) {}
   } else if (table === 'livraisons') {
     set('liv-date', row.date_depart?.slice(0,10)); set('liv-type', row.type_mission);
     set('liv-produit', row.produit); set('liv-from', row.point_depart); set('liv-to', row.destination);
@@ -4370,6 +4420,8 @@ async function savFacture() {
   await db('factures','POST',{
     numero_facture: numero,
     type_facture: document.getElementById('fac-type').value,
+    sens: document.getElementById('fac-sens').value,
+    departement: document.getElementById('fac-dept').value,
     nom: document.getElementById('fac-nom').value,
     date_facture: document.getElementById('fac-date').value,
     date_echeance: document.getElementById('fac-echeance').value,
@@ -4396,49 +4448,214 @@ async function savFacture() {
 // ═══ RENDER FACTURES ═══
 async function renderFactures() {
   const facs = await db('factures');
-  const canF = userRole==='directeur'||userRole==='dg'||userRole==='comptabilite';
+  const canF = true; // All responsables can add
+  const canEdit = userRole==='directeur'||userRole==='dg'||userRole==='comptabilite';
   const m = new Date().toISOString().slice(0,7);
   const today = new Date().toISOString().slice(0,10);
   const mf = (facs||[]).filter(f=>f.date_facture?.startsWith(m));
   const payees = (facs||[]).filter(f=>f.statut==='Payée');
   const enRetard = (facs||[]).filter(f=>f.statut!=='Payée'&&f.date_echeance&&f.date_echeance<today);
+  const recettes = (facs||[]).filter(f=>f.sens==='recette').reduce((a,b)=>a+(+b.montant_total||0),0);
+  const depenses = (facs||[]).filter(f=>f.sens==='depense'||!f.sens).reduce((a,b)=>a+(+b.montant_total||0),0);
   const totalTTC = (facs||[]).reduce((a,b)=>a+(+b.montant_total||0),0);
 
+  // Stats par catégorie
+  const cats = {};
+  (facs||[]).forEach(f=>{
+    const cat = f.type_facture||'Autre';
+    if (!cats[cat]) cats[cat]={count:0,total:0};
+    cats[cat].count++;
+    cats[cat].total += +f.montant_total||0;
+  });
+
+  // Top fournisseurs
+  const fournisseurs = {};
+  (facs||[]).forEach(f=>{
+    if (!f.nom) return;
+    if (!fournisseurs[f.nom]) fournisseurs[f.nom]={count:0,total:0};
+    fournisseurs[f.nom].count++;
+    fournisseurs[f.nom].total += +f.montant_total||0;
+  });
+  const topFourn = Object.entries(fournisseurs).sort((a,b)=>b[1].total-a[1].total).slice(0,5);
+
+  // Period filter state
+  const period = window._facPeriod || m;
+
   document.getElementById('fac-content').innerHTML = `
-    <div class="sh"><div><div class="stl">Factures</div><div class="sst">Suivi factures fournisseurs & clients</div></div></div>
+    <div class="sh">
+      <div><div class="stl">Factures</div><div class="sst">Bilan interne Sarpa</div></div>
+      <div style="display:flex;gap:6px">
+        <button class="btn bg2" onclick="exportFacturesPDF()" style="font-size:11px">📄 Export PDF Bilan</button>
+        <button class="btn bm" onclick="openM('m-facture')" style="font-size:11px">+ Facture</button>
+      </div>
+    </div>
+
+    <!-- KPIs -->
     <div class="kg" style="grid-template-columns:repeat(4,1fr);margin-bottom:14px">
       <div class="kc kc-b"><div class="kl">Total factures</div><div class="kv">${(facs||[]).length}</div><div class="ks">enregistrées</div></div>
-      <div class="kc kc-g"><div class="kl">Payées</div><div class="kv">${payees.length}</div><div class="ks">factures</div></div>
-      <div class="kc kc-r"><div class="kl">En retard</div><div class="kv">${enRetard.length}</div><div class="ks">factures</div></div>
-      <div class="kc kc-m"><div class="kl">Montant total</div><div class="kv">${fmt(Math.round(totalTTC/1000))}k</div><div class="ks">FCFA</div></div>
+      <div class="kc kc-g"><div class="kl">Recettes</div><div class="kv">${fmt(Math.round(recettes/1000))}k</div><div class="ks">FCFA entrées</div></div>
+      <div class="kc kc-r"><div class="kl">Dépenses</div><div class="kv">${fmt(Math.round(depenses/1000))}k</div><div class="ks">FCFA sorties</div></div>
+      <div class="kc ${recettes-depenses>=0?'kc-g':'kc-r'}"><div class="kl">Solde</div><div class="kv">${recettes-depenses>=0?'+':''}${fmt(Math.round((recettes-depenses)/1000))}k</div><div class="ks">FCFA net</div></div>
     </div>
+
     ${enRetard.length>0?`<div class="al al-r">🔴 ${enRetard.length} facture(s) en retard de paiement !</div>`:''}
+
+    <!-- FILTERS -->
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center">
+      <span style="font-size:11px;color:var(--tx3)">Période :</span>
+      <input type="month" value="${period}" onchange="window._facPeriod=this.value;renderFactures()" style="background:var(--sf2);border:1px solid var(--bd2);border-radius:6px;padding:4px 8px;color:var(--tx);font-size:11px">
+      <button onclick="window._facPeriod=null;renderFactures()" class="btn bg2" style="font-size:11px">Tout voir</button>
+      <select onchange="window._facSens=this.value;renderFactures()" style="background:var(--sf2);border:1px solid var(--bd2);border-radius:6px;padding:4px 8px;color:var(--tx);font-size:11px">
+        <option value="">Toutes</option>
+        <option value="recette" ${window._facSens==='recette'?'selected':''}>💰 Recettes</option>
+        <option value="depense" ${window._facSens==='depense'?'selected':''}>💸 Dépenses</option>
+      </select>
+    </div>
+
+    <div class="g2" style="margin-bottom:14px">
+      <!-- STATS PAR CATEGORIE -->
+      <div class="card">
+        <div class="ch"><div class="ct">📊 Par catégorie</div></div>
+        ${Object.entries(cats).length===0?'<div style="color:var(--tx3);text-align:center;padding:12px">Aucune donnée</div>':
+          Object.entries(cats).sort((a,b)=>b[1].total-a[1].total).map(([cat,s])=>{
+            const maxT = Math.max(...Object.values(cats).map(x=>x.total),1);
+            const pct = Math.round(s.total/maxT*100);
+            return `<div style="margin-bottom:10px">
+              <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+                <span style="font-size:11px;color:var(--tx)">${cat}</span>
+                <span style="font-size:11px;color:var(--must2);font-weight:700">${fmt(Math.round(s.total))} FCFA</span>
+              </div>
+              <div class="pb"><div class="pf" style="width:${pct}%;background:var(--must)"></div></div>
+              <div style="font-size:9px;color:var(--tx3)">${s.count} facture(s)</div>
+            </div>`;
+          }).join('')}
+      </div>
+
+      <!-- TOP FOURNISSEURS -->
+      <div class="card">
+        <div class="ch"><div class="ct">🏆 Top fournisseurs / clients</div></div>
+        ${topFourn.length===0?'<div style="color:var(--tx3);text-align:center;padding:12px">Aucune donnée</div>':
+          topFourn.map(([nom,s],i)=>`
+            <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--sf3)">
+              <span style="font-size:16px;font-weight:800;color:var(--must2);min-width:20px">${i+1}</span>
+              <div style="flex:1">
+                <div style="font-size:12px;font-weight:700;color:var(--tx)">${nom}</div>
+                <div style="font-size:10px;color:var(--tx3)">${s.count} facture(s)</div>
+              </div>
+              <span style="font-size:12px;color:var(--must2);font-weight:700">${fmt(Math.round(s.total))} FCFA</span>
+            </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- TABLE -->
     <div class="card">
       <div class="ch"><div class="ct">🧾 Toutes les factures</div></div>
       <div class="tw"><table><thead><tr>
-        <th>N° Facture</th><th>Type</th><th>Nom</th><th>Date</th><th>Échéance</th>
-        <th>Montant TTC</th><th>Mode paiement</th><th>Source</th><th>Statut</th>
-        ${canF?'<th></th>':''}
+        <th>N° Facture</th><th>Type</th><th>Sens</th><th>Dept</th><th>Nom</th>
+        <th>Date</th><th>Échéance</th><th>Montant TTC</th><th>Mode</th><th>Statut</th>
+        <th></th>
       </tr></thead>
-      <tbody>${(facs||[]).length===0
-        ? '<tr><td colspan="10" style="text-align:center;color:var(--tx3)">Aucune facture enregistrée</td></tr>'
-        : (facs||[]).map(f=>{
-            const isRetard = f.statut!=='Payée'&&f.date_echeance&&f.date_echeance<today;
-            return `<tr>
-              <td class="mono"><strong style="color:var(--must2)">${f.numero_facture||'—'}</strong></td>
-              <td><span class="b bg-p" style="font-size:10px">${f.type_facture||'—'}</span></td>
-              <td>${f.nom||'—'}</td>
-              <td class="mono">${f.date_facture||'—'}</td>
-              <td class="mono" style="color:${isRetard?'var(--rd2)':'inherit'}">${f.date_echeance||'—'}${isRetard?' ⚠️':''}</td>
-              <td><strong>${fmt(f.montant_total||0)} FCFA</strong></td>
-              <td style="font-size:11px">${f.mode_paiement||'—'}</td>
-              <td style="font-size:10px;color:var(--tx3)">${f.source_table==='commandes'?'📋 Commande':'🚚 Livraison'}</td>
-              <td><span class="b ${f.statut==='Payée'?'bg-g':f.statut==='En retard'?'bg-r':f.statut==='Annulée'?'bg-x':'bg-o'}">${f.statut||'—'}</span></td>
-              ${canF?`<td><button onclick="editRow('factures','${f.id}','factures')" style="background:none;border:none;cursor:pointer;font-size:13px">✏️</button></td>`:''}
-            </tr>`;
-          }).join('')}
+      <tbody>${(()=>{
+        let filtered = facs||[];
+        if (window._facPeriod) filtered = filtered.filter(f=>f.date_facture?.startsWith(window._facPeriod));
+        if (window._facSens) filtered = filtered.filter(f=>f.sens===window._facSens||(window._facSens==='depense'&&!f.sens));
+        if (filtered.length===0) return '<tr><td colspan="11" style="text-align:center;color:var(--tx3)">Aucune facture</td></tr>';
+        return filtered.map(f=>{
+          const isRetard = f.statut!=='Payée'&&f.date_echeance&&f.date_echeance<today;
+          return `<tr>
+            <td class="mono"><strong style="color:var(--must2)">${f.numero_facture||'—'}</strong></td>
+            <td style="font-size:10px">${f.type_facture||'—'}</td>
+            <td><span class="b ${f.sens==='recette'?'bg-g':'bg-r'}" style="font-size:9px">${f.sens==='recette'?'💰 Recette':'💸 Dépense'}</span></td>
+            <td style="font-size:10px;color:var(--tx3)">${f.departement||'—'}</td>
+            <td>${f.nom||'—'}</td>
+            <td class="mono">${f.date_facture||'—'}</td>
+            <td class="mono" style="color:${isRetard?'var(--rd2)':'inherit'}">${f.date_echeance||'—'}${isRetard?' ⚠️':''}</td>
+            <td><strong>${fmt(f.montant_total||0)} FCFA</strong></td>
+            <td style="font-size:10px">${f.mode_paiement||'—'}</td>
+            <td><span class="b ${f.statut==='Payée'?'bg-g':f.statut==='En retard'?'bg-r':f.statut==='Annulée'?'bg-x':'bg-o'}">${f.statut||'—'}</span></td>
+            <td><button onclick="editRow('factures','${f.id}','factures')" style="background:none;border:none;cursor:pointer;font-size:13px">✏️</button></td>
+          </tr>`;
+        }).join('');
+      })()}
       </tbody></table></div>
     </div>`;
+}
+
+async function exportFacturesPDF() {
+  const facs = await db('factures');
+  const period = window._facPeriod || new Date().toISOString().slice(0,7);
+  const filtered = window._facPeriod ? facs.filter(f=>f.date_facture?.startsWith(period)) : facs;
+  const recettes = filtered.filter(f=>f.sens==='recette').reduce((a,b)=>a+(+b.montant_total||0),0);
+  const depenses = filtered.filter(f=>f.sens==='depense'||!f.sens).reduce((a,b)=>a+(+b.montant_total||0),0);
+  const solde = recettes - depenses;
+
+  // Stats par cat
+  const cats = {};
+  filtered.forEach(f=>{
+    const cat = f.type_facture||'Autre';
+    if (!cats[cat]) cats[cat]={recette:0,depense:0};
+    if (f.sens==='recette') cats[cat].recette += +f.montant_total||0;
+    else cats[cat].depense += +f.montant_total||0;
+  });
+
+  const win = window.open('','_blank');
+  if (!win) { toast('Autorisez les popups'); return; }
+  const cfg = getConfig();
+  const company = cfg.companyName||'Sarpa Group';
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Bilan Factures ${period}</title>
+  <style>body{font-family:Arial;margin:40px;color:#1a1a2e;font-size:12px}
+  h1{color:#1E1035;border-bottom:3px solid #D4A017;padding-bottom:8px}
+  h2{color:#1E1035;margin-top:20px;font-size:14px}
+  table{width:100%;border-collapse:collapse;margin-top:8px}
+  th{background:#1E1035;color:#fff;padding:7px;font-size:10px;text-align:left}
+  td{padding:5px 7px;border-bottom:1px solid #eee;font-size:10px}
+  tr:nth-child(even){background:#f9f9f9}
+  .kpi{display:inline-block;background:#f4f0ff;border-radius:6px;padding:10px 16px;margin:4px;text-align:center;min-width:110px}
+  .kv{font-size:18px;font-weight:800;color:#1E1035}.kl{font-size:9px;color:#666}
+  .green{color:#2e7d32;font-weight:800}.red{color:#c62828;font-weight:800}
+  @media print{button{display:none}}</style></head>
+  <body>
+  <div style="display:flex;justify-content:space-between;margin-bottom:20px">
+    <div><div style="font-size:22px;font-weight:800;color:#1E1035">${company}</div><div style="color:#666;font-size:10px">Bilan interne des factures</div></div>
+    <div style="text-align:right"><div style="font-weight:700">Période : ${period}</div><div style="color:#666;font-size:10px">Généré par : ${userName} — ${new Date().toLocaleDateString('fr-FR')}</div></div>
+  </div>
+  <button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button>
+  <button onclick="window.print()" style="background:#1E1035;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-bottom:20px">🖨️ Imprimer / PDF</button>
+  <h1>🧾 Bilan Factures — ${period}</h1>
+  <div>
+    <div class="kpi"><div class="kv">${filtered.length}</div><div class="kl">Factures</div></div>
+    <div class="kpi"><div class="kv green">+${fmt(Math.round(recettes))}</div><div class="kl">Recettes FCFA</div></div>
+    <div class="kpi"><div class="kv red">-${fmt(Math.round(depenses))}</div><div class="kl">Dépenses FCFA</div></div>
+    <div class="kpi"><div class="kv ${solde>=0?'green':'red'}">${solde>=0?'+':''}${fmt(Math.round(solde))}</div><div class="kl">Solde FCFA</div></div>
+  </div>
+  <h2>📊 Répartition par catégorie</h2>
+  <table><thead><tr><th>Catégorie</th><th>Recettes</th><th>Dépenses</th><th>Net</th></tr></thead>
+  <tbody>${Object.entries(cats).map(([cat,v])=>`<tr>
+    <td>${cat}</td>
+    <td class="green">${fmt(Math.round(v.recette))} FCFA</td>
+    <td class="red">${fmt(Math.round(v.depense))} FCFA</td>
+    <td class="${v.recette-v.depense>=0?'green':'red'}">${v.recette-v.depense>=0?'+':''}${fmt(Math.round(v.recette-v.depense))} FCFA</td>
+  </tr>`).join('')}</tbody></table>
+  <h2>🧾 Détail des factures</h2>
+  <table><thead><tr><th>N°</th><th>Type</th><th>Sens</th><th>Nom</th><th>Date</th><th>Échéance</th><th>Montant</th><th>Mode</th><th>Statut</th></tr></thead>
+  <tbody>${filtered.map(f=>`<tr>
+    <td><strong>${f.numero_facture||'—'}</strong></td>
+    <td>${f.type_facture||'—'}</td>
+    <td>${f.sens==='recette'?'Recette':'Dépense'}</td>
+    <td>${f.nom||'—'}</td>
+    <td>${f.date_facture||'—'}</td>
+    <td>${f.date_echeance||'—'}</td>
+    <td><strong>${fmt(f.montant_total||0)} FCFA</strong></td>
+    <td>${f.mode_paiement||'—'}</td>
+    <td>${f.statut||'—'}</td>
+  </tr>`).join('')}</tbody></table>
+  <div style="margin-top:30px;padding:15px;background:#f4f0ff;border-radius:8px;text-align:center">
+    <div style="font-size:10px;color:#666;margin-bottom:4px">Ce bilan est généré depuis l'application Sarpa Ops</div>
+    <div style="font-size:10px;color:#666">À comparer avec le bilan officiel de la comptabilité</div>
+  </div>
+  </body></html>`);
+  win.document.close();
+  logAction('export','factures',{periode:period});
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -4467,7 +4684,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
+
+
+
 </script>
+
+
+
 
 
 
