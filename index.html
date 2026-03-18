@@ -1098,6 +1098,7 @@ textarea{resize:vertical;min-height:70px}
 
 
 
+
 const ROLE_CODES = {
   'DG4X9K2M': { role:'dg',                    name:'Directeur Général'              },
   'OP7R3N8W': { role:'directeur',              name:'Directeur Opérations'           },
@@ -1187,13 +1188,13 @@ async function initGoogleSheets() {
 }
 
 // ═══ ROLES ═══
-const ALL = ['dashboard','production','stocks','quality','fleet','tours','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','rh','formation','planning','carburant','checklist','messages','annuaire','conges','partenariats','objectifs','graphiques','journal','livraisons'];
+const ALL = ['dashboard','production','stocks','quality','fleet','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','rh','formation','planning','carburant','checklist','messages','annuaire','conges','partenariats','objectifs','graphiques','journal','livraisons'];
 const ROLES = {
   dg:                   { label:'Directeur Général',              badge:'rb-director', pages:ALL },
   directeur:            { label:'Dir. Opérations & Logistique',   badge:'rb-director', pages:ALL },
-  coordinatrice:        { label:'Coordinatrice Holding',          badge:'rb-coord',    pages:['dashboard','production','stocks','tours','fournisseurs','projets','partenaires','accidents','planning','messages','annuaire','livraisons'] },
+  coordinatrice:        { label:'Coordinatrice Holding',          badge:'rb-coord',    pages:['dashboard','production','stocks','fournisseurs','projets','partenaires','accidents','planning','messages','annuaire','livraisons'] },
   responsable_centrale: { label:'Resp. Centrale à Béton',         badge:'rb-resp',     pages:['dashboard','production','stocks','quality','accidents','planning','messages','annuaire'] },
-  responsable_flotte:   { label:'Resp. Flotte Camions',           badge:'rb-resp',     pages:['dashboard','fleet','tours','maintenance','accidents','planning','carburant','checklist','messages','annuaire','livraisons'] },
+  responsable_flotte:   { label:'Resp. Flotte Camions',           badge:'rb-resp',     pages:['dashboard','fleet','maintenance','accidents','planning','carburant','checklist','messages','annuaire','livraisons'] },
   comptabilite:         { label:'Comptabilité',                   badge:'rb-resp',     pages:['dashboard','finances','fournisseurs','rapports','messages','annuaire','objectifs'] },
   rh:                   { label:'Ressources Humaines',            badge:'rb-coord',    pages:['dashboard','rh','formation','accidents','conges','messages','annuaire'] },
   commercial:           { label:'Commercial',                     badge:'rb-coord',    pages:['dashboard','projets','fournisseurs','partenaires','partenariats','messages','annuaire'] },
@@ -1215,41 +1216,38 @@ const NAV = [
   { id:'dashboard',   ic:'◈', lb:'Tableau de bord' },
   { s:'Centrale à Béton' },
   { id:'production',  ic:'🏗', lb:'Production' },
-  { id:'stocks',      ic:'📦', lb:'Stocks & Appro',     bg:'nb-s' },
+  { id:'stocks',      ic:'📦', lb:'Stocks & Appro',      bg:'nb-s' },
   { id:'quality',     ic:'✦', lb:'Qualité' },
-  { s:'Flotte Camions' },
-  { id:'fleet',       ic:'🚛', lb:'Flotte',              bg:'nb-f' },
-  { id:'tours',       ic:'◎', lb:'Tournées' },
+  { s:'Flotte & Terrain' },
+  { id:'fleet',       ic:'🚛', lb:'Flotte',               bg:'nb-f' },
   { id:'maintenance', ic:'⚙', lb:'Maintenance' },
+  { s:'Planning & Terrain' },
+  { id:'livraisons',  ic:'🚚', lb:'Livraisons',           bg:'nb-liv' },
+  { id:'planning',    ic:'📅', lb:'Planning opérationnel', bg:'nb-plan' },
+  { id:'carburant',   ic:'⛽', lb:'Suivi carburant' },
+  { id:'checklist',   ic:'🔧', lb:'Checklist préventive' },
   { s:'Opérations' },
   { id:'accidents',   ic:'🚨', lb:'Accidents & Sécurité', bg:'nb-acc' },
   { id:'fournisseurs',ic:'🏭', lb:'Fournisseurs' },
   { id:'projets',     ic:'📋', lb:'Projets & Chantiers' },
   { id:'partenaires', ic:'🤝', lb:'Partenaires' },
-  { s:'RH & Administratif' },
-  { id:'rh',          ic:'👤', lb:'Employés' },
-  { id:'formation',   ic:'🎓', lb:'Formations' },
-  { s:'🔒 Direction uniquement' },
-  { id:'finances',    ic:'💰', lb:'Finances & Budget',   dir:true },
-  { id:'evaluations', ic:'📊', lb:'Évaluations',          dir:true },
-  { id:'rapports',    ic:'▣', lb:'Rapports consolidés',  dir:true },
-  { id:'parametres',  ic:'⚙', lb:'Paramètres app.',      dir:true },
-  { id:'users',       ic:'👥', lb:'Utilisateurs',         dir:true },
-  { s:'Planning & Terrain' },
-  { id:'livraisons',  ic:'🚚', lb:'Livraisons',            bg:'nb-liv' },
-  { id:'planning',    ic:'📅', lb:'Planning opérationnel', bg:'nb-plan' },
-  { id:'carburant',   ic:'⛽', lb:'Suivi carburant' },
-  { id:'checklist',   ic:'🔧', lb:'Checklist préventive' },
   { s:'Équipe & Communication' },
-  { id:'messages',    ic:'💬', lb:'Messages',               bg:'nb-msg' },
+  { id:'messages',    ic:'💬', lb:'Messages',              bg:'nb-msg' },
   { id:'annuaire',    ic:'📒', lb:'Annuaire interne' },
   { id:'conges',      ic:'🗓', lb:'Congés & Absences' },
+  { id:'rh',          ic:'👤', lb:'Employés' },
+  { id:'formation',   ic:'🎓', lb:'Formations' },
   { s:'Partenariats & Objectifs' },
   { id:'partenariats',ic:'🤝', lb:'Partenariats' },
   { id:'objectifs',   ic:'📊', lb:'Objectifs mensuels' },
-  { s:'🔒 Direction — Analyses' },
+  { s:'🔒 Direction uniquement' },
+  { id:'finances',    ic:'💰', lb:'Finances & Budget',    dir:true },
+  { id:'evaluations', ic:'📊', lb:'Évaluations',           dir:true },
+  { id:'rapports',    ic:'▣', lb:'Rapports consolidés',   dir:true },
   { id:'graphiques',  ic:'📈', lb:'Graphiques & Analyses', dir:true },
   { id:'journal',     ic:'🔍', lb:'Journal modifications',  dir:true },
+  { id:'parametres',  ic:'⚙', lb:'Paramètres app.',        dir:true },
+  { id:'users',       ic:'👥', lb:'Utilisateurs',           dir:true },
 ];
 
 // ═══ AUTH ═══
@@ -1459,7 +1457,7 @@ async function savFleet() {
 }
 
 async function savTour() {
-  await db('tours','POST',{
+  await db('POST',{
     date: document.getElementById('it-d').value,
     truck_id: document.getElementById('it-t').value,
     chauffeur: document.getElementById('it-ch').value||'—',
@@ -1471,7 +1469,7 @@ async function savTour() {
     ponctuel: document.getElementById('it-p').value==='1',
     created_by: userName
   });
-  closeM('mt'); logAction('insert','tours',{truck:document.getElementById('it-t').value}); toast('Tournée enregistrée ✓'); render('tours'); render('dashboard');
+  closeM('mt'); logAction('insert',{truck:document.getElementById('it-t').value}); toast('Tournée enregistrée ✓'); render('tours'); render('dashboard');
 }
 
 async function savMaint() {
@@ -3234,7 +3232,7 @@ async function autoBackup() {
   if (last && Date.now()-parseInt(last) < 86400000) return;
   try {
     const backup={};
-    for (const t of ['trucks','productions','tours','stocks','accidents']) backup[t]=await _dbOrig(t,'GET');
+    for (const t of ['trucks','productions','stocks','accidents']) backup[t]=await _dbOrig(t,'GET');
     const key = 'sarpa_bk_'+new Date().toISOString().slice(0,10);
     localStorage.setItem(key, JSON.stringify(backup));
     localStorage.setItem('sarpa_last_bk', String(Date.now()));
@@ -4156,7 +4154,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
+
 </script>
+
 
 
 
