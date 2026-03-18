@@ -321,6 +321,7 @@ textarea{resize:vertical;min-height:70px}
 
   <!-- DASHBOARD -->
   <div class="pg active" id="pg-dashboard">
+    <div id="pending-val-alert"></div>
     <div id="dash-al" style="margin-bottom:14px"></div>
     <div class="kg" id="dash-kpis">
       <div class="kc kc-g"><div class="kl">Production aujourd'hui</div><div class="kv" id="d-p">—</div><div class="ks">m³ produits</div><div class="kt" id="d-pt">—</div></div>
@@ -1099,6 +1100,7 @@ textarea{resize:vertical;min-height:70px}
 
 
 
+
 const ROLE_CODES = {
   'DG4X9K2M': { role:'dg',                    name:'Directeur Général'              },
   'OP7R3N8W': { role:'directeur',              name:'Directeur Opérations'           },
@@ -1286,6 +1288,7 @@ function startApp(role, name) {
   applyAppearance();
   go('dashboard');
   startNotifPolling();
+  setTimeout(checkPendingValidations, 4000);
   updateBadges();
   setTimeout(autoBackup, 5000);
   setTimeout(async () => {
@@ -1319,14 +1322,14 @@ function buildNav() {
 function buildQuickGrid() {
   const allowed = ROLES[userRole]?.pages || [];
   const items = [
-    {m:'mp',  ic:'🏗', lb:'Production', pg:'production'},
-    {m:'mf',  ic:'🚛', lb:'Camion',     pg:'fleet'},
-    {m:'mt',  ic:'◎', lb:'Tournée',    pg:'tours'},
-    {m:'mm',  ic:'⚙', lb:'Maintenance',pg:'maintenance'},
-    {m:'ms',  ic:'📦', lb:'Stock',      pg:'stocks'},
-    {m:'mq2', ic:'✦', lb:'Qualité',    pg:'quality'},
-    {m:'mc',  ic:'📋', lb:'Commande',   pg:'stocks'},
-    {m:'m-acc',ic:'🚨',lb:'Incident',   pg:'accidents'},
+    {m:'mp',   ic:'🏗', lb:'Production',  pg:'production'},
+    {m:'mf',   ic:'🚛', lb:'Camion',      pg:'fleet'},
+    {m:'mm',   ic:'⚙', lb:'Maintenance', pg:'maintenance'},
+    {m:'ms',   ic:'📦', lb:'Stock',       pg:'stocks'},
+    {m:'mq2',  ic:'✦', lb:'Qualité',     pg:'quality'},
+    {m:'mc',   ic:'📋', lb:'Commande',    pg:'stocks'},
+    {m:'m-liv',ic:'🚚', lb:'Livraison',   pg:'livraisons'},
+    {m:'m-acc',ic:'🚨', lb:'Incident',    pg:'accidents'},
   ].filter(i => allowed.includes(i.pg));
   document.getElementById('quick-grid').innerHTML = items.map(i =>
     `<button class="btn bg2" style="justify-content:center;padding:14px;flex-direction:column;gap:4px;font-size:12px" onclick="sw('mq','${i.m}')">${i.ic}<br>${i.lb}</button>`
@@ -2528,6 +2531,8 @@ async function renderUsers() {
         <tr><td>RH</td><td class="mono">RH1K7N3E</td><td><span class="b bg-p">Employés, formations</span></td></tr>
         <tr><td>Commercial</td><td class="mono">CM4W9T2F</td><td><span class="b bg-p">Projets, partenaires</span></td></tr>
         <tr><td>Immobilier</td><td class="mono">IM8S5G1Y</td><td><span class="b bg-p">Projets, partenaires</span></td></tr>
+        <tr><td>Invité 1</td><td class="mono">GS1X4B7N</td><td><span class="b bg-x">Lecture seule</span></td></tr>
+        <tr><td>Invité 2</td><td class="mono">GS2M9K3P</td><td><span class="b bg-x">Lecture seule</span></td></tr>
       </tbody></table></div>
     </div>`;
 }
@@ -3889,7 +3894,9 @@ async function renderLivraisons() {
         <th>Date</th><th>Type</th><th>Produit</th><th>De</th><th>Vers</th>
         <th>Camion</th><th>Chauffeur</th><th>Qté</th>
         <th>Départ prévu</th><th>Départ réel</th><th>Retour réel</th>
-        <th>Km</th><th>Ponctualité</th><th>Client</th><th>Statut</th>
+        <th>Km</th><th>Ponctualité</th><th>Client</th>
+        <th>✅ Centrale</th><th>✅ Flotte</th>
+        <th>Statut</th>
         ${canE?'<th></th>':''}
       </tr></thead>
       <tbody id="t-liv"></tbody></table></div>
@@ -3942,6 +3949,8 @@ function renderLivraisonsTable(livs, filter) {
           <td>${l.km_reel?fmt(l.km_reel)+' km':l.km_estime?fmt(l.km_estime)+' km*':'—'}</td>
           <td>${l.statut==='Terminée'?`<span style="color:${ponctColor};font-weight:700">${ponct}%</span>`:'—'}</td>
           <td style="font-size:11px">${l.client||'—'}</td>
+          <td>${renderValidationCell(l, 'centrale')}</td>
+          <td>${renderValidationCell(l, 'flotte')}</td>
           <td><span class="b ${stColors[l.statut]||'bg-x'}">${stIcons[l.statut]||''} ${l.statut||'—'}</span></td>
           ${canE?`<td style="display:flex;gap:4px">
             <button onclick="editRow('livraisons','${l.id}','livraisons')" style="background:none;border:none;cursor:pointer;font-size:13px" title="Modifier">✏️</button>
@@ -4131,6 +4140,65 @@ async function exportLivraisonsPDF() {
   win.document.close();
 }
 
+
+// ═══ VALIDATION LIVRAISONS ═══
+function renderValidationCell(l, dept) {
+  const valField = dept === 'centrale' ? 'valide_centrale' : 'valide_flotte';
+  const valByField = dept === 'centrale' ? 'valide_centrale_par' : 'valide_flotte_par';
+  const valAtField = dept === 'centrale' ? 'valide_centrale_at' : 'valide_flotte_at';
+  const canVal = (dept === 'centrale' && (userRole === 'responsable_centrale' || userRole === 'directeur' || userRole === 'dg')) ||
+                 (dept === 'flotte' && (userRole === 'responsable_flotte' || userRole === 'directeur' || userRole === 'dg'));
+
+  if (l[valField] === '1' || l[valField] === 1 || l[valField] === true) {
+    return `<span title="Validé par ${l[valByField]||'—'} le ${l[valAtField]?.slice(0,10)||'—'}" style="color:var(--gn2);font-size:16px;cursor:default">✅</span>`;
+  }
+  if (canVal) {
+    return `<button onclick="validerLivraison('${l.id}','${dept}')" style="background:var(--sf2);border:1px solid var(--must2);border-radius:6px;padding:3px 8px;cursor:pointer;font-size:10px;color:var(--must2);font-weight:600">Valider</button>`;
+  }
+  return `<span style="color:var(--tx3);font-size:11px">⏳</span>`;
+}
+
+async function validerLivraison(id, dept) {
+  const valField = dept === 'centrale' ? 'valide_centrale' : 'valide_flotte';
+  const valByField = dept === 'centrale' ? 'valide_centrale_par' : 'valide_flotte_par';
+  const valAtField = dept === 'centrale' ? 'valide_centrale_at' : 'valide_flotte_at';
+  const deptLabel = dept === 'centrale' ? 'Centrale à Béton' : 'Flotte Camions';
+
+  await db('livraisons', 'PATCH', {
+    [valField]: 1,
+    [valByField]: userName,
+    [valAtField]: new Date().toISOString(),
+  }, {id});
+
+  logAction('update', 'livraisons', {id, action: `Validé par ${deptLabel} — ${userName}`});
+  toast(`✅ Livraison validée par ${deptLabel}`);
+  render('livraisons');
+}
+
+// Check pending validations for badge
+async function checkPendingValidations() {
+  try {
+    const livs = await db('livraisons');
+    const pending = (livs||[]).filter(l => {
+      if (l.statut === 'Annulée' || l.statut === 'Terminée') return false;
+      if (userRole === 'responsable_centrale') return !l.valide_centrale || l.valide_centrale === '0';
+      if (userRole === 'responsable_flotte') return !l.valide_flotte || l.valide_flotte === '0';
+      if (userRole === 'directeur' || userRole === 'dg') {
+        return (!l.valide_centrale || l.valide_centrale === '0') ||
+               (!l.valide_flotte || l.valide_flotte === '0');
+      }
+      return false;
+    });
+    if (pending.length > 0) {
+      _unreadCount += pending.length;
+      updateNotifBadge();
+      // Show alert in dashboard
+      const el = document.getElementById('pending-val-alert');
+      if (el) el.innerHTML = `<div class="al al-m">⚠️ ${pending.length} livraison(s) en attente de votre validation — <a href="#" onclick="go('livraisons')" style="color:var(--must2);font-weight:700">Voir</a></div>`;
+    }
+  } catch(e) {}
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('login-btn').addEventListener('click', doLogin);
   document.getElementById('l-code').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
@@ -4155,7 +4223,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
+
 </script>
+
 
 
 
