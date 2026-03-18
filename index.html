@@ -641,6 +641,12 @@ textarea{resize:vertical;min-height:70px}
   <div id="liv-content"></div>
 </div>
 
+
+<!-- ═══ FACTURES ═══ -->
+<div class="pg" id="pg-factures">
+  <div id="fac-content"></div>
+</div>
+
 </div><!-- /mn -->
 </div><!-- /app -->
 
@@ -1087,7 +1093,61 @@ textarea{resize:vertical;min-height:70px}
   <div class="fg"><label>Notes</label><textarea id="liv-notes" rows="2"></textarea></div>
   <div class="mf"><button class="btn bg2" onclick="closeM('m-liv')">Annuler</button><button class="btn bm" onclick="savLivraison()">Enregistrer</button></div>
 </div></div>
+
+<!-- MODAL FACTURE -->
+<div class="mo" id="m-facture"><div class="md" style="max-width:620px">
+  <div class="mh"><div class="mt">🧾 Saisir une facture</div><button class="mc" onclick="closeM('m-facture')">✕</button></div>
+  <input type="hidden" id="fac-source">
+  <input type="hidden" id="fac-source-id">
+  <div class="fr">
+    <div class="fg"><label>N° Facture</label><input type="text" id="fac-numero" placeholder="Ex: FAC-2026-001"></div>
+    <div class="fg"><label>Type</label><select id="fac-type">
+      <option>Facture fournisseur</option><option>Facture client</option>
+      <option>Avoir</option><option>Proforma</option>
+    </select></div>
+  </div>
+  <div class="fr">
+    <div class="fg"><label>Nom fournisseur / client</label><input type="text" id="fac-nom"></div>
+    <div class="fg"><label>Date facture</label><input type="date" id="fac-date"></div>
+    <div class="fg"><label>Date échéance</label><input type="date" id="fac-echeance"></div>
+  </div>
+
+  <!-- LIGNES ARTICLES -->
+  <div style="margin:12px 0 6px;font-weight:700;font-size:12px;color:var(--tx2)">📦 Articles / Produits</div>
+  <div id="fac-lignes">
+    <div class="fac-ligne fr" style="gap:6px;align-items:flex-end;margin-bottom:8px">
+      <div class="fg" style="flex:3"><label>Article / Produit</label><input type="text" id="fac-ligne-1-desc" placeholder="Description..."></div>
+      <div class="fg" style="flex:1"><label>Qté</label><input type="number" id="fac-ligne-1-qty" value="1" oninput="updateFactureTotal()"></div>
+      <div class="fg" style="flex:2"><label>Prix unitaire (FCFA)</label><input type="number" id="fac-ligne-1-pu" value="0" oninput="updateFactureTotal()"></div>
+      <div class="fg" style="flex:2"><label>Total</label><input type="text" id="fac-ligne-1-tot" readonly style="background:var(--sf2);color:var(--must2);font-weight:700"></div>
+    </div>
+  </div>
+  <button onclick="addFactureLigne()" class="btn bg2" style="font-size:11px;margin-bottom:12px">+ Ajouter une ligne</button>
+
+  <!-- TOTAUX -->
+  <div class="fr">
+    <div class="fg"><label>Remise (%)</label><input type="number" id="fac-remise" value="0" min="0" max="100" oninput="updateFactureTotal()"></div>
+    <div class="fg"><label>TVA (%)</label><input type="number" id="fac-tva" value="0" min="0" oninput="updateFactureTotal()"></div>
+    <div class="fg"><label>Montant total (FCFA)</label><input type="number" id="fac-montant" readonly style="background:var(--sf2);color:var(--must2);font-weight:800;font-size:14px"></div>
+  </div>
+  <div id="fac-total-display" style="background:var(--sf2);border-radius:8px;padding:12px;margin-bottom:12px;font-size:12px;display:flex;flex-direction:column;gap:4px"></div>
+
+  <div class="fr">
+    <div class="fg"><label>Mode de paiement</label><select id="fac-mode">
+      <option value="">— Non défini —</option>
+      <option>📱 Wave</option><option>📱 Orange Money</option><option>📱 Free Money</option>
+      <option>🏦 Transfert bancaire</option><option>📝 Chèque</option>
+      <option>💵 Espèces</option><option>⏳ À crédit</option>
+    </select></div>
+    <div class="fg"><label>Statut</label><select id="fac-statut">
+      <option>En attente</option><option>Payée</option><option>En retard</option><option>Annulée</option>
+    </select></div>
+  </div>
+  <div class="fg"><label>Notes</label><textarea id="fac-notes" rows="2" placeholder="Observations, conditions de paiement..."></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-facture')">Annuler</button><button class="btn bm" onclick="savFacture()">Enregistrer</button></div>
+</div></div>
 <script>
+
 
 
 
@@ -1190,14 +1250,14 @@ async function initGoogleSheets() {
 }
 
 // ═══ ROLES ═══
-const ALL = ['dashboard','production','stocks','quality','fleet','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','rh','formation','planning','carburant','checklist','messages','annuaire','conges','partenariats','objectifs','graphiques','journal','livraisons'];
+const ALL = ['dashboard','production','stocks','quality','fleet','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','rh','formation','planning','carburant','checklist','messages','annuaire','conges','partenariats','objectifs','graphiques','journal','livraisons','factures'];
 const ROLES = {
   dg:                   { label:'Directeur Général',              badge:'rb-director', pages:ALL },
   directeur:            { label:'Dir. Opérations & Logistique',   badge:'rb-director', pages:ALL },
   coordinatrice:        { label:'Coordinatrice Holding',          badge:'rb-coord',    pages:['dashboard','production','stocks','fournisseurs','projets','partenaires','accidents','planning','messages','annuaire','livraisons'] },
   responsable_centrale: { label:'Resp. Centrale à Béton',         badge:'rb-resp',     pages:['dashboard','production','stocks','quality','accidents','planning','messages','annuaire'] },
   responsable_flotte:   { label:'Resp. Flotte Camions',           badge:'rb-resp',     pages:['dashboard','fleet','maintenance','accidents','planning','carburant','checklist','messages','annuaire','livraisons'] },
-  comptabilite:         { label:'Comptabilité',                   badge:'rb-resp',     pages:['dashboard','finances','fournisseurs','rapports','messages','annuaire','objectifs'] },
+  comptabilite:         { label:'Comptabilité',                   badge:'rb-resp',     pages:['dashboard','finances','fournisseurs','rapports','messages','annuaire','objectifs','factures','livraisons','stocks'] },
   rh:                   { label:'Ressources Humaines',            badge:'rb-coord',    pages:['dashboard','rh','formation','accidents','conges','messages','annuaire'] },
   commercial:           { label:'Commercial',                     badge:'rb-coord',    pages:['dashboard','projets','fournisseurs','partenaires','partenariats','messages','annuaire'] },
   immobilier:           { label:'Agence Immobilière',             badge:'rb-coord',    pages:['dashboard','projets','partenaires','partenariats','messages','annuaire'] },
@@ -1244,6 +1304,7 @@ const NAV = [
   { id:'objectifs',   ic:'📊', lb:'Objectifs mensuels' },
   { s:'🔒 Direction uniquement' },
   { id:'finances',    ic:'💰', lb:'Finances & Budget',    dir:true },
+  { id:'factures',    ic:'🧾', lb:'Factures',               dir:false },
   { id:'evaluations', ic:'📊', lb:'Évaluations',           dir:true },
   { id:'rapports',    ic:'▣', lb:'Rapports consolidés',   dir:true },
   { id:'graphiques',  ic:'📈', lb:'Graphiques & Analyses', dir:true },
@@ -1741,7 +1802,7 @@ async function render(p) {
     planning:renderPlanning, annuaire:renderAnnuaire, messages:renderMessages,
     carburant:renderCarburant, objectifs:renderObjectifs, conges:renderConges,
     checklist:renderChecklist, partenariats:renderPartenariats,
-    graphiques:renderGraphiques, journal:renderJournal, livraisons:renderLivraisons
+    graphiques:renderGraphiques, journal:renderJournal, livraisons:renderLivraisons, factures:renderFactures
   };
   if (map[p]) await map[p]();
 }
@@ -1885,8 +1946,9 @@ async function renderStocks() {
     </div>`).join('');
   const cmds = await db('commandes');
   const canPayEdit = userRole==='directeur'||userRole==='dg'||userRole==='comptabilite';
+  const canFacture = userRole==='directeur'||userRole==='dg'||userRole==='comptabilite';
   document.getElementById('tc').innerHTML = (cmds||[]).length===0
-    ? '<tr><td colspan="9" style="text-align:center;color:var(--tx3)">Aucune commande</td></tr>'
+    ? '<tr><td colspan="10" style="text-align:center;color:var(--tx3)">Aucune commande</td></tr>'
     : (cmds||[]).map(c=>`<tr>
         <td class="mono">${c.date||'—'}</td>
         <td><strong>${c.fournisseur||'—'}</strong></td>
@@ -1896,7 +1958,11 @@ async function renderStocks() {
         <td><span class="b ${c.statut==='Livrée'?'bg-g':c.statut==='Confirmée'?'bg-b':'bg-x'}">${c.statut||'—'}</span></td>
         <td>${c.mode_paiement?`<span class="b bg-p" style="font-size:10px">${c.mode_paiement}</span>`:'<span style="color:var(--tx3);font-size:11px">—</span>'}</td>
         <td><span class="b ${c.statut_paiement==='Payé'?'bg-g':c.statut_paiement==='Partiel'?'bg-o':'bg-x'}">${c.statut_paiement||'En attente'}</span></td>
-        <td>${canPayEdit?`<button onclick="updatePaiement('${c.id}')" style="background:var(--must);border:none;border-radius:4px;padding:3px 8px;cursor:pointer;font-size:10px;color:var(--bg)">💳 Paiement</button>`:'—'}</td>
+        <td>${c.numero_facture?`<span class="mono" style="font-size:11px;color:var(--must2)">${c.numero_facture}</span>`:'<span style="color:var(--tx3);font-size:10px">—</span>'}</td>
+        <td style="display:flex;gap:4px">
+          ${canPayEdit?`<button onclick="updatePaiement('${c.id}')" style="background:var(--must);border:none;border-radius:4px;padding:3px 8px;cursor:pointer;font-size:10px;color:var(--bg)">💳</button>`:''}
+          ${canFacture?`<button onclick="openFacture('${c.id}','commandes')" style="background:var(--ac2);border:none;border-radius:4px;padding:3px 8px;cursor:pointer;font-size:10px;color:var(--bg)">📄</button>`:''}
+        </td>
       </tr>`).join('');
 }
 
@@ -3896,6 +3962,7 @@ async function renderLivraisons() {
         <th>Départ prévu</th><th>Départ réel</th><th>Retour réel</th>
         <th>Km</th><th>Ponctualité</th><th>Client</th>
         <th>✅ Centrale</th><th>✅ Flotte</th>
+        <th>N° Facture</th>
         <th>Statut</th>
         ${canE?'<th></th>':''}
       </tr></thead>
@@ -3951,10 +4018,12 @@ function renderLivraisonsTable(livs, filter) {
           <td style="font-size:11px">${l.client||'—'}</td>
           <td>${renderValidationCell(l, 'centrale')}</td>
           <td>${renderValidationCell(l, 'flotte')}</td>
+          <td>${l.numero_facture?`<span class="mono" style="font-size:11px;color:var(--must2)">${l.numero_facture}</span>`:'<span style="color:var(--tx3);font-size:10px">—</span>'}</td>
           <td><span class="b ${stColors[l.statut]||'bg-x'}">${stIcons[l.statut]||''} ${l.statut||'—'}</span></td>
           ${canE?`<td style="display:flex;gap:4px">
             <button onclick="editRow('livraisons','${l.id}','livraisons')" style="background:none;border:none;cursor:pointer;font-size:13px" title="Modifier">✏️</button>
             <button onclick="openBonMission('${l.id}')" style="background:none;border:none;cursor:pointer;font-size:13px" title="Bon de mission">📄</button>
+            ${(userRole==='directeur'||userRole==='dg'||userRole==='comptabilite')?`<button onclick="openFacture('${l.id}','livraisons')" style="background:none;border:none;cursor:pointer;font-size:13px" title="Facture">🧾</button>`:''}
           </td>`:''}
         </tr>`;
       }).join('');
@@ -4199,6 +4268,179 @@ async function checkPendingValidations() {
   } catch(e) {}
 }
 
+
+// ═══ FACTURES ═══
+async function openFacture(id, source) {
+  const rows = await db(source);
+  const row = (rows||[]).find(r=>String(r.id)===String(id));
+  if (!row) return;
+
+  document.getElementById('fac-source').value = source;
+  document.getElementById('fac-source-id').value = id;
+
+  // Pre-fill from existing data
+  if (source === 'commandes') {
+    document.getElementById('fac-nom').value = row.fournisseur||'';
+    document.getElementById('fac-montant').value = row.montant||0;
+    document.getElementById('fac-type').value = 'Facture fournisseur';
+    document.getElementById('fac-mode').value = row.mode_paiement||'';
+    document.getElementById('fac-statut').value = row.statut_paiement==='Payé'?'Payée':'En attente';
+    // Pre-fill first article line
+    document.getElementById('fac-ligne-1-desc').value = row.article||'';
+    document.getElementById('fac-ligne-1-qty').value = row.quantite||1;
+    document.getElementById('fac-ligne-1-pu').value = row.montant||0;
+  } else if (source === 'livraisons') {
+    document.getElementById('fac-nom').value = row.client||'';
+    document.getElementById('fac-montant').value = row.cout_estime||0;
+    document.getElementById('fac-type').value = 'Facture client';
+    document.getElementById('fac-statut').value = 'En attente';
+    document.getElementById('fac-ligne-1-desc').value = row.produit||row.type_mission||'';
+    document.getElementById('fac-ligne-1-qty').value = row.quantite||1;
+    document.getElementById('fac-ligne-1-pu').value = row.cout_estime||0;
+  }
+
+  // Pre-fill existing facture number if any
+  document.getElementById('fac-numero').value = row.numero_facture||'';
+  document.getElementById('fac-date').value = new Date().toISOString().slice(0,10);
+
+  updateFactureTotal();
+  openM('m-facture');
+}
+
+function addFactureLigne() {
+  const container = document.getElementById('fac-lignes');
+  const count = container.querySelectorAll('.fac-ligne').length + 1;
+  const div = document.createElement('div');
+  div.className = 'fac-ligne fr';
+  div.style.cssText = 'gap:6px;align-items:flex-end;margin-bottom:8px';
+  div.innerHTML = `
+    <div class="fg" style="flex:3"><label>Article / Produit</label><input type="text" id="fac-ligne-${count}-desc" placeholder="Description..."></div>
+    <div class="fg" style="flex:1"><label>Qté</label><input type="number" id="fac-ligne-${count}-qty" value="1" oninput="updateFactureTotal()"></div>
+    <div class="fg" style="flex:2"><label>Prix unitaire</label><input type="number" id="fac-ligne-${count}-pu" value="0" oninput="updateFactureTotal()"></div>
+    <div class="fg" style="flex:2"><label>Total</label><input type="text" id="fac-ligne-${count}-tot" readonly style="background:var(--sf2);color:var(--must2);font-weight:700"></div>
+    <button onclick="this.parentElement.remove();updateFactureTotal()" style="background:var(--rd2);border:none;border-radius:6px;padding:6px 10px;cursor:pointer;color:#fff;margin-bottom:4px">✕</button>`;
+  container.appendChild(div);
+}
+
+function updateFactureTotal() {
+  const lignes = document.querySelectorAll('.fac-ligne');
+  let total = 0;
+  lignes.forEach((l, i) => {
+    const n = i + 1;
+    const qty = +document.getElementById(`fac-ligne-${n}-qty`)?.value||0;
+    const pu = +document.getElementById(`fac-ligne-${n}-pu`)?.value||0;
+    const tot = qty * pu;
+    total += tot;
+    const totEl = document.getElementById(`fac-ligne-${n}-tot`);
+    if (totEl) totEl.value = fmt(tot) + ' FCFA';
+  });
+  const remise = +document.getElementById('fac-remise')?.value||0;
+  const tva = +document.getElementById('fac-tva')?.value||0;
+  const sousTotal = total;
+  const montantRemise = sousTotal * remise / 100;
+  const base = sousTotal - montantRemise;
+  const montantTva = base * tva / 100;
+  const ttc = base + montantTva;
+  const el = document.getElementById('fac-total-display');
+  if (el) el.innerHTML = `
+    <div style="display:flex;justify-content:space-between"><span>Sous-total</span><span>${fmt(Math.round(sousTotal))} FCFA</span></div>
+    ${remise>0?`<div style="display:flex;justify-content:space-between;color:var(--gn2)"><span>Remise (${remise}%)</span><span>- ${fmt(Math.round(montantRemise))} FCFA</span></div>`:''}
+    ${tva>0?`<div style="display:flex;justify-content:space-between"><span>TVA (${tva}%)</span><span>${fmt(Math.round(montantTva))} FCFA</span></div>`:''}
+    <div style="display:flex;justify-content:space-between;font-weight:800;font-size:16px;color:var(--must2);border-top:2px solid var(--bd2);padding-top:8px;margin-top:8px"><span>TOTAL TTC</span><span>${fmt(Math.round(ttc))} FCFA</span></div>`;
+  document.getElementById('fac-montant').value = Math.round(ttc);
+}
+
+async function savFacture() {
+  const source = document.getElementById('fac-source').value;
+  const sourceId = document.getElementById('fac-source-id').value;
+  const numero = document.getElementById('fac-numero').value;
+  if (!numero) { toast('N° facture requis'); return; }
+
+  // Collect lignes
+  const lignes = [];
+  document.querySelectorAll('.fac-ligne').forEach((l,i)=>{
+    const n = i+1;
+    const desc = document.getElementById(`fac-ligne-${n}-desc`)?.value;
+    const qty = document.getElementById(`fac-ligne-${n}-qty`)?.value;
+    const pu = document.getElementById(`fac-ligne-${n}-pu`)?.value;
+    if (desc) lignes.push({desc, qty, pu, total: Math.round(qty*pu)});
+  });
+
+  // Save facture record
+  await db('factures','POST',{
+    numero_facture: numero,
+    type_facture: document.getElementById('fac-type').value,
+    nom: document.getElementById('fac-nom').value,
+    date_facture: document.getElementById('fac-date').value,
+    date_echeance: document.getElementById('fac-echeance').value,
+    montant_total: +document.getElementById('fac-montant').value||0,
+    remise: +document.getElementById('fac-remise').value||0,
+    tva: +document.getElementById('fac-tva').value||0,
+    mode_paiement: document.getElementById('fac-mode').value,
+    statut: document.getElementById('fac-statut').value,
+    notes: document.getElementById('fac-notes').value,
+    lignes: JSON.stringify(lignes),
+    source_table: source,
+    source_id: sourceId,
+    created_by: userName
+  });
+
+  // Update source record with facture number
+  await db(source,'PATCH',{numero_facture: numero},{id: sourceId});
+  logAction('insert','factures',{numero, source});
+  closeM('m-facture');
+  toast(`Facture ${numero} enregistrée ✓`);
+  render(source==='commandes'?'stocks':'livraisons');
+}
+
+// ═══ RENDER FACTURES ═══
+async function renderFactures() {
+  const facs = await db('factures');
+  const canF = userRole==='directeur'||userRole==='dg'||userRole==='comptabilite';
+  const m = new Date().toISOString().slice(0,7);
+  const today = new Date().toISOString().slice(0,10);
+  const mf = (facs||[]).filter(f=>f.date_facture?.startsWith(m));
+  const payees = (facs||[]).filter(f=>f.statut==='Payée');
+  const enRetard = (facs||[]).filter(f=>f.statut!=='Payée'&&f.date_echeance&&f.date_echeance<today);
+  const totalTTC = (facs||[]).reduce((a,b)=>a+(+b.montant_total||0),0);
+
+  document.getElementById('fac-content').innerHTML = `
+    <div class="sh"><div><div class="stl">Factures</div><div class="sst">Suivi factures fournisseurs & clients</div></div></div>
+    <div class="kg" style="grid-template-columns:repeat(4,1fr);margin-bottom:14px">
+      <div class="kc kc-b"><div class="kl">Total factures</div><div class="kv">${(facs||[]).length}</div><div class="ks">enregistrées</div></div>
+      <div class="kc kc-g"><div class="kl">Payées</div><div class="kv">${payees.length}</div><div class="ks">factures</div></div>
+      <div class="kc kc-r"><div class="kl">En retard</div><div class="kv">${enRetard.length}</div><div class="ks">factures</div></div>
+      <div class="kc kc-m"><div class="kl">Montant total</div><div class="kv">${fmt(Math.round(totalTTC/1000))}k</div><div class="ks">FCFA</div></div>
+    </div>
+    ${enRetard.length>0?`<div class="al al-r">🔴 ${enRetard.length} facture(s) en retard de paiement !</div>`:''}
+    <div class="card">
+      <div class="ch"><div class="ct">🧾 Toutes les factures</div></div>
+      <div class="tw"><table><thead><tr>
+        <th>N° Facture</th><th>Type</th><th>Nom</th><th>Date</th><th>Échéance</th>
+        <th>Montant TTC</th><th>Mode paiement</th><th>Source</th><th>Statut</th>
+        ${canF?'<th></th>':''}
+      </tr></thead>
+      <tbody>${(facs||[]).length===0
+        ? '<tr><td colspan="10" style="text-align:center;color:var(--tx3)">Aucune facture enregistrée</td></tr>'
+        : (facs||[]).map(f=>{
+            const isRetard = f.statut!=='Payée'&&f.date_echeance&&f.date_echeance<today;
+            return `<tr>
+              <td class="mono"><strong style="color:var(--must2)">${f.numero_facture||'—'}</strong></td>
+              <td><span class="b bg-p" style="font-size:10px">${f.type_facture||'—'}</span></td>
+              <td>${f.nom||'—'}</td>
+              <td class="mono">${f.date_facture||'—'}</td>
+              <td class="mono" style="color:${isRetard?'var(--rd2)':'inherit'}">${f.date_echeance||'—'}${isRetard?' ⚠️':''}</td>
+              <td><strong>${fmt(f.montant_total||0)} FCFA</strong></td>
+              <td style="font-size:11px">${f.mode_paiement||'—'}</td>
+              <td style="font-size:10px;color:var(--tx3)">${f.source_table==='commandes'?'📋 Commande':'🚚 Livraison'}</td>
+              <td><span class="b ${f.statut==='Payée'?'bg-g':f.statut==='En retard'?'bg-r':f.statut==='Annulée'?'bg-x':'bg-o'}">${f.statut||'—'}</span></td>
+              ${canF?`<td><button onclick="editRow('factures','${f.id}','factures')" style="background:none;border:none;cursor:pointer;font-size:13px">✏️</button></td>`:''}
+            </tr>`;
+          }).join('')}
+      </tbody></table></div>
+    </div>`;
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('login-btn').addEventListener('click', doLogin);
   document.getElementById('l-code').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
@@ -4224,7 +4466,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
+
 </script>
+
 
 
 
