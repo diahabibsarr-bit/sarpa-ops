@@ -245,6 +245,9 @@ textarea{resize:vertical;min-height:70px}
 /* Sidebar overlay */
 #sb-overlay{display:none;position:fixed;inset:0;z-index:199;background:rgba(0,0,0,.4)}
 #sb-overlay.show{display:block}
+
+@keyframes slideInRight{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+.fsec{animation:fadeIn .2s ease}
 </style>
 </head>
 <body>
@@ -307,6 +310,10 @@ textarea{resize:vertical;min-height:70px}
     </div>
     <div class="tba">
       <div class="rt-indicator"><span class="rt-dot"></span><span style="display:none" id="rt-txt">Temps réel</span></div>
+      <button onclick="openNotifCenter()" style="background:none;border:none;cursor:pointer;position:relative;padding:4px" title="Notifications">
+        <span style="font-size:20px">🔔</span>
+        <span id="notif-badge" style="display:none;position:absolute;top:0;right:0;background:var(--rd2);color:#fff;border-radius:50%;width:16px;height:16px;font-size:9px;font-weight:800;align-items:center;justify-content:center">0</span>
+      </button>
       <span class="role-badge" id="role-badge">—</span>
       <button class="btn bm" id="quick-btn" onclick="openM('mq')">✦ Saisie</button>
     </div>
@@ -388,6 +395,20 @@ textarea{resize:vertical;min-height:70px}
         <button class="btn bm" onclick="openM('mf')">✏ Mettre à jour</button>
       </div>
     </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px">
+      <button onclick="showFleetTab('parking')" id="ftab-parking" class="btn bm" style="font-size:11px">🅿️ Parking</button>
+      <button onclick="showFleetTab('liste')" id="ftab-liste" class="btn bg2" style="font-size:11px">📋 Liste</button>
+      <button onclick="showFleetTab('assurances')" id="ftab-assurances" class="btn bg2" style="font-size:11px">🛡️ Assurances</button>
+      <button onclick="showFleetTab('visites')" id="ftab-visites" class="btn bg2" style="font-size:11px">🔍 Visites tech.</button>
+      <button onclick="showFleetTab('entretiens')" id="ftab-entretiens" class="btn bg2" style="font-size:11px">🔧 Entretiens</button>
+      <button onclick="showFleetTab('documents')" id="ftab-documents" class="btn bg2" style="font-size:11px">📄 Documents</button>
+    </div>
+    <div id="fleet-parking" class="fsec"></div>
+    <div id="fleet-liste" class="fsec" style="display:none"></div>
+    <div id="fleet-assurances" class="fsec" style="display:none"></div>
+    <div id="fleet-visites" class="fsec" style="display:none"></div>
+    <div id="fleet-entretiens" class="fsec" style="display:none"></div>
+    <div id="fleet-documents" class="fsec" style="display:none"></div>
     <div class="kg" style="grid-template-columns:repeat(4,1fr);margin-bottom:18px">
       <div class="kc kc-g"><div class="kl">Opérationnels</div><div class="kv" id="f-ok">—</div></div>
       <div class="kc kc-r"><div class="kl">En panne</div><div class="kv" id="f-dn">—</div></div>
@@ -667,7 +688,18 @@ textarea{resize:vertical;min-height:70px}
   <div class="mt2">📋 Commande fournisseur</div>
   <div class="fr"><div class="fg"><label>Date</label><input type="date" id="ic-d"></div><div class="fg"><label>Fournisseur</label><input type="text" id="ic-f"></div></div>
   <div class="fr"><div class="fg"><label>Article</label><input type="text" id="ic-a"></div><div class="fg"><label>Quantité</label><input type="text" id="ic-q"></div></div>
-  <div class="fr"><div class="fg"><label>Montant (FCFA)</label><input type="number" id="ic-m" min="0"></div><div class="fg"><label>Statut</label><select id="ic-s"><option>En attente</option><option>Confirmée</option><option>Livrée</option></select></div></div>
+  <div class="fr"><div class="fg"><label>Montant (FCFA)</label><input type="number" id="ic-m" min="0"></div><div class="fg"><label>Statut commande</label><select id="ic-s"><option>En attente</option><option>Confirmée</option><option>Livrée</option></select></div></div>
+  <div class="fr"><div class="fg"><label>Mode de paiement</label><select id="ic-pay">
+    <option value="">— Non défini —</option>
+    <option>📱 Wave</option><option>📱 Orange Money</option><option>📱 Free Money</option>
+    <option>🏦 Transfert bancaire</option><option>📝 Chèque</option>
+    <option>💵 Espèces</option><option>⏳ À crédit</option>
+  </select></div><div class="fg"><label>Statut paiement</label><select id="ic-pay-st">
+    <option value="En attente">⏳ En attente</option>
+    <option value="Partiel">🔄 Partiel</option>
+    <option value="Payé">✅ Payé</option>
+  </select></div></div>
+  <div class="fg"><label>Montant reçu (FCFA)</label><input type="number" id="ic-pay-m" min="0" placeholder="0"></div>
   <div class="mf"><button class="btn bg2" onclick="closeM('mc')">Annuler</button><button class="btn bm" onclick="savCmd()">Enregistrer</button></div>
 </div></div>
 
@@ -901,7 +933,103 @@ textarea{resize:vertical;min-height:70px}
     </div>
   </div>
 </div></div>
+
+<!-- PANNEAU NOTIFICATIONS -->
+<div id="notif-panel" style="position:fixed;top:0;right:-380px;width:360px;height:100vh;background:var(--sf);border-left:1px solid var(--bd2);z-index:500;transition:right .3s ease;display:flex;flex-direction:column;box-shadow:-4px 0 30px rgba(0,0,0,.3)">
+  <div style="padding:16px;border-bottom:1px solid var(--bd2);display:flex;justify-content:space-between;align-items:center">
+    <div style="font-family:var(--fh);font-weight:800;font-size:16px;color:var(--tx)">🔔 Notifications</div>
+    <button onclick="closeNotifPanel()" style="background:none;border:none;color:var(--tx3);font-size:20px;cursor:pointer">✕</button>
+  </div>
+  <div id="notif-list" style="flex:1;overflow-y:auto;padding:12px"></div>
+</div>
+<style>#notif-panel.open{right:0}</style>
+
+<!-- MODAL PAIEMENT -->
+<div class="mo" id="m-paiement"><div class="md">
+  <div class="mh"><div class="mt">💳 Mettre à jour paiement</div><button class="mc" onclick="closeM('m-paiement')">✕</button></div>
+  <input type="hidden" id="pay-id">
+  <div style="background:var(--sf2);border-radius:8px;padding:10px;margin-bottom:12px">
+    <div style="font-size:11px;color:var(--tx3)">Commande</div>
+    <div style="font-weight:700" id="pay-article">—</div>
+    <div style="font-size:11px;color:var(--tx3)" id="pay-fournisseur">—</div>
+  </div>
+  <div class="fg"><label>Montant total (FCFA)</label><input type="number" id="pay-montant" placeholder="0"></div>
+  <div class="fg"><label>Mode de paiement</label><select id="pay-mode">
+    <option value="">— Non défini —</option>
+    <option>📱 Wave</option><option>📱 Orange Money</option><option>📱 Free Money</option>
+    <option>🏦 Transfert bancaire</option><option>📝 Chèque</option>
+    <option>💵 Espèces</option><option>⏳ À crédit</option>
+  </select></div>
+  <div class="fg"><label>Montant reçu (FCFA)</label><input type="number" id="pay-recu" placeholder="0"></div>
+  <div class="fg"><label>Statut paiement</label><select id="pay-status">
+    <option value="En attente">⏳ En attente</option>
+    <option value="Partiel">🔄 Partiel</option>
+    <option value="Payé">✅ Payé</option>
+  </select></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-paiement')">Annuler</button><button class="btn bm" onclick="savPaiement()">Enregistrer</button></div>
+</div></div>
+
+<!-- MODAL ASSURANCE -->
+<div class="mo" id="m-assurance"><div class="md">
+  <div class="mh"><div class="mt">🛡️ Assurance</div><button class="mc" onclick="closeM('m-assurance')">✕</button></div>
+  <div class="fg"><label>Camion</label><select id="ass-truck"></select></div>
+  <div class="fg"><label>Compagnie d'assurance</label><input type="text" id="ass-comp" placeholder="Ex: NSIA, Allianz..."></div>
+  <div class="fg"><label>N° Police</label><input type="text" id="ass-pol"></div>
+  <div class="fg"><label>Date début</label><input type="date" id="ass-deb"></div>
+  <div class="fg"><label>Date expiration</label><input type="date" id="ass-exp"></div>
+  <div class="fg"><label>Montant (FCFA)</label><input type="number" id="ass-mont" placeholder="0"></div>
+  <div class="fg"><label>Notes</label><textarea id="ass-notes" rows="2"></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-assurance')">Annuler</button><button class="btn bm" onclick="savAssurance()">Enregistrer</button></div>
+</div></div>
+
+<!-- MODAL VISITE TECHNIQUE -->
+<div class="mo" id="m-visite"><div class="md">
+  <div class="mh"><div class="mt">🔍 Visite technique</div><button class="mc" onclick="closeM('m-visite')">✕</button></div>
+  <div class="fg"><label>Camion</label><select id="vt-truck"></select></div>
+  <div class="fg"><label>Date de la visite</label><input type="date" id="vt-date"></div>
+  <div class="fg"><label>Résultat</label><select id="vt-res"><option>Favorable</option><option>Favorable avec réserves</option><option>Défavorable</option></select></div>
+  <div class="fg"><label>Prochaine visite</label><input type="date" id="vt-next"></div>
+  <div class="fg"><label>Centre de contrôle</label><input type="text" id="vt-centre"></div>
+  <div class="fg"><label>Coût (FCFA)</label><input type="number" id="vt-cout" placeholder="0"></div>
+  <div class="fg"><label>Notes</label><textarea id="vt-notes" rows="2"></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-visite')">Annuler</button><button class="btn bm" onclick="savVisite()">Enregistrer</button></div>
+</div></div>
+
+<!-- MODAL ENTRETIEN -->
+<div class="mo" id="m-entretien"><div class="md">
+  <div class="mh"><div class="mt">🔧 Entretien</div><button class="mc" onclick="closeM('m-entretien')">✕</button></div>
+  <div class="fg"><label>Camion</label><select id="ent-truck"></select></div>
+  <div class="fg"><label>Type d'entretien</label><select id="ent-type">
+    <option>Vidange</option><option>Révision complète</option><option>Freins</option>
+    <option>Pneus</option><option>Filtres</option><option>Courroies</option>
+    <option>Bougies</option><option>Bétonnière</option><option>Autre</option>
+  </select></div>
+  <div class="fg"><label>Date</label><input type="date" id="ent-date"></div>
+  <div class="fg"><label>Km au moment de l'entretien</label><input type="number" id="ent-km" placeholder="0"></div>
+  <div class="fg"><label>Prochain entretien (km)</label><input type="number" id="ent-next-km" placeholder="0"></div>
+  <div class="fg"><label>Coût (FCFA)</label><input type="number" id="ent-cout" placeholder="0"></div>
+  <div class="fg"><label>Garage / Prestataire</label><input type="text" id="ent-garage"></div>
+  <div class="fg"><label>Statut</label><select id="ent-status"><option>Planifié</option><option>En cours</option><option>Terminé</option></select></div>
+  <div class="fg"><label>Notes</label><textarea id="ent-notes" rows="2"></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-entretien')">Annuler</button><button class="btn bm" onclick="savEntretien()">Enregistrer</button></div>
+</div></div>
+
+<!-- MODAL DOCUMENT FLOTTE -->
+<div class="mo" id="m-doc-flotte"><div class="md">
+  <div class="mh"><div class="mt">📄 Document</div><button class="mc" onclick="closeM('m-doc-flotte')">✕</button></div>
+  <div class="fg"><label>Camion</label><select id="doc-truck"></select></div>
+  <div class="fg"><label>Type de document</label><select id="doc-type">
+    <option>Carte grise</option><option>Vignette</option><option>Autorisation transport</option>
+    <option>Certificat de conformité</option><option>Permis circulation</option><option>Autre</option>
+  </select></div>
+  <div class="fg"><label>Numéro</label><input type="text" id="doc-num"></div>
+  <div class="fg"><label>Date d'émission</label><input type="date" id="doc-em"></div>
+  <div class="fg"><label>Date d'expiration</label><input type="date" id="doc-exp"></div>
+  <div class="fg"><label>Notes</label><textarea id="doc-notes" rows="2"></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-doc-flotte')">Annuler</button><button class="btn bm" onclick="savDocFlotte()">Enregistrer</button></div>
+</div></div>
 <script>
+
 
 
 
@@ -1099,6 +1227,7 @@ function startApp(role, name) {
   initGoogleSheets().then(() => seedData());
   applyAppearance();
   go('dashboard');
+  startNotifPolling();
   updateBadges();
   setTimeout(autoBackup, 5000);
   setTimeout(async () => {
@@ -1186,6 +1315,10 @@ function openM(id) {
   if (id==='m-plan') loadTrucks(document.getElementById('plan-truck'), false);
   if (id==='m-carb') loadTrucks(document.getElementById('carb-truck'), false);
   if (id==='m-check') loadTrucks(document.getElementById('chk-truck'), false);
+  if (id==='m-assurance') loadTrucks(document.getElementById('ass-truck'), false);
+  if (id==='m-visite') loadTrucks(document.getElementById('vt-truck'), false);
+  if (id==='m-entretien') loadTrucks(document.getElementById('ent-truck'), false);
+  if (id==='m-doc-flotte') loadTrucks(document.getElementById('doc-truck'), false);
 }
 
 function showActionBtn(module) {
@@ -1302,16 +1435,48 @@ async function savStock() {
 }
 
 async function savCmd() {
-  await db('commandes','POST',{
+  const data = {
     date: document.getElementById('ic-d').value,
     fournisseur: document.getElementById('ic-f').value||'—',
     article: document.getElementById('ic-a').value||'—',
     quantite: document.getElementById('ic-q').value||'—',
     montant: +document.getElementById('ic-m').value||0,
     statut: document.getElementById('ic-s').value,
-    created_by: userName
-  });
-  closeM('mc'); toast('Commande enregistrée ✓'); render('stocks');
+    mode_paiement: document.getElementById('ic-pay').value,
+    statut_paiement: document.getElementById('ic-pay-st').value,
+    montant_recu: +document.getElementById('ic-pay-m').value||0,
+  };
+  await dbSave('commandes', data, 'mc', 'stocks', 'Commande enregistrée ✓');
+}
+
+async function updatePaiement(id) {
+  // Comptable can update payment info only
+  const rows = await db('commandes');
+  const row = (rows||[]).find(r=>String(r.id)===String(id));
+  if (!row) return;
+  // Pre-fill payment modal
+  document.getElementById('pay-id').value = id;
+  document.getElementById('pay-mode').value = row.mode_paiement||'';
+  document.getElementById('pay-status').value = row.statut_paiement||'En attente';
+  document.getElementById('pay-montant').value = row.montant||0;
+  document.getElementById('pay-recu').value = row.montant_recu||0;
+  document.getElementById('pay-article').textContent = row.article||'—';
+  document.getElementById('pay-fournisseur').textContent = row.fournisseur||'—';
+  openM('m-paiement');
+}
+
+async function savPaiement() {
+  const id = document.getElementById('pay-id').value;
+  await db('commandes','PATCH',{
+    mode_paiement: document.getElementById('pay-mode').value,
+    statut_paiement: document.getElementById('pay-status').value,
+    montant: +document.getElementById('pay-montant').value||0,
+    montant_recu: +document.getElementById('pay-recu').value||0,
+  },{id});
+  logAction('update','commandes',{id, action:'paiement mis à jour'});
+  closeM('m-paiement');
+  toast('Paiement mis à jour ✓');
+  render('stocks');
 }
 
 async function savQual() {
@@ -1657,15 +1822,19 @@ async function renderStocks() {
       ${s.current_qty<=s.critical_qty?' — COMMANDER EN URGENCE':''}
     </div>`).join('');
   const cmds = await db('commandes');
+  const canPayEdit = userRole==='directeur'||userRole==='dg'||userRole==='comptabilite';
   document.getElementById('tc').innerHTML = (cmds||[]).length===0
-    ? '<tr><td colspan="6" style="text-align:center;color:var(--tx3)">Aucune commande</td></tr>'
+    ? '<tr><td colspan="9" style="text-align:center;color:var(--tx3)">Aucune commande</td></tr>'
     : (cmds||[]).map(c=>`<tr>
-        <td class="mono">${c.date}</td>
-        <td><strong>${c.fournisseur}</strong></td>
-        <td>${c.article}</td>
-        <td>${c.quantite}</td>
-        <td>${fmt(c.montant)} FCFA</td>
-        <td><span class="b ${c.statut==='Livrée'?'bg-g':c.statut==='Confirmée'?'bg-b':'bg-x'}">${c.statut}</span></td>
+        <td class="mono">${c.date||'—'}</td>
+        <td><strong>${c.fournisseur||'—'}</strong></td>
+        <td>${c.article||'—'}</td>
+        <td>${c.quantite||'—'}</td>
+        <td>${fmt(c.montant||0)} FCFA</td>
+        <td><span class="b ${c.statut==='Livrée'?'bg-g':c.statut==='Confirmée'?'bg-b':'bg-x'}">${c.statut||'—'}</span></td>
+        <td>${c.mode_paiement?`<span class="b bg-p" style="font-size:10px">${c.mode_paiement}</span>`:'<span style="color:var(--tx3);font-size:11px">—</span>'}</td>
+        <td><span class="b ${c.statut_paiement==='Payé'?'bg-g':c.statut_paiement==='Partiel'?'bg-o':'bg-x'}">${c.statut_paiement||'En attente'}</span></td>
+        <td>${canPayEdit?`<button onclick="updatePaiement('${c.id}')" style="background:var(--must);border:none;border-radius:4px;padding:3px 8px;cursor:pointer;font-size:10px;color:var(--bg)">💳 Paiement</button>`:'—'}</td>
       </tr>`).join('');
 }
 
@@ -1692,6 +1861,7 @@ async function renderQual() {
 
 async function renderFleet() {
   const trucks = await db('trucks');
+  showFleetTab('parking');
   const ok = (trucks||[]).filter(t=>t.status==='operational').length;
   const dn = (trucks||[]).filter(t=>t.status==='breakdown').length;
   const mn = (trucks||[]).filter(t=>t.status==='maintenance').length;
@@ -1700,21 +1870,7 @@ async function renderFleet() {
   document.getElementById('f-dn').textContent = dn;
   document.getElementById('f-mn').textContent = mn;
   document.getElementById('f-pc').textContent = `${pct}%`;
-  const canEditFleet = canEdit('fleet');
-  document.getElementById('trg').innerHTML = (trucks||[]).map(t=>`
-    <div class="tc ${t.status}">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div class="tc-id">${t.id}</div>
-        <div style="display:flex;gap:4px">
-          <button onclick="generateQR('${t.id}')" style="background:none;border:none;cursor:pointer;font-size:14px;padding:0" title="QR Code">📱</button>
-          ${canEditFleet ? `<button onclick="openEditTruck('${t.id}')" style="background:none;border:none;cursor:pointer;font-size:14px;padding:0" title="Modifier">✏️</button>` : ''}
-        </div>
-      </div>
-      <div class="tc-t">${t.type}</div>
-      <div style="margin-top:7px">${stBadge(t.status)}</div>
-      <div class="tc-k">📏 ${fmt(t.km)} km</div>
-      ${t.description?`<div style="font-size:10px;color:var(--tx3);margin-top:4px">${t.description}</div>`:''}
-    </div>`).join('');
+  // Truck grid now handled by renderParking()
 }
 
 async function editTruck(id) {
@@ -3213,6 +3369,391 @@ async function dbSave(table, data, modal, page, successMsg) {
   }
 }
 
+
+// ═══ FLEET TABS ═══
+function showFleetTab(tab) {
+  document.querySelectorAll('.fsec').forEach(s=>s.style.display='none');
+  document.querySelectorAll('[id^="ftab-"]').forEach(b=>{b.className='btn bg2';b.style.fontSize='11px';});
+  const sec = document.getElementById('fleet-'+tab);
+  const btn = document.getElementById('ftab-'+tab);
+  if (sec) sec.style.display='';
+  if (btn) { btn.className='btn bm'; btn.style.fontSize='11px'; }
+  const renderMap = {
+    parking: renderParking, liste: renderFleetListe,
+    assurances: renderAssurances, visites: renderVisites,
+    entretiens: renderEntretiens, documents: renderDocuments
+  };
+  if (renderMap[tab]) renderMap[tab]();
+}
+
+async function renderParking() {
+  const trucks = await db('trucks');
+  const tours = await db('tours');
+  const today = new Date().toISOString().slice(0,10);
+  const inTour = new Set((tours||[]).filter(t=>t.date===today&&t.statut==='En cours').map(t=>t.truck_id));
+  const statusInfo = {
+    operational: {label:'Opérationnel', color:'var(--gn2)', bg:'rgba(46,213,115,.1)', icon:'🟢'},
+    maintenance:  {label:'Maintenance',  color:'var(--must2)', bg:'rgba(212,160,23,.1)', icon:'🟡'},
+    breakdown:    {label:'En panne',     color:'var(--rd2)', bg:'rgba(235,87,87,.1)', icon:'🔴'},
+  };
+  const stats = {operational:0, maintenance:0, breakdown:0, tour:0};
+  (trucks||[]).forEach(t=>{
+    if (inTour.has(t.id)) stats.tour++;
+    else stats[t.status]=(stats[t.status]||0)+1;
+  });
+  document.getElementById('fleet-parking').innerHTML = `
+    <div class="kg" style="grid-template-columns:repeat(4,1fr);margin-bottom:16px">
+      <div class="kc kc-g"><div class="kl">Disponibles</div><div class="kv">${stats.operational}</div><div class="ks">opérationnels</div></div>
+      <div class="kc kc-b"><div class="kl">En tournée</div><div class="kv">${stats.tour}</div><div class="ks">aujourd'hui</div></div>
+      <div class="kc kc-m"><div class="kl">Maintenance</div><div class="kv">${stats.maintenance}</div><div class="ks">planifiée</div></div>
+      <div class="kc kc-r"><div class="kl">En panne</div><div class="kv">${stats.breakdown}</div><div class="ks">hors service</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px">
+      ${(trucks||[]).map(t=>{
+        const isTour = inTour.has(t.id);
+        const st = isTour ? {label:'En tournée',color:'var(--ac2)',bg:'rgba(100,210,255,.1)',icon:'🔵'} : (statusInfo[t.status]||statusInfo.operational);
+        return `<div onclick="openEditTruck('${t.id}')" style="background:${st.bg};border:2px solid ${st.color};border-radius:12px;padding:12px;cursor:pointer;transition:.2s;position:relative" title="Cliquer pour modifier">
+          <div style="font-size:22px;text-align:center;margin-bottom:6px">🚛</div>
+          <div style="font-family:var(--fm);font-weight:800;font-size:13px;color:var(--tx);text-align:center">${t.id}</div>
+          <div style="font-size:10px;color:var(--tx3);text-align:center;margin:2px 0">${t.type}</div>
+          <div style="text-align:center;margin-top:6px"><span style="font-size:10px;background:${st.color}20;color:${st.color};padding:2px 8px;border-radius:10px;font-weight:600">${st.icon} ${st.label}</span></div>
+          <div style="font-size:9px;color:var(--tx3);text-align:center;margin-top:4px">📏 ${fmt(t.km)} km</div>
+        </div>`;
+      }).join('')}
+    </div>`;
+}
+
+async function renderFleetListe() {
+  const trucks = await db('trucks');
+  const canEditF = canEdit('fleet');
+  document.getElementById('fleet-liste').innerHTML = `
+    <div class="card">
+      <div class="ch"><div class="ct">📋 Liste complète flotte</div>${canEditF?`<button class="btn bm" onclick="openM('m-add-truck')" style="font-size:11px">+ Camion</button>`:''}</div>
+      <div class="tw"><table><thead><tr><th>ID</th><th>Type</th><th>Km</th><th>Statut</th><th>Description</th>${canEditF?'<th>Action</th>':''}</tr></thead>
+      <tbody>${(trucks||[]).map(t=>`<tr>
+        <td class="mono"><strong>${t.id}</strong></td>
+        <td>${t.type}</td>
+        <td>${fmt(t.km)} km</td>
+        <td>${stBadge(t.status)}</td>
+        <td style="font-size:11px">${t.description||'—'}</td>
+        ${canEditF?`<td><button onclick="openEditTruck('${t.id}')" style="background:none;border:none;cursor:pointer;font-size:14px">✏️</button></td>`:''}
+      </tr>`).join('')}</tbody></table></div>
+    </div>`;
+}
+
+async function renderAssurances() {
+  const assurances = await db('assurances');
+  const today = new Date().toISOString().slice(0,10);
+  const in30 = new Date(); in30.setDate(in30.getDate()+30);
+  const in30s = in30.toISOString().slice(0,10);
+  const canEditF = canEdit('fleet');
+  const expired = (assurances||[]).filter(a=>a.date_expiration<today);
+  const soon = (assurances||[]).filter(a=>a.date_expiration>=today&&a.date_expiration<=in30s);
+  let alerts = '';
+  if (expired.length) alerts += `<div class="al al-r">🔴 ${expired.length} assurance(s) expirée(s) !</div>`;
+  if (soon.length) alerts += `<div class="al al-m">⚠️ ${soon.length} assurance(s) expire(nt) dans 30 jours</div>`;
+  document.getElementById('fleet-assurances').innerHTML = `
+    ${alerts}
+    <div class="card">
+      <div class="ch"><div class="ct">🛡️ Assurances</div>${canEditF?`<button class="btn bm" onclick="openM('m-assurance')" style="font-size:11px">+ Assurance</button>`:''}</div>
+      <div class="tw"><table><thead><tr><th>Camion</th><th>Compagnie</th><th>N° Police</th><th>Début</th><th>Expiration</th><th>Montant</th><th>Statut</th>${canEditF?'<th></th>':''}</tr></thead>
+      <tbody>${(assurances||[]).length===0?'<tr><td colspan="8" style="text-align:center;color:var(--tx3)">Aucune assurance enregistrée</td></tr>':
+        (assurances||[]).map(a=>{
+          const exp = a.date_expiration<today?'bg-r':a.date_expiration<=in30s?'bg-o':'bg-g';
+          const lbl = a.date_expiration<today?'Expirée':a.date_expiration<=in30s?'Bientôt':'Active';
+          return `<tr>
+            <td class="mono"><strong>${a.camion}</strong></td>
+            <td>${a.compagnie||'—'}</td>
+            <td class="mono">${a.numero_police||'—'}</td>
+            <td class="mono">${a.date_debut||'—'}</td>
+            <td class="mono" style="color:${a.date_expiration<today?'var(--rd2)':a.date_expiration<=in30s?'var(--must2)':'inherit'}">${a.date_expiration||'—'}</td>
+            <td>${fmt(a.montant||0)} FCFA</td>
+            <td><span class="b ${exp}">${lbl}</span></td>
+            ${canEditF?`<td><button onclick="editRow('assurances','${a.id}','fleet')" style="background:none;border:none;cursor:pointer;font-size:13px">✏️</button></td>`:''}
+          </tr>`;}).join('')}
+      </tbody></table></div>
+    </div>`;
+}
+
+async function renderVisites() {
+  const visites = await db('visites_techniques');
+  const today = new Date().toISOString().slice(0,10);
+  const in30 = new Date(); in30.setDate(in30.getDate()+30);
+  const in30s = in30.toISOString().slice(0,10);
+  const canEditF = canEdit('fleet');
+  const expired = (visites||[]).filter(v=>v.prochaine_visite<today);
+  const soon = (visites||[]).filter(v=>v.prochaine_visite>=today&&v.prochaine_visite<=in30s);
+  let alerts = '';
+  if (expired.length) alerts += `<div class="al al-r">🔴 ${expired.length} visite(s) technique(s) dépassée(s) !</div>`;
+  if (soon.length) alerts += `<div class="al al-m">⚠️ ${soon.length} visite(s) prévue(s) dans 30 jours</div>`;
+  document.getElementById('fleet-visites').innerHTML = `
+    ${alerts}
+    <div class="card">
+      <div class="ch"><div class="ct">🔍 Visites techniques</div>${canEditF?`<button class="btn bm" onclick="openM('m-visite')" style="font-size:11px">+ Visite</button>`:''}</div>
+      <div class="tw"><table><thead><tr><th>Camion</th><th>Dernière visite</th><th>Résultat</th><th>Prochaine</th><th>Centre</th><th>Coût</th><th>Statut</th>${canEditF?'<th></th>':''}</tr></thead>
+      <tbody>${(visites||[]).length===0?'<tr><td colspan="8" style="text-align:center;color:var(--tx3)">Aucune visite enregistrée</td></tr>':
+        (visites||[]).map(v=>{
+          const exp = v.prochaine_visite<today?'bg-r':v.prochaine_visite<=in30s?'bg-o':'bg-g';
+          const lbl = v.prochaine_visite<today?'Dépassée':v.prochaine_visite<=in30s?'Bientôt':'OK';
+          return `<tr>
+            <td class="mono"><strong>${v.camion}</strong></td>
+            <td class="mono">${v.date_visite||'—'}</td>
+            <td><span class="b ${v.resultat==='Favorable'?'bg-g':v.resultat==='Défavorable'?'bg-r':'bg-o'}">${v.resultat||'—'}</span></td>
+            <td class="mono" style="color:${v.prochaine_visite<today?'var(--rd2)':v.prochaine_visite<=in30s?'var(--must2)':'inherit'}">${v.prochaine_visite||'—'}</td>
+            <td>${v.centre||'—'}</td>
+            <td>${fmt(v.cout||0)} FCFA</td>
+            <td><span class="b ${exp}">${lbl}</span></td>
+            ${canEditF?`<td><button onclick="editRow('visites_techniques','${v.id}','fleet')" style="background:none;border:none;cursor:pointer;font-size:13px">✏️</button></td>`:''}
+          </tr>`;}).join('')}
+      </tbody></table></div>
+    </div>`;
+}
+
+async function renderEntretiens() {
+  const ents = await db('entretiens');
+  const trucks = await db('trucks');
+  const canEditF = canEdit('fleet');
+  const cfg = getConfig();
+  const seuil = cfg.vidangeKm||5000;
+  // Check overdue entretiens
+  const overdue = (ents||[]).filter(e=>{
+    const t = (trucks||[]).find(t=>t.id===e.camion);
+    return t && e.km_entretien && (+t.km - +e.km_entretien) >= seuil;
+  });
+  let alerts = overdue.length ? `<div class="al al-r">🔴 ${overdue.length} entretien(s) dépassé(s) selon kilométrage !</div>` : '';
+  document.getElementById('fleet-entretiens').innerHTML = `
+    ${alerts}
+    <div class="card">
+      <div class="ch"><div class="ct">🔧 Entretiens & Révisions</div>${canEditF?`<button class="btn bm" onclick="openM('m-entretien')" style="font-size:11px">+ Entretien</button>`:''}</div>
+      <div class="tw"><table><thead><tr><th>Camion</th><th>Type</th><th>Date</th><th>Km entretien</th><th>Prochain (km)</th><th>Coût</th><th>Garage</th><th>Statut</th>${canEditF?'<th></th>':''}</tr></thead>
+      <tbody>${(ents||[]).length===0?'<tr><td colspan="9" style="text-align:center;color:var(--tx3)">Aucun entretien enregistré</td></tr>':
+        (ents||[]).map(e=>{
+          const t = (trucks||[]).find(t=>t.id===e.camion);
+          const kmSince = t ? (+t.km - +e.km_entretien) : 0;
+          const overdue = kmSince >= seuil;
+          return `<tr>
+            <td class="mono"><strong>${e.camion}</strong></td>
+            <td>${e.type_entretien||'—'}</td>
+            <td class="mono">${e.date||'—'}</td>
+            <td>${fmt(e.km_entretien||0)} km</td>
+            <td>${fmt(e.prochain_km||0)} km ${overdue?'<span class="b bg-r">Dépassé</span>':''}</td>
+            <td>${fmt(e.cout||0)} FCFA</td>
+            <td>${e.garage||'—'}</td>
+            <td><span class="b ${e.statut==='Terminé'?'bg-g':e.statut==='En cours'?'bg-b':'bg-o'}">${e.statut||'—'}</span></td>
+            ${canEditF?`<td><button onclick="editRow('entretiens','${e.id}','fleet')" style="background:none;border:none;cursor:pointer;font-size:13px">✏️</button></td>`:''}
+          </tr>`;}).join('')}
+      </tbody></table></div>
+    </div>`;
+}
+
+async function renderDocuments() {
+  const docs = await db('documents_flotte');
+  const today = new Date().toISOString().slice(0,10);
+  const canEditF = canEdit('fleet');
+  document.getElementById('fleet-documents').innerHTML = `
+    <div class="card">
+      <div class="ch"><div class="ct">📄 Documents administratifs</div>${canEditF?`<button class="btn bm" onclick="openM('m-doc-flotte')" style="font-size:11px">+ Document</button>`:''}</div>
+      <div class="tw"><table><thead><tr><th>Camion</th><th>Type</th><th>Numéro</th><th>Date émission</th><th>Expiration</th><th>Notes</th><th>Statut</th>${canEditF?'<th></th>':''}</tr></thead>
+      <tbody>${(docs||[]).length===0?'<tr><td colspan="8" style="text-align:center;color:var(--tx3)">Aucun document enregistré</td></tr>':
+        (docs||[]).map(d=>{
+          const exp = d.date_expiration&&d.date_expiration<today?'bg-r':'bg-g';
+          const lbl = d.date_expiration&&d.date_expiration<today?'Expiré':'Valide';
+          return `<tr>
+            <td class="mono"><strong>${d.camion}</strong></td>
+            <td>${d.type_document||'—'}</td>
+            <td class="mono">${d.numero||'—'}</td>
+            <td class="mono">${d.date_emission||'—'}</td>
+            <td class="mono">${d.date_expiration||'—'}</td>
+            <td style="font-size:11px">${d.notes||'—'}</td>
+            <td><span class="b ${exp}">${lbl}</span></td>
+            ${canEditF?`<td><button onclick="editRow('documents_flotte','${d.id}','fleet')" style="background:none;border:none;cursor:pointer;font-size:13px">✏️</button></td>`:''}
+          </tr>`;}).join('')}
+      </tbody></table></div>
+    </div>`;
+}
+
+// ═══ NOTIFICATIONS ═══
+let _lastNotifCheck = Date.now();
+let _notifInterval = null;
+let _unreadCount = 0;
+
+async function startNotifPolling() {
+  if (_notifInterval) clearInterval(_notifInterval);
+  await checkNewNotifs();
+  _notifInterval = setInterval(checkNewNotifs, 30000);
+}
+
+async function checkNewNotifs() {
+  try {
+    const logs = await _dbOrig('journal','GET');
+    const newOnes = (logs||[]).filter(l=>{
+      const ts = new Date(l.created_at).getTime();
+      return ts > _lastNotifCheck && l.utilisateur !== userName;
+    });
+    if (newOnes.length > 0) {
+      newOnes.forEach(l => showNotifPopup(l));
+      _unreadCount += newOnes.length;
+      updateNotifBadge();
+    }
+    _lastNotifCheck = Date.now();
+  } catch(e) {}
+}
+
+function showNotifPopup(log) {
+  const icons = {insert:'➕',update:'✏️',delete:'🗑️',export:'📤'};
+  const colors = {insert:'var(--gn2)',update:'var(--must2)',delete:'var(--rd2)',export:'var(--ac2)'};
+  let details = {};
+  try { details = JSON.parse(log.details||'{}'); } catch(e) {}
+  const tableLabels = {
+    productions:'Production béton', tours:'Tournée', maintenances:'Maintenance',
+    trucks:'Camion', accidents:'Incident', employes:'Employé', formations:'Formation',
+    planning:'Planning', commandes:'Commande', stocks:'Stock', finances:'Finance',
+    fournisseurs:'Fournisseur', projets:'Projet', partenariats:'Partenariat',
+    messages:'Message', conges:'Congé', checklist:'Contrôle', carburant:'Carburant',
+    assurances:'Assurance', visites_techniques:'Visite technique', entretiens:'Entretien',
+    documents_flotte:'Document'
+  };
+  const actionLabels = {insert:'a ajouté', update:'a modifié', delete:'a supprimé', export:'a exporté'};
+  const label = tableLabels[log.table_modifiee]||log.table_modifiee;
+  const action = actionLabels[log.action]||log.action;
+  const detail = details.nom||details.volume||details.id||'';
+
+  const popup = document.createElement('div');
+  popup.style.cssText = `position:fixed;bottom:${20+(_unreadCount%5)*70}px;right:20px;background:var(--sf);border:1px solid ${colors[log.action]||'var(--bd2)'};border-left:4px solid ${colors[log.action]||'var(--ac2)'};border-radius:10px;padding:12px 16px;max-width:300px;z-index:9999;animation:slideInRight .3s ease;box-shadow:0 4px 20px rgba(0,0,0,.3)`;
+  popup.innerHTML = `
+    <div style="display:flex;align-items:flex-start;gap:8px">
+      <span style="font-size:18px">${icons[log.action]||'📝'}</span>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:12px;color:var(--tx)">${log.utilisateur||'—'} <span style="color:var(--tx3);font-weight:400">${action}</span></div>
+        <div style="font-size:11px;color:var(--tx2);margin-top:2px">${label} ${detail?'· '+detail:''}</div>
+        <div style="font-size:10px;color:var(--tx3);margin-top:2px">${new Date(log.created_at).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</div>
+      </div>
+      <button onclick="this.parentElement.parentElement.remove()" style="background:none;border:none;color:var(--tx3);cursor:pointer;font-size:14px;padding:0">✕</button>
+    </div>`;
+  document.body.appendChild(popup);
+  setTimeout(()=>{ if(popup.parentElement) popup.remove(); }, 5000);
+}
+
+function updateNotifBadge() {
+  const badge = document.getElementById('notif-badge');
+  if (badge) {
+    badge.textContent = _unreadCount > 99 ? '99+' : _unreadCount;
+    badge.style.display = _unreadCount > 0 ? 'flex' : 'none';
+  }
+}
+
+async function openNotifCenter() {
+  _unreadCount = 0;
+  updateNotifBadge();
+  const logs = await db('journal');
+  const icons = {insert:'➕',update:'✏️',delete:'🗑️',export:'📤'};
+  const colors = {insert:'var(--gn2)',update:'var(--must2)',delete:'var(--rd2)',export:'var(--ac2)'};
+  const tableLabels = {
+    productions:'Production', tours:'Tournée', maintenances:'Maintenance',
+    trucks:'Camion', accidents:'Incident', employes:'Employé', formations:'Formation',
+    planning:'Planning', commandes:'Commande', stocks:'Stock', finances:'Finance',
+    fournisseurs:'Fournisseur', projets:'Projet', partenariats:'Partenariat',
+    messages:'Message', conges:'Congé', checklist:'Contrôle', carburant:'Carburant',
+    assurances:'Assurance', visites_techniques:'Visite tech.', entretiens:'Entretien',
+  };
+  const actionLabels = {insert:'Ajout',update:'Modification',delete:'Suppression',export:'Export'};
+
+  // Group by date
+  const groups = {};
+  const today = new Date().toISOString().slice(0,10);
+  const yesterday = new Date(Date.now()-86400000).toISOString().slice(0,10);
+  (logs||[]).forEach(l=>{
+    const d = l.created_at?.slice(0,10)||'';
+    const key = d===today?'Aujourd\'hui':d===yesterday?'Hier':d||'Avant';
+    if(!groups[key]) groups[key]=[];
+    groups[key].push(l);
+  });
+
+  document.getElementById('notif-list').innerHTML = Object.keys(groups).length===0
+    ? '<div style="color:var(--tx3);text-align:center;padding:20px">Aucune notification</div>'
+    : Object.entries(groups).map(([date,items])=>`
+      <div style="font-size:10px;color:var(--tx3);font-weight:700;padding:8px 0 4px;text-transform:uppercase;letter-spacing:1px">${date}</div>
+      ${items.map(l=>{
+        let details={};try{details=JSON.parse(l.details||'{}')}catch(e){}
+        const detail = details.nom||details.volume||details.id||'';
+        const label = tableLabels[l.table_modifiee]||l.table_modifiee;
+        const action = actionLabels[l.action]||l.action;
+        return `<div style="display:flex;gap:10px;align-items:flex-start;padding:8px;background:var(--sf2);border-radius:8px;margin-bottom:6px;border-left:3px solid ${colors[l.action]||'var(--tx3)'}">
+          <span style="font-size:16px">${icons[l.action]||'📝'}</span>
+          <div style="flex:1">
+            <div style="font-size:12px;font-weight:700;color:var(--tx)">${l.utilisateur||'—'} <span style="color:${colors[l.action]||'var(--tx3)'};font-weight:400">${action}</span> <strong>${label}</strong> ${detail?'· '+detail:''}</div>
+            <div style="font-size:10px;color:var(--tx3);margin-top:2px">${l.created_at?.slice(0,16)||'—'}</div>
+          </div>
+        </div>`;}).join('')}`).join('');
+  document.getElementById('notif-panel').classList.add('open');
+}
+
+function closeNotifPanel() {
+  document.getElementById('notif-panel').classList.remove('open');
+}
+
+// ═══ SAVE FLEET ADMIN ═══
+async function savAssurance() {
+  await db('assurances','POST',{
+    camion: document.getElementById('ass-truck').value,
+    compagnie: document.getElementById('ass-comp').value,
+    numero_police: document.getElementById('ass-pol').value,
+    date_debut: document.getElementById('ass-deb').value,
+    date_expiration: document.getElementById('ass-exp').value,
+    montant: +document.getElementById('ass-mont').value||0,
+    notes: document.getElementById('ass-notes').value,
+    created_by: userName
+  });
+  logAction('insert','assurances',{camion:document.getElementById('ass-truck').value});
+  closeM('m-assurance'); toast('Assurance enregistrée ✓'); renderAssurances();
+}
+
+async function savVisite() {
+  await db('visites_techniques','POST',{
+    camion: document.getElementById('vt-truck').value,
+    date_visite: document.getElementById('vt-date').value,
+    resultat: document.getElementById('vt-res').value,
+    prochaine_visite: document.getElementById('vt-next').value,
+    centre: document.getElementById('vt-centre').value,
+    cout: +document.getElementById('vt-cout').value||0,
+    notes: document.getElementById('vt-notes').value,
+    created_by: userName
+  });
+  logAction('insert','visites_techniques',{camion:document.getElementById('vt-truck').value});
+  closeM('m-visite'); toast('Visite enregistrée ✓'); renderVisites();
+}
+
+async function savEntretien() {
+  await db('entretiens','POST',{
+    camion: document.getElementById('ent-truck').value,
+    type_entretien: document.getElementById('ent-type').value,
+    date: document.getElementById('ent-date').value,
+    km_entretien: +document.getElementById('ent-km').value||0,
+    prochain_km: +document.getElementById('ent-next-km').value||0,
+    cout: +document.getElementById('ent-cout').value||0,
+    garage: document.getElementById('ent-garage').value,
+    statut: document.getElementById('ent-status').value,
+    notes: document.getElementById('ent-notes').value,
+    created_by: userName
+  });
+  logAction('insert','entretiens',{camion:document.getElementById('ent-truck').value});
+  closeM('m-entretien'); toast('Entretien enregistré ✓'); renderEntretiens();
+}
+
+async function savDocFlotte() {
+  await db('documents_flotte','POST',{
+    camion: document.getElementById('doc-truck').value,
+    type_document: document.getElementById('doc-type').value,
+    numero: document.getElementById('doc-num').value,
+    date_emission: document.getElementById('doc-em').value,
+    date_expiration: document.getElementById('doc-exp').value,
+    notes: document.getElementById('doc-notes').value,
+    created_by: userName
+  });
+  logAction('insert','documents_flotte',{camion:document.getElementById('doc-truck').value});
+  closeM('m-doc-flotte'); toast('Document enregistré ✓'); renderDocuments();
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('login-btn').addEventListener('click', doLogin);
   document.getElementById('l-code').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
@@ -3234,7 +3775,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
+
 </script>
+
 
 
 
