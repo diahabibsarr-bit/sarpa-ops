@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Sarpa Ops V2</title>
+<title>Sarpa Ops/SCM</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -257,7 +257,7 @@ textarea{resize:vertical;min-height:70px}
   <div class="login-card">
     <div class="login-logo">
       <div class="login-diamond" id="sb-initial">S</div>
-      <div class="login-title">Sarpa Ops V2</div>
+      <div class="login-title">Sarpa Ops/SCM</div>
       <div class="login-sub">Accès sécurisé</div>
     </div>
     <div class="login-fg">
@@ -281,7 +281,7 @@ textarea{resize:vertical;min-height:70px}
   <div class="logo-block">
     <div class="logo-row">
       <div class="logo-d">S</div>
-      <div><div class="logo-n">Sarpa Group</div><div class="logo-t">Ops & Logistique V2</div></div>
+      <div><div class="logo-n">Sarpa Groupe</div><div class="logo-t">Ops/SCM</div></div>
     </div>
     <div class="logo-user">
       <span class="user-dot"></span>
@@ -1354,10 +1354,12 @@ textarea{resize:vertical;min-height:70px}
 
 
 
+
+
 const ROLE_CODES = {
   'DG4X9K2M': { role:'dg',                    name:'Directeur Général'              },
   'OP7R3N8W': { role:'directeur',              name:'Dir. Opérations & Logistique'  },
-  'CR5T1P6Q': { role:'coordinatrice',          name:'Coordinatrice Sarpa Group'     },
+  'CR5T1P6Q': { role:'coordinatrice',          name:'Coordinatrice Sarpa Groupe'     },
   'CB2H8L4V': { role:'responsable_centrale',   name:'Resp. Production Béton'        },
   'FL9M3D7J': { role:'responsable_flotte',     name:'Manager Sarpa Logistics'       },
   'CT6A2R5B': { role:'comptabilite',           name:'Comptabilité'                  },
@@ -1457,7 +1459,7 @@ const ALL = ['dashboard','production','stocks','quality','fleet','maintenance','
 const ROLES = {
   dg                       : { label:'Directeur Général', badge:'rb-director', pages:['dashboard','production','stocks','quality','fleet','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','rh','formation','planning','carburant','checklist','messages','annuaire','conges','partenariats','objectifs','graphiques','journal','livraisons','factures','pointage','opening','closing','biens','visites','contrats_immo','etats_lieux','loyers'] },
   directeur                : { label:'Dir. Opérations & Logistique', badge:'rb-director', pages:['dashboard','production','stocks','quality','fleet','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','rh','formation','planning','carburant','checklist','messages','annuaire','conges','partenariats','objectifs','graphiques','journal','livraisons','factures','pointage','opening','closing','biens','visites','contrats_immo','etats_lieux','loyers'] },
-  coordinatrice            : { label:'Coordinatrice Sarpa Group', badge:'rb-coord', pages:['dashboard','stocks','fournisseurs','projets','partenaires','accidents','planning','messages','annuaire','livraisons','factures','partenariats','objectifs','conges','formation','rapports','biens','visites','contrats_immo','etats_lieux','loyers'] },
+  coordinatrice            : { label:'Coordinatrice Sarpa Groupe', badge:'rb-coord', pages:['dashboard','stocks','fournisseurs','projets','partenaires','accidents','planning','messages','annuaire','livraisons','factures','partenariats','objectifs','conges','formation','rapports','biens','visites','contrats_immo','etats_lieux','loyers'] },
   manager_beton            : { label:'Manager Sarpa Béton', badge:'rb-beton', pages:['dashboard','production','stocks','quality','accidents','planning','livraisons','factures','messages','annuaire','fournisseurs','objectifs','opening','closing','pointage'] },
   responsable_centrale     : { label:'Resp. Production Béton', badge:'rb-beton', pages:['dashboard','production','stocks','quality','accidents','planning','livraisons','factures','messages','annuaire','fournisseurs','opening','closing','pointage'] },
   resp_production          : { label:'Resp. Production', badge:'rb-beton', pages:['dashboard','production','stocks','quality','accidents','messages','annuaire','opening','closing','pointage'] },
@@ -2024,7 +2026,7 @@ async function seedData() {
 async function render(p) {
   const map = {
     dashboard:renderDash, production:renderProd, stocks:renderStocks, quality:renderQual,
-    fleet:renderFleet, tours:renderTours, maintenance:renderMaint, accidents:renderAccidents,
+    fleet:renderFleet, maintenance:renderMaint, accidents:renderAccidents,
     fournisseurs:renderFournisseurs, projets:renderProjets, partenaires:renderPartenaires,
     finances:renderFinances, evaluations:renderEvals, rapports:renderRapports,
     parametres:renderParams, users:renderUsers, rh:renderRH, formation:renderFormation,
@@ -2670,9 +2672,9 @@ async function renderParams() {
     <div id="psec-apparence" class="psec" style="display:none">
       <div class="card sp">
         <div class="ch"><div class="ct">🎨 Apparence</div></div>
-        <div class="fg"><label>Nom de l'entreprise</label><input type="text" id="cfg-company" value="${cfg.companyName||'Sarpa Group'}"></div>
+        <div class="fg"><label>Nom de l'entreprise</label><input type="text" id="cfg-company" value="${cfg.companyName||'Sarpa Groupe'}"></div>
         <div class="fg"><label>Initiales / Logo</label><input type="text" id="cfg-initials" value="${cfg.initials||'S'}" maxlength="2"></div>
-        <div class="fg"><label>Sous-titre</label><input type="text" id="cfg-subtitle" value="${cfg.subtitle||'OPS & LOGISTIQUE V2'}"></div>
+        <div class="fg"><label>Sous-titre</label><input type="text" id="cfg-subtitle" value="${cfg.subtitle||'OPS / SCM'}"></div>
         <div class="fg"><label>Couleur principale</label><input type="color" id="cfg-color" value="${cfg.primaryColor||'#D4A017'}"></div>
         <button class="btn bm" onclick="saveConfig('apparence');applyAppearance()">💾 Enregistrer & Appliquer</button>
       </div>
@@ -2824,7 +2826,7 @@ async function renderUsers() {
       <tbody>
         <tr><td><strong>Directeur Général</strong></td><td class=\"mono\">DG4X9K2M</td><td><span class=\"b bg-m\">Direction</span></td></tr>
         <tr><td><strong>Dir. Opérations & Logistique</strong></td><td class=\"mono\">OP7R3N8W</td><td><span class=\"b bg-m\">Direction</span></td></tr>
-        <tr><td><strong>Coordinatrice Sarpa Group</strong></td><td class=\"mono\">CR5T1P6Q</td><td><span class=\"b bg-p\">Direction</span></td></tr>
+        <tr><td><strong>Coordinatrice Sarpa Groupe</strong></td><td class=\"mono\">CR5T1P6Q</td><td><span class=\"b bg-p\">Direction</span></td></tr>
         <tr><td><strong>Resp. Production Béton</strong></td><td class=\"mono\">CB2H8L4V</td><td><span class=\"b bg-p\">Sarpa Béton</span></td></tr>
         <tr><td><strong>Manager Sarpa Logistics</strong></td><td class=\"mono\">FL9M3D7J</td><td><span class=\"b bg-p\">Sarpa Logistics</span></td></tr>
         <tr><td><strong>Comptabilité</strong></td><td class=\"mono\">CT6A2R5B</td><td><span class=\"b bg-p\">Finance</span></td></tr>
@@ -3458,7 +3460,7 @@ async function exportPDF() {
   <style>body{font-family:Arial,sans-serif;color:#1a1a2e;margin:40px;font-size:13px}h1{color:#1E1035;border-bottom:3px solid #D4A017;padding-bottom:10px}h2{color:#1E1035;margin-top:24px;font-size:15px}table{width:100%;border-collapse:collapse;margin-top:10px}th{background:#1E1035;color:#fff;padding:8px;text-align:left;font-size:11px}td{padding:7px;border-bottom:1px solid #eee;font-size:11px}tr:nth-child(even){background:#f9f9f9}.kpi{display:inline-block;background:#f4f0ff;border-radius:8px;padding:12px 20px;margin:6px;text-align:center}.kv{font-size:24px;font-weight:800;color:#1E1035}.kl{font-size:10px;color:#666;margin-top:4px}@media print{button{display:none}}</style>
   </head><body>
   <div style="display:flex;justify-content:space-between;margin-bottom:20px">
-    <div><div style="font-size:24px;font-weight:800;color:#1E1035">SARPA GROUP</div><div style="font-size:11px;color:#666">Ops & Logistique V2</div></div>
+    <div><div style="font-size:24px;font-weight:800;color:#1E1035">SARPA GROUP</div><div style="font-size:11px;color:#666">Ops/SCM</div></div>
     <div style="text-align:right"><div style="font-weight:700">Rapport opérationnel</div><div style="font-size:11px;color:#666">${today}</div><div style="font-size:11px;color:#666">Par: ${userName}</div></div>
   </div>
   <button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:10px 20px;border-radius:6px;cursor:pointer;margin-bottom:10px;margin-right:8px">← Retour</button>
@@ -4823,7 +4825,7 @@ async function exportFacturesPDF() {
   const win = window.open('','_blank');
   if (!win) { toast('Autorisez les popups'); return; }
   const cfg = getConfig();
-  const company = cfg.companyName||'Sarpa Group';
+  const company = cfg.companyName||'Sarpa Groupe';
   win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Bilan Factures ${period}</title>
   <style>body{font-family:Arial;margin:40px;color:#1a1a2e;font-size:12px}
   h1{color:#1E1035;border-bottom:3px solid #D4A017;padding-bottom:8px}
@@ -5201,7 +5203,7 @@ async function exportPointagePDF() {
   @media print{button{display:none}}</style></head>
   <body>
   <div style="display:flex;justify-content:space-between;margin-bottom:16px">
-    <div><div style="font-size:20px;font-weight:800;color:#1E1035">${cfg.companyName||'Sarpa Group'}</div><div style="color:#666;font-size:10px">Rapport de pointage mensuel</div></div>
+    <div><div style="font-size:20px;font-weight:800;color:#1E1035">${cfg.companyName||'Sarpa Groupe'}</div><div style="color:#666;font-size:10px">Rapport de pointage mensuel</div></div>
     <div style="text-align:right"><div style="font-weight:700">Mois : ${m}</div><div style="color:#666;font-size:10px">Par : ${userName}</div></div>
   </div>
   <button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button>
@@ -5400,7 +5402,7 @@ async function exportShiftPDF(type) {
   @media print{button{display:none}}</style></head>
   <body>
   <div style="display:flex;justify-content:space-between;margin-bottom:16px">
-    <div><div style="font-size:20px;font-weight:800;color:#1E1035">${cfg.companyName||'Sarpa Group'}</div></div>
+    <div><div style="font-size:20px;font-weight:800;color:#1E1035">${cfg.companyName||'Sarpa Groupe'}</div></div>
     <div style="text-align:right"><div style="font-weight:700">${label} — ${today}</div><div style="color:#666;font-size:10px">Par : ${userName}</div></div>
   </div>
   <button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button>
@@ -5501,7 +5503,7 @@ async function exportBiensPDF() {
   @media print{button{display:none}}</style></head>
   <body>
   <div style="display:flex;justify-content:space-between;margin-bottom:16px">
-    <div><div style="font-size:20px;font-weight:800;color:#1E1035">${cfg.companyName||'Sarpa Group'}</div><div style="color:#666;font-size:10px">Sarpa Immobilier — Portefeuille</div></div>
+    <div><div style="font-size:20px;font-weight:800;color:#1E1035">${cfg.companyName||'Sarpa Groupe'}</div><div style="color:#666;font-size:10px">Sarpa Immobilier — Portefeuille</div></div>
     <div style="text-align:right"><div style="font-weight:700">${new Date().toLocaleDateString('fr-FR')}</div><div style="color:#666;font-size:10px">Par : ${userName}</div></div>
   </div>
   <button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button>
@@ -5599,7 +5601,7 @@ async function exportVisitesPDF() {
   td{padding:5px 6px;border-bottom:1px solid #eee}tr:nth-child(even){background:#f9f9f9}@media print{button{display:none}}</style></head>
   <body>
   <div style="display:flex;justify-content:space-between;margin-bottom:16px">
-    <div><strong style="font-size:18px;color:#1E1035">${cfg.companyName||'Sarpa Group'}</strong><br><small>Sarpa Immobilier — Visites & Prospects</small></div>
+    <div><strong style="font-size:18px;color:#1E1035">${cfg.companyName||'Sarpa Groupe'}</strong><br><small>Sarpa Immobilier — Visites & Prospects</small></div>
     <div style="text-align:right">${new Date().toLocaleDateString('fr-FR')}<br><small>Par : ${userName}</small></div>
   </div>
   <button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button>
@@ -5707,7 +5709,7 @@ async function exportContratPDF(id) {
   @media print{button{display:none}}</style></head>
   <body>
   <div style="display:flex;justify-content:space-between;margin-bottom:24px">
-    <div><div style="font-size:22px;font-weight:800;color:#1E1035">${cfg.companyName||'Sarpa Group'}</div><div style="color:#666">Sarpa Immobilier</div></div>
+    <div><div style="font-size:22px;font-weight:800;color:#1E1035">${cfg.companyName||'Sarpa Groupe'}</div><div style="color:#666">Sarpa Immobilier</div></div>
     <div style="text-align:right"><div style="font-weight:700;font-size:16px">${c.numero_contrat}</div><div style="color:#666">${c.date_debut||''}</div></div>
   </div>
   <button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button>
@@ -5846,7 +5848,7 @@ async function exportEtatDetailPDF(id) {
   @media print{button{display:none}}</style></head>
   <body>
   <div style="display:flex;justify-content:space-between;margin-bottom:20px">
-    <div><strong style="font-size:20px;color:#1E1035">${cfg.companyName||'Sarpa Group'}</strong><br><small>Sarpa Immobilier</small></div>
+    <div><strong style="font-size:20px;color:#1E1035">${cfg.companyName||'Sarpa Groupe'}</strong><br><small>Sarpa Immobilier</small></div>
     <div style="text-align:right"><strong>État des lieux</strong><br><small>${e.date}</small></div>
   </div>
   <button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button>
@@ -6012,7 +6014,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
+
+
 </script>
+
+
 
 
 
