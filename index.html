@@ -650,6 +650,22 @@ textarea{resize:vertical;min-height:70px}
   <div id="closing-content"></div>
 </div>
 
+
+<!-- ═══ BIENS IMMOBILIERS ═══ -->
+<div class="pg" id="pg-biens"><div id="biens-content"></div></div>
+
+<!-- ═══ VISITES IMMO ═══ -->
+<div class="pg" id="pg-visites"><div id="visites-content"></div></div>
+
+<!-- ═══ CONTRATS IMMO ═══ -->
+<div class="pg" id="pg-contrats_immo"><div id="contrats_immo-content"></div></div>
+
+<!-- ═══ ETATS DES LIEUX ═══ -->
+<div class="pg" id="pg-etats_lieux"><div id="etats_lieux-content"></div></div>
+
+<!-- ═══ LOYERS ═══ -->
+<div class="pg" id="pg-loyers"><div id="loyers-content"></div></div>
+
 </div><!-- /mn -->
 </div><!-- /app -->
 
@@ -1188,7 +1204,137 @@ textarea{resize:vertical;min-height:70px}
   <div class="fg"><label>Description (optionnel)</label><textarea id="shift-item-desc" rows="2" placeholder="Instructions détaillées..."></textarea></div>
   <div class="mf"><button class="btn bg2" onclick="closeM('m-shift-item')">Annuler</button><button class="btn bm" onclick="savShiftItem()">Ajouter</button></div>
 </div></div>
+
+<!-- MODAL BIEN -->
+<div class="mo" id="m-bien"><div class="md">
+  <div class="mh"><div class="mt">🏠 Ajouter un bien</div><button class="mc" onclick="closeM('m-bien')">✕</button></div>
+  <div class="fg"><label>Nom / Référence</label><input type="text" id="bien-nom" placeholder="Ex: Villa Almadies B2"></div>
+  <div class="fr">
+    <div class="fg"><label>Type de bien</label><select id="bien-type">
+      <option>Appartement</option><option>Villa</option><option>Bureau</option>
+      <option>Local commercial</option><option>Terrain</option><option>Immeuble</option><option>Autre</option>
+    </select></div>
+    <div class="fg"><label>Superficie (m²)</label><input type="number" id="bien-surf" placeholder="0"></div>
+  </div>
+  <div class="fg"><label>Adresse / Localisation</label><input type="text" id="bien-adresse" placeholder="Adresse complète"></div>
+  <div class="fg"><label>Statut</label><select id="bien-statut">
+    <option>Libre</option><option>Occupé</option><option>En rénovation</option><option>À vendre</option>
+  </select></div>
+  <div class="fr">
+    <div class="fg"><label>Locataire actuel</label><input type="text" id="bien-locataire"></div>
+    <div class="fg"><label>Loyer mensuel (FCFA)</label><input type="number" id="bien-loyer" placeholder="0"></div>
+  </div>
+  <div class="fr">
+    <div class="fg"><label>Valeur estimée (FCFA)</label><input type="number" id="bien-valeur" placeholder="0"></div>
+    <div class="fg"><label>Date acquisition</label><input type="date" id="bien-date-acq"></div>
+  </div>
+  <div class="fg"><label>Notes</label><textarea id="bien-notes" rows="2"></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-bien')">Annuler</button><button class="btn bm" onclick="savBien()">Enregistrer</button></div>
+</div></div>
+
+<!-- MODAL VISITE IMMO -->
+<div class="mo" id="m-visite-immo"><div class="md">
+  <div class="mh"><div class="mt">👥 Nouvelle visite</div><button class="mc" onclick="closeM('m-visite-immo')">✕</button></div>
+  <div class="fr">
+    <div class="fg"><label>Date visite</label><input type="date" id="vi-date"></div>
+    <div class="fg"><label>Type opération</label><select id="vi-type">
+      <option>Location</option><option>Vente</option><option>Achat</option>
+    </select></div>
+  </div>
+  <div class="fr">
+    <div class="fg"><label>Nom prospect</label><input type="text" id="vi-nom"></div>
+    <div class="fg"><label>Téléphone</label><input type="tel" id="vi-tel"></div>
+    <div class="fg"><label>Email</label><input type="email" id="vi-email"></div>
+  </div>
+  <div class="fg"><label>Bien visité</label><input type="text" id="vi-bien" placeholder="Nom ou référence du bien"></div>
+  <div class="fr">
+    <div class="fg"><label>Intérêt</label><select id="vi-interet">
+      <option>Très intéressé</option><option>Intéressé</option><option>Neutre</option><option>Pas intéressé</option>
+    </select></div>
+    <div class="fg"><label>Budget (FCFA)</label><input type="number" id="vi-budget" placeholder="0"></div>
+  </div>
+  <div class="fg"><label>Suivi / Prochaine étape</label><input type="text" id="vi-suivi" placeholder="Ex: Rappel dans 3 jours"></div>
+  <div class="fg"><label>Agent responsable</label><input type="text" id="vi-agent"></div>
+  <div class="fg"><label>Notes</label><textarea id="vi-notes" rows="2"></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-visite-immo')">Annuler</button><button class="btn bm" onclick="savVisiteImmo()">Enregistrer</button></div>
+</div></div>
+
+<!-- MODAL CONTRAT IMMO -->
+<div class="mo" id="m-contrat-immo"><div class="md">
+  <div class="mh"><div class="mt">📄 Nouveau contrat</div><button class="mc" onclick="closeM('m-contrat-immo')">✕</button></div>
+  <div class="fr">
+    <div class="fg"><label>N° Contrat</label><input type="text" id="ci-numero" readonly style="background:var(--sf2);color:var(--must2);font-weight:700"></div>
+    <div class="fg"><label>Type</label><select id="ci-type">
+      <option>Bail location</option><option>Promesse de vente</option><option>Acte de vente</option>
+      <option>Location commerciale</option><option>Autre</option>
+    </select></div>
+  </div>
+  <div class="fg"><label>Bien concerné</label><input type="text" id="ci-bien"></div>
+  <div class="fr">
+    <div class="fg"><label>Nom client</label><input type="text" id="ci-client"></div>
+    <div class="fg"><label>Téléphone</label><input type="tel" id="ci-tel"></div>
+    <div class="fg"><label>Email</label><input type="email" id="ci-email"></div>
+  </div>
+  <div class="fr">
+    <div class="fg"><label>Date début</label><input type="date" id="ci-date-debut"></div>
+    <div class="fg"><label>Date fin</label><input type="date" id="ci-date-fin"></div>
+    <div class="fg"><label>Montant (FCFA)</label><input type="number" id="ci-montant" placeholder="0"></div>
+  </div>
+  <div class="fg"><label>Conditions particulières</label><textarea id="ci-conditions" rows="3"></textarea></div>
+  <div class="fg"><label>Statut</label><select id="ci-statut"><option>Actif</option><option>En cours</option><option>Terminé</option><option>Annulé</option></select></div>
+  <div class="fg"><label>Notes</label><textarea id="ci-notes" rows="2"></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-contrat-immo')">Annuler</button><button class="btn bm" onclick="savContratImmo()">Enregistrer</button></div>
+</div></div>
+
+<!-- MODAL ETAT DES LIEUX -->
+<div class="mo" id="m-etat-lieux"><div class="md">
+  <div class="mh"><div class="mt">📋 État des lieux</div><button class="mc" onclick="closeM('m-etat-lieux')">✕</button></div>
+  <div class="fr">
+    <div class="fg"><label>Date</label><input type="date" id="el-date"></div>
+    <div class="fg"><label>Type</label><select id="el-type"><option>Entrée</option><option>Sortie</option></select></div>
+  </div>
+  <div class="fr">
+    <div class="fg"><label>Bien</label><input type="text" id="el-bien"></div>
+    <div class="fg"><label>Locataire</label><input type="text" id="el-locataire"></div>
+  </div>
+  <div class="fg"><label>État général</label><select id="el-etat"><option>Bon</option><option>Moyen</option><option>Mauvais</option></select></div>
+  <div class="fg"><label>Pièces (détail par pièce)</label><textarea id="el-pieces" rows="3" placeholder="Salon : bon état&#10;Chambre 1 : traces humidité..."></textarea></div>
+  <div class="fg"><label>Équipements</label><textarea id="el-equip" rows="2" placeholder="Climatiseur : OK&#10;Chauffe-eau : défaillant..."></textarea></div>
+  <div class="fg"><label>Observations générales</label><textarea id="el-obs" rows="2"></textarea></div>
+  <div class="fg"><label>Agent</label><input type="text" id="el-agent"></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-etat-lieux')">Annuler</button><button class="btn bm" onclick="savEtatLieux()">Enregistrer</button></div>
+</div></div>
+
+<!-- MODAL LOYER -->
+<div class="mo" id="m-loyer"><div class="md">
+  <div class="mh"><div class="mt">💰 Saisir un loyer</div><button class="mc" onclick="closeM('m-loyer')">✕</button></div>
+  <div class="fr">
+    <div class="fg"><label>Bien</label><input type="text" id="loy-bien" placeholder="Nom du bien"></div>
+    <div class="fg"><label>Locataire</label><input type="text" id="loy-locataire"></div>
+  </div>
+  <div class="fr">
+    <div class="fg"><label>Mois</label><input type="month" id="loy-mois"></div>
+    <div class="fg"><label>Montant (FCFA)</label><input type="number" id="loy-montant" placeholder="0"></div>
+  </div>
+  <div class="fr">
+    <div class="fg"><label>Date échéance</label><input type="date" id="loy-echeance"></div>
+    <div class="fg"><label>Date paiement</label><input type="date" id="loy-paiement"></div>
+  </div>
+  <div class="fr">
+    <div class="fg"><label>Mode paiement</label><select id="loy-mode">
+      <option value="">— Non défini —</option>
+      <option>📱 Wave</option><option>📱 Orange Money</option>
+      <option>🏦 Transfert bancaire</option><option>📝 Chèque</option><option>💵 Espèces</option>
+    </select></div>
+    <div class="fg"><label>Statut</label><select id="loy-statut">
+      <option>En attente</option><option>Payé</option><option>En retard</option>
+    </select></div>
+  </div>
+  <div class="fg"><label>Notes</label><textarea id="loy-notes" rows="2"></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-loyer')">Annuler</button><button class="btn bm" onclick="savLoyer()">Enregistrer</button></div>
+</div></div>
 <script>
+
 
 
 
@@ -1307,23 +1453,23 @@ async function initGoogleSheets() {
 }
 
 // ═══ ROLES ═══
-const ALL = ['dashboard','production','stocks','quality','fleet','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','rh','formation','planning','carburant','checklist','messages','annuaire','conges','partenariats','objectifs','graphiques','journal','livraisons','factures','pointage','opening','closing'];
+const ALL = ['dashboard','production','stocks','quality','fleet','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','rh','formation','planning','carburant','checklist','messages','annuaire','conges','partenariats','objectifs','graphiques','journal','livraisons','factures','pointage','opening','closing','biens','visites','contrats_immo','etats_lieux','loyers'];
 const ROLES = {
-  dg                       : { label:'Directeur Général', badge:'rb-director', pages:['dashboard','production','stocks','quality','fleet','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','rh','formation','planning','carburant','checklist','messages','annuaire','conges','partenariats','objectifs','graphiques','journal','livraisons','factures','pointage','opening','closing'] },
-  directeur                : { label:'Dir. Opérations & Logistique', badge:'rb-director', pages:['dashboard','production','stocks','quality','fleet','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','rh','formation','planning','carburant','checklist','messages','annuaire','conges','partenariats','objectifs','graphiques','journal','livraisons','factures','pointage','opening','closing'] },
-  coordinatrice            : { label:'Coordinatrice Sarpa Group', badge:'rb-coord', pages:['dashboard','stocks','fournisseurs','projets','partenaires','accidents','planning','messages','annuaire','livraisons','factures','partenariats','objectifs','conges','formation','rapports'] },
+  dg                       : { label:'Directeur Général', badge:'rb-director', pages:['dashboard','production','stocks','quality','fleet','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','rh','formation','planning','carburant','checklist','messages','annuaire','conges','partenariats','objectifs','graphiques','journal','livraisons','factures','pointage','opening','closing','biens','visites','contrats_immo','etats_lieux','loyers'] },
+  directeur                : { label:'Dir. Opérations & Logistique', badge:'rb-director', pages:['dashboard','production','stocks','quality','fleet','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','rh','formation','planning','carburant','checklist','messages','annuaire','conges','partenariats','objectifs','graphiques','journal','livraisons','factures','pointage','opening','closing','biens','visites','contrats_immo','etats_lieux','loyers'] },
+  coordinatrice            : { label:'Coordinatrice Sarpa Group', badge:'rb-coord', pages:['dashboard','stocks','fournisseurs','projets','partenaires','accidents','planning','messages','annuaire','livraisons','factures','partenariats','objectifs','conges','formation','rapports','biens','visites','contrats_immo','etats_lieux','loyers'] },
   manager_beton            : { label:'Manager Sarpa Béton', badge:'rb-beton', pages:['dashboard','production','stocks','quality','accidents','planning','livraisons','factures','messages','annuaire','fournisseurs','objectifs','opening','closing','pointage'] },
   responsable_centrale     : { label:'Resp. Production Béton', badge:'rb-beton', pages:['dashboard','production','stocks','quality','accidents','planning','livraisons','factures','messages','annuaire','fournisseurs','opening','closing','pointage'] },
   resp_production          : { label:'Resp. Production', badge:'rb-beton', pages:['dashboard','production','stocks','quality','accidents','messages','annuaire','opening','closing','pointage'] },
   resp_qualite             : { label:'Responsable Qualité', badge:'rb-qual', pages:['dashboard','quality','production','rapports','accidents','messages','annuaire','evaluations'] },
   manager_logistics        : { label:'Manager Sarpa Logistics', badge:'rb-flotte', pages:['dashboard','fleet','maintenance','livraisons','planning','carburant','checklist','accidents','factures','messages','annuaire','fournisseurs','objectifs','opening','closing','pointage'] },
   responsable_flotte       : { label:'Resp. Flotte', badge:'rb-flotte', pages:['dashboard','fleet','maintenance','livraisons','planning','carburant','checklist','accidents','factures','messages','annuaire','opening','closing','pointage'] },
-  manager_immo             : { label:'Manager Sarpa Immobilier', badge:'rb-immo', pages:['dashboard','projets','partenaires','partenariats','livraisons','factures','messages','annuaire','fournisseurs','objectifs'] },
-  immobilier               : { label:'Agence Immobilière', badge:'rb-immo', pages:['dashboard','projets','partenaires','partenariats','livraisons','factures','messages','annuaire'] },
+  manager_immo             : { label:'Manager Sarpa Immobilier', badge:'rb-immo', pages:['dashboard','projets','partenaires','partenariats','livraisons','factures','messages','annuaire','fournisseurs','objectifs','biens','visites','contrats_immo','etats_lieux','loyers'] },
+  immobilier               : { label:'Agence Immobilière', badge:'rb-immo', pages:['dashboard','projets','partenaires','partenariats','livraisons','factures','messages','annuaire','biens','visites','contrats_immo','etats_lieux','loyers'] },
   resp_info                : { label:'Resp. Informatique', badge:'rb-info', pages:['dashboard','parametres','users','journal','graphiques','rapports','messages','annuaire','evaluations'] },
   comptabilite             : { label:'Comptabilité', badge:'rb-compta', pages:['dashboard','finances','factures','fournisseurs','rapports','messages','annuaire','objectifs','livraisons','stocks','commandes'] },
   comptable_beton          : { label:'Comptable Béton', badge:'rb-compta', pages:['dashboard','finances','factures','fournisseurs','messages','annuaire','stocks'] },
-  comptable_immo           : { label:'Comptable Immobilier', badge:'rb-compta', pages:['dashboard','finances','factures','projets','messages','annuaire'] },
+  comptable_immo           : { label:'Comptable Immobilier', badge:'rb-compta', pages:['dashboard','finances','factures','projets','messages','annuaire','biens','loyers','contrats_immo'] },
   comptable_logistics      : { label:'Comptable Logistics', badge:'rb-compta', pages:['dashboard','finances','factures','livraisons','carburant','messages','annuaire'] },
   rh                       : { label:'Ressources Humaines', badge:'rb-rh', pages:['dashboard','rh','formation','accidents','conges','messages','annuaire','factures','livraisons','pointage','opening','closing'] },
   commercial               : { label:'Commercial', badge:'rb-comm', pages:['dashboard','projets','fournisseurs','partenaires','partenariats','messages','annuaire','livraisons','factures','planning'] },
@@ -1359,6 +1505,12 @@ const NAV = [
   { id:'planning',     ic:'📅', lb:'Planning opérationnel', bg:'nb-plan' },
   { id:'carburant',    ic:'⛽', lb:'Suivi carburant' },
   { id:'checklist',    ic:'🔧', lb:'Checklist préventive' },
+  { s:'Sarpa Immobilier' },
+  { id:'biens',        ic:'🏠', lb:'Biens immobiliers' },
+  { id:'visites',      ic:'👥', lb:'Visites & Prospects' },
+  { id:'contrats_immo',ic:'📄', lb:'Contrats immo' },
+  { id:'etats_lieux',  ic:'📋', lb:'États des lieux' },
+  { id:'loyers',       ic:'💰', lb:'Suivi loyers',         bg:'nb-loy' },
   { s:'Opérations' },
   { id:'accidents',    ic:'🚨', lb:'Accidents & Sécurité', bg:'nb-acc' },
   { id:'fournisseurs', ic:'🏭', lb:'Fournisseurs' },
@@ -1880,7 +2032,9 @@ async function render(p) {
     carburant:renderCarburant, objectifs:renderObjectifs, conges:renderConges,
     checklist:renderChecklist, partenariats:renderPartenariats,
     graphiques:renderGraphiques, journal:renderJournal, livraisons:renderLivraisons, factures:renderFactures,
-    pointage:renderPointage, opening:renderOpening, closing:renderClosing
+    pointage:renderPointage, opening:renderOpening, closing:renderClosing,
+    biens:renderBiens, visites:renderVisites, contrats_immo:renderContratsImmo,
+    etats_lieux:renderEtatsLieux, loyers:renderLoyers
   };
   if (map[p]) await map[p]();
 }
@@ -5258,6 +5412,574 @@ async function exportShiftPDF(type) {
   win.document.close();
 }
 
+
+// ═══ BIENS IMMOBILIERS ═══
+async function renderBiens() {
+  const biens = await db('biens');
+  const canE = canEdit('biens');
+  const stats = {
+    libre: (biens||[]).filter(b=>b.statut==='Libre').length,
+    occupe: (biens||[]).filter(b=>b.statut==='Occupé').length,
+    renovation: (biens||[]).filter(b=>b.statut==='En rénovation').length,
+    vente: (biens||[]).filter(b=>b.statut==='À vendre').length,
+  };
+  const stColors = {'Libre':'var(--gn2)','Occupé':'var(--ac2)','En rénovation':'var(--must2)','À vendre':'var(--rd2)'};
+  const stIcons = {'Libre':'🟢','Occupé':'🔵','En rénovation':'🟡','À vendre':'🔴'};
+
+  document.getElementById('biens-content').innerHTML = `
+    <div class="sh">
+      <div><div class="stl">Biens Immobiliers</div><div class="sst">Portefeuille Sarpa Immobilier</div></div>
+      <div style="display:flex;gap:6px">
+        <button class="btn bg2" onclick="exportBiensPDF()" style="font-size:11px">📄 PDF</button>
+        ${canE?`<button class="btn bm" onclick="openM('m-bien')" style="font-size:11px">+ Bien</button>`:''}
+      </div>
+    </div>
+    <div class="kg" style="grid-template-columns:repeat(4,1fr);margin-bottom:14px">
+      <div class="kc kc-g"><div class="kl">Libres</div><div class="kv">${stats.libre}</div><div class="ks">disponibles</div></div>
+      <div class="kc kc-b"><div class="kl">Occupés</div><div class="kv">${stats.occupe}</div><div class="ks">loués/vendus</div></div>
+      <div class="kc kc-m"><div class="kl">Rénovation</div><div class="kv">${stats.renovation}</div><div class="ks">en travaux</div></div>
+      <div class="kc kc-r"><div class="kl">À vendre</div><div class="kv">${stats.vente}</div><div class="ks">sur marché</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">
+      ${(biens||[]).length===0
+        ? '<div class="al al-m">Aucun bien enregistré</div>'
+        : (biens||[]).map(b=>`
+          <div class="fcard">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start">
+              <div>
+                <div class="fcard-title">🏠 ${b.nom||b.adresse||'—'}</div>
+                <div class="fcard-sub">${b.type_bien||'—'} — ${b.superficie||'—'} m²</div>
+              </div>
+              <span style="font-size:18px">${stIcons[b.statut]||'⚪'}</span>
+            </div>
+            <div style="margin:8px 0">
+              <span class="b" style="background:${stColors[b.statut]||'var(--tx3)'}20;color:${stColors[b.statut]||'var(--tx3)'}">${b.statut||'—'}</span>
+            </div>
+            <div style="font-size:11px;color:var(--tx2);margin-bottom:6px">📍 ${b.adresse||'—'}</div>
+            ${b.locataire?`<div style="font-size:11px;color:var(--tx3)">👤 ${b.locataire}</div>`:''}
+            ${b.loyer_mensuel?`<div style="font-size:11px;color:var(--must2);font-weight:700">💰 ${fmt(b.loyer_mensuel)} FCFA/mois</div>`:''}
+            ${b.valeur?`<div style="font-size:11px;color:var(--gn2)">💎 ${fmt(b.valeur)} FCFA</div>`:''}
+            ${b.notes?`<div style="font-size:10px;color:var(--tx3);margin-top:6px">${b.notes}</div>`:''}
+            ${canE?`<div style="margin-top:10px;display:flex;gap:6px">
+              <button onclick="editRow('biens','${b.id}','biens')" style="background:none;border:1px solid var(--bd2);border-radius:4px;padding:3px 8px;cursor:pointer;font-size:10px">✏️ Modifier</button>
+            </div>`:''}
+          </div>`).join('')}
+    </div>`;
+}
+
+async function savBien() {
+  if (!document.getElementById('bien-nom').value&&!document.getElementById('bien-adresse').value) { toast('Nom ou adresse requis'); return; }
+  const data = {
+    nom: document.getElementById('bien-nom').value,
+    type_bien: document.getElementById('bien-type').value,
+    adresse: document.getElementById('bien-adresse').value,
+    superficie: +document.getElementById('bien-surf').value||0,
+    statut: document.getElementById('bien-statut').value,
+    locataire: document.getElementById('bien-locataire').value,
+    loyer_mensuel: +document.getElementById('bien-loyer').value||0,
+    valeur: +document.getElementById('bien-valeur').value||0,
+    date_acquisition: document.getElementById('bien-date-acq').value,
+    notes: document.getElementById('bien-notes').value,
+  };
+  await dbSave('biens', data, 'm-bien', 'biens', 'Bien enregistré ✓');
+}
+
+async function exportBiensPDF() {
+  const biens = await db('biens');
+  const cfg = getConfig();
+  const win = window.open('','_blank');
+  if (!win) { toast('Autorisez les popups'); return; }
+  const stColors = {'Libre':'#2e7d32','Occupé':'#1565c0','En rénovation':'#e65100','À vendre':'#c62828'};
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Portefeuille Immobilier</title>
+  <style>body{font-family:Arial;margin:40px;color:#1a1a2e;font-size:12px}
+  h1{color:#1E1035;border-bottom:3px solid #D4A017;padding-bottom:8px}
+  table{width:100%;border-collapse:collapse;margin-top:10px}
+  th{background:#1E1035;color:#fff;padding:7px;font-size:10px;text-align:left}
+  td{padding:6px 7px;border-bottom:1px solid #eee;font-size:10px}
+  tr:nth-child(even){background:#f9f9f9}
+  .badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700}
+  @media print{button{display:none}}</style></head>
+  <body>
+  <div style="display:flex;justify-content:space-between;margin-bottom:16px">
+    <div><div style="font-size:20px;font-weight:800;color:#1E1035">${cfg.companyName||'Sarpa Group'}</div><div style="color:#666;font-size:10px">Sarpa Immobilier — Portefeuille</div></div>
+    <div style="text-align:right"><div style="font-weight:700">${new Date().toLocaleDateString('fr-FR')}</div><div style="color:#666;font-size:10px">Par : ${userName}</div></div>
+  </div>
+  <button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button>
+  <button onclick="window.print()" style="background:#1E1035;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-bottom:16px">🖨️ Imprimer</button>
+  <h1>🏠 Portefeuille Immobilier — ${(biens||[]).length} biens</h1>
+  <table><thead><tr><th>Bien</th><th>Type</th><th>Adresse</th><th>Superficie</th><th>Statut</th><th>Locataire</th><th>Loyer/mois</th><th>Valeur</th></tr></thead>
+  <tbody>${(biens||[]).map(b=>`<tr>
+    <td><strong>${b.nom||'—'}</strong></td><td>${b.type_bien||'—'}</td>
+    <td>${b.adresse||'—'}</td><td>${b.superficie||'—'} m²</td>
+    <td><span class="badge" style="background:${stColors[b.statut]||'#666'}20;color:${stColors[b.statut]||'#666'}">${b.statut||'—'}</span></td>
+    <td>${b.locataire||'—'}</td>
+    <td>${b.loyer_mensuel?fmt(b.loyer_mensuel)+' FCFA':'—'}</td>
+    <td>${b.valeur?fmt(b.valeur)+' FCFA':'—'}</td>
+  </tr>`).join('')}</tbody></table>
+  </body></html>`);
+  win.document.close();
+}
+
+// ═══ VISITES & PROSPECTS ═══
+async function renderVisites() {
+  // Note: this overrides the fleet visites function - renamed below
+  const visites = await db('visites_immo');
+  const biens = await db('biens');
+  const canE = canEdit('visites');
+  const m = new Date().toISOString().slice(0,7);
+  const mv = (visites||[]).filter(v=>v.date_visite?.startsWith(m));
+  const interesses = (visites||[]).filter(v=>v.interet==='Très intéressé'||v.interet==='Intéressé');
+
+  document.getElementById('visites-content').innerHTML = `
+    <div class="sh">
+      <div><div class="stl">Visites & Prospects</div><div class="sst">Suivi des visites immobilières</div></div>
+      <div style="display:flex;gap:6px">
+        <button class="btn bg2" onclick="exportVisitesPDF()" style="font-size:11px">📄 Rapport PDF</button>
+        ${canE?`<button class="btn bm" onclick="openM('m-visite-immo')" style="font-size:11px">+ Visite</button>`:''}
+      </div>
+    </div>
+    <div class="kg" style="grid-template-columns:repeat(3,1fr);margin-bottom:14px">
+      <div class="kc kc-b"><div class="kl">Visites ce mois</div><div class="kv">${mv.length}</div><div class="ks">visites</div></div>
+      <div class="kc kc-g"><div class="kl">Prospects chauds</div><div class="kv">${interesses.length}</div><div class="ks">intéressés</div></div>
+      <div class="kc kc-m"><div class="kl">Total prospects</div><div class="kv">${(visites||[]).length}</div><div class="ks">enregistrés</div></div>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ct">👥 Toutes les visites</div></div>
+      <div class="tw"><table><thead><tr>
+        <th>Date</th><th>Prospect</th><th>Téléphone</th><th>Bien visité</th><th>Type</th>
+        <th>Intérêt</th><th>Budget</th><th>Suivi</th><th>Agent</th>
+        ${canE?'<th></th>':''}
+      </tr></thead>
+      <tbody>${(visites||[]).length===0
+        ? '<tr><td colspan="10" style="text-align:center;color:var(--tx3)">Aucune visite enregistrée</td></tr>'
+        : (visites||[]).map(v=>{
+            const intColors = {'Très intéressé':'bg-g','Intéressé':'bg-b','Neutre':'bg-x','Pas intéressé':'bg-r'};
+            return `<tr>
+              <td class="mono">${v.date_visite||'—'}</td>
+              <td><strong>${v.nom_prospect||'—'}</strong></td>
+              <td class="mono">${v.telephone||'—'}</td>
+              <td>${v.bien_visite||'—'}</td>
+              <td><span class="b bg-p" style="font-size:10px">${v.type_operation||'—'}</span></td>
+              <td><span class="b ${intColors[v.interet]||'bg-x'}">${v.interet||'—'}</span></td>
+              <td>${v.budget?fmt(v.budget)+' FCFA':'—'}</td>
+              <td style="font-size:11px">${v.suivi||'—'}</td>
+              <td style="font-size:10px">${v.agent||'—'}</td>
+              ${canE?`<td><button onclick="editRow('visites_immo','${v.id}','visites')" style="background:none;border:none;cursor:pointer;font-size:13px">✏️</button></td>`:''}
+            </tr>`;
+          }).join('')}
+      </tbody></table></div>
+    </div>`;
+}
+
+async function savVisiteImmo() {
+  const data = {
+    date_visite: document.getElementById('vi-date').value,
+    nom_prospect: document.getElementById('vi-nom').value,
+    telephone: document.getElementById('vi-tel').value,
+    email: document.getElementById('vi-email').value,
+    bien_visite: document.getElementById('vi-bien').value,
+    type_operation: document.getElementById('vi-type').value,
+    interet: document.getElementById('vi-interet').value,
+    budget: +document.getElementById('vi-budget').value||0,
+    suivi: document.getElementById('vi-suivi').value,
+    agent: document.getElementById('vi-agent').value||userName,
+    notes: document.getElementById('vi-notes').value,
+  };
+  await dbSave('visites_immo', data, 'm-visite-immo', 'visites', 'Visite enregistrée ✓');
+}
+
+async function exportVisitesPDF() {
+  const visites = await db('visites_immo');
+  const cfg = getConfig();
+  const win = window.open('','_blank');
+  if (!win) { toast('Autorisez les popups'); return; }
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Rapport Visites</title>
+  <style>body{font-family:Arial;margin:40px;color:#1a1a2e;font-size:11px}h1{color:#1E1035;border-bottom:3px solid #D4A017;padding-bottom:8px}
+  table{width:100%;border-collapse:collapse;margin-top:10px}th{background:#1E1035;color:#fff;padding:6px;font-size:10px;text-align:left}
+  td{padding:5px 6px;border-bottom:1px solid #eee}tr:nth-child(even){background:#f9f9f9}@media print{button{display:none}}</style></head>
+  <body>
+  <div style="display:flex;justify-content:space-between;margin-bottom:16px">
+    <div><strong style="font-size:18px;color:#1E1035">${cfg.companyName||'Sarpa Group'}</strong><br><small>Sarpa Immobilier — Visites & Prospects</small></div>
+    <div style="text-align:right">${new Date().toLocaleDateString('fr-FR')}<br><small>Par : ${userName}</small></div>
+  </div>
+  <button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button>
+  <button onclick="window.print()" style="background:#1E1035;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-bottom:16px">🖨️ Imprimer</button>
+  <h1>👥 Rapport Visites & Prospects</h1>
+  <table><thead><tr><th>Date</th><th>Prospect</th><th>Téléphone</th><th>Bien</th><th>Type</th><th>Intérêt</th><th>Budget</th><th>Suivi</th><th>Agent</th></tr></thead>
+  <tbody>${(visites||[]).map(v=>`<tr><td>${v.date_visite||'—'}</td><td><strong>${v.nom_prospect||'—'}</strong></td>
+    <td>${v.telephone||'—'}</td><td>${v.bien_visite||'—'}</td><td>${v.type_operation||'—'}</td>
+    <td>${v.interet||'—'}</td><td>${v.budget?fmt(v.budget)+' F':'—'}</td>
+    <td>${v.suivi||'—'}</td><td>${v.agent||'—'}</td></tr>`).join('')}</tbody></table>
+  </body></html>`);
+  win.document.close();
+}
+
+// ═══ CONTRATS IMMO ═══
+let _contratImmoCounter = 0;
+
+async function renderContratsImmo() {
+  const contrats = await db('contrats_immo');
+  const canE = canEdit('contrats_immo');
+  const today = new Date().toISOString().slice(0,10);
+  _contratImmoCounter = (contrats||[]).length;
+  const expiring = (contrats||[]).filter(c=>c.date_fin&&c.date_fin<=new Date(Date.now()+30*86400000).toISOString().slice(0,10)&&c.statut==='Actif');
+
+  document.getElementById('contrats_immo-content').innerHTML = `
+    <div class="sh">
+      <div><div class="stl">Contrats Immobilier</div><div class="sst">Vente & Location</div></div>
+      <div style="display:flex;gap:6px">
+        <button class="btn bg2" onclick="exportContratsImmoPDF()" style="font-size:11px">📄 PDF</button>
+        ${canE?`<button class="btn bm" onclick="openContratImmo()" style="font-size:11px">+ Contrat</button>`:''}
+      </div>
+    </div>
+    ${expiring.length>0?`<div class="al al-m">⚠️ ${expiring.length} contrat(s) expirant dans 30 jours !</div>`:''}
+    <div class="card">
+      <div class="ch"><div class="ct">📄 Tous les contrats</div></div>
+      <div class="tw"><table><thead><tr>
+        <th>N° Contrat</th><th>Type</th><th>Bien</th><th>Client</th><th>Téléphone</th>
+        <th>Date début</th><th>Date fin</th><th>Montant</th><th>Statut</th>
+        ${canE?'<th></th>':''}
+      </tr></thead>
+      <tbody>${(contrats||[]).length===0
+        ? '<tr><td colspan="10" style="text-align:center;color:var(--tx3)">Aucun contrat</td></tr>'
+        : (contrats||[]).map(c=>{
+            const expSoon = c.date_fin&&c.date_fin<=new Date(Date.now()+30*86400000).toISOString().slice(0,10);
+            return `<tr>
+              <td class="mono"><strong style="color:var(--must2)">${c.numero_contrat||'—'}</strong></td>
+              <td><span class="b bg-p" style="font-size:10px">${c.type_contrat||'—'}</span></td>
+              <td>${c.bien||'—'}</td>
+              <td><strong>${c.nom_client||'—'}</strong></td>
+              <td class="mono">${c.telephone||'—'}</td>
+              <td class="mono">${c.date_debut||'—'}</td>
+              <td class="mono" style="color:${expSoon?'var(--rd2)':'inherit'}">${c.date_fin||'—'}${expSoon?' ⚠️':''}</td>
+              <td><strong>${fmt(c.montant||0)} FCFA</strong></td>
+              <td><span class="b ${c.statut==='Actif'?'bg-g':c.statut==='Terminé'?'bg-x':'bg-o'}">${c.statut||'—'}</span></td>
+              ${canE?`<td style="display:flex;gap:4px">
+                <button onclick="editRow('contrats_immo','${c.id}','contrats_immo')" style="background:none;border:none;cursor:pointer;font-size:13px">✏️</button>
+                <button onclick="exportContratPDF('${c.id}')" style="background:none;border:none;cursor:pointer;font-size:13px">📄</button>
+              </td>`:''}
+            </tr>`;
+          }).join('')}
+      </tbody></table></div>
+    </div>`;
+}
+
+function openContratImmo() {
+  const year = new Date().getFullYear();
+  const num = String(_contratImmoCounter+1).padStart(3,'0');
+  document.getElementById('ci-numero').value = `CTR-IMM-${year}-${num}`;
+  document.getElementById('ci-date-debut').value = new Date().toISOString().slice(0,10);
+  openM('m-contrat-immo');
+}
+
+async function savContratImmo() {
+  if (!document.getElementById('ci-numero').value) { toast('N° contrat requis'); return; }
+  const data = {
+    numero_contrat: document.getElementById('ci-numero').value,
+    type_contrat: document.getElementById('ci-type').value,
+    bien: document.getElementById('ci-bien').value,
+    nom_client: document.getElementById('ci-client').value,
+    telephone: document.getElementById('ci-tel').value,
+    email: document.getElementById('ci-email').value,
+    date_debut: document.getElementById('ci-date-debut').value,
+    date_fin: document.getElementById('ci-date-fin').value,
+    montant: +document.getElementById('ci-montant').value||0,
+    conditions: document.getElementById('ci-conditions').value,
+    statut: document.getElementById('ci-statut').value,
+    notes: document.getElementById('ci-notes').value,
+  };
+  await dbSave('contrats_immo', data, 'm-contrat-immo', 'contrats_immo', 'Contrat enregistré ✓');
+}
+
+async function exportContratPDF(id) {
+  const contrats = await db('contrats_immo');
+  const c = (contrats||[]).find(x=>String(x.id)===String(id));
+  if (!c) return;
+  const cfg = getConfig();
+  const win = window.open('','_blank');
+  if (!win) { toast('Autorisez les popups'); return; }
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Contrat ${c.numero_contrat}</title>
+  <style>body{font-family:Arial;margin:50px;color:#1a1a2e;font-size:12px}
+  h1{color:#1E1035;font-size:20px}.row{display:flex;gap:20px;margin-bottom:10px}
+  .label{color:#666;font-size:11px;min-width:150px}.val{font-weight:700}
+  .box{background:#f4f0ff;border-radius:8px;padding:16px;margin:14px 0}
+  .sig{border-top:2px solid #1E1035;padding-top:8px;text-align:center;color:#666;font-size:11px;margin-top:60px}
+  @media print{button{display:none}}</style></head>
+  <body>
+  <div style="display:flex;justify-content:space-between;margin-bottom:24px">
+    <div><div style="font-size:22px;font-weight:800;color:#1E1035">${cfg.companyName||'Sarpa Group'}</div><div style="color:#666">Sarpa Immobilier</div></div>
+    <div style="text-align:right"><div style="font-weight:700;font-size:16px">${c.numero_contrat}</div><div style="color:#666">${c.date_debut||''}</div></div>
+  </div>
+  <button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button>
+  <button onclick="window.print()" style="background:#1E1035;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-bottom:20px">🖨️ Imprimer</button>
+  <h1>📄 ${c.type_contrat||'Contrat'} Immobilier</h1>
+  <div class="box">
+    <div class="row"><span class="label">N° Contrat</span><span class="val">${c.numero_contrat}</span></div>
+    <div class="row"><span class="label">Type</span><span class="val">${c.type_contrat||'—'}</span></div>
+    <div class="row"><span class="label">Bien concerné</span><span class="val">${c.bien||'—'}</span></div>
+    <div class="row"><span class="label">Montant</span><span class="val">${fmt(c.montant||0)} FCFA</span></div>
+    <div class="row"><span class="label">Date début</span><span class="val">${c.date_debut||'—'}</span></div>
+    <div class="row"><span class="label">Date fin</span><span class="val">${c.date_fin||'—'}</span></div>
+    <div class="row"><span class="label">Statut</span><span class="val">${c.statut||'—'}</span></div>
+  </div>
+  <div class="box">
+    <div style="font-weight:700;margin-bottom:10px">👤 Client / Acquéreur</div>
+    <div class="row"><span class="label">Nom</span><span class="val">${c.nom_client||'—'}</span></div>
+    <div class="row"><span class="label">Téléphone</span><span class="val">${c.telephone||'—'}</span></div>
+    <div class="row"><span class="label">Email</span><span class="val">${c.email||'—'}</span></div>
+  </div>
+  ${c.conditions?`<div class="box"><div style="font-weight:700;margin-bottom:8px">📋 Conditions</div>${c.conditions}</div>`:''}
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:60px">
+    <div class="sig">Signature Client</div>
+    <div class="sig">Signature Sarpa Immobilier</div>
+  </div>
+  </body></html>`);
+  win.document.close();
+}
+
+async function exportContratsImmoPDF() {
+  const contrats = await db('contrats_immo');
+  const cfg = getConfig();
+  const win = window.open('','_blank');
+  if (!win) return;
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Contrats Immo</title>
+  <style>body{font-family:Arial;margin:40px;font-size:11px;color:#1a1a2e}h1{color:#1E1035;border-bottom:3px solid #D4A017;padding-bottom:8px}
+  table{width:100%;border-collapse:collapse}th{background:#1E1035;color:#fff;padding:6px;font-size:10px;text-align:left}
+  td{padding:5px;border-bottom:1px solid #eee}tr:nth-child(even){background:#f9f9f9}@media print{button{display:none}}</style></head>
+  <body>
+  <div style="display:flex;justify-content:space-between;margin-bottom:16px">
+    <strong style="font-size:18px;color:#1E1035">${cfg.companyName||'Sarpa'} — Contrats Immobilier</strong>
+    <span>${new Date().toLocaleDateString('fr-FR')}</span>
+  </div>
+  <button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button>
+  <button onclick="window.print()" style="background:#1E1035;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-bottom:16px">🖨️ Imprimer</button>
+  <h1>📄 Liste des contrats</h1>
+  <table><thead><tr><th>N°</th><th>Type</th><th>Bien</th><th>Client</th><th>Début</th><th>Fin</th><th>Montant</th><th>Statut</th></tr></thead>
+  <tbody>${(contrats||[]).map(c=>`<tr><td><strong>${c.numero_contrat}</strong></td><td>${c.type_contrat}</td><td>${c.bien}</td><td>${c.nom_client}</td><td>${c.date_debut}</td><td>${c.date_fin||'—'}</td><td>${fmt(c.montant||0)} FCFA</td><td>${c.statut}</td></tr>`).join('')}</tbody></table>
+  </body></html>`);
+  win.document.close();
+}
+
+// ═══ ÉTATS DES LIEUX ═══
+async function renderEtatsLieux() {
+  const etats = await db('etats_lieux');
+  const canE = canEdit('etats_lieux');
+  document.getElementById('etats_lieux-content').innerHTML = `
+    <div class="sh">
+      <div><div class="stl">États des lieux</div><div class="sst">Entrée & Sortie</div></div>
+      <div style="display:flex;gap:6px">
+        <button class="btn bg2" onclick="exportEtatPDF()" style="font-size:11px">📄 PDF</button>
+        ${canE?`<button class="btn bm" onclick="openM('m-etat-lieux')" style="font-size:11px">+ État des lieux</button>`:''}
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ct">📋 Tous les états des lieux</div></div>
+      <div class="tw"><table><thead><tr>
+        <th>Date</th><th>Type</th><th>Bien</th><th>Locataire</th><th>État général</th><th>Observations</th><th>Agent</th>
+        ${canE?'<th></th>':''}
+      </tr></thead>
+      <tbody>${(etats||[]).length===0
+        ? '<tr><td colspan="8" style="text-align:center;color:var(--tx3)">Aucun état des lieux</td></tr>'
+        : (etats||[]).map(e=>`<tr>
+            <td class="mono">${e.date||'—'}</td>
+            <td><span class="b ${e.type_etat==='Entrée'?'bg-g':'bg-o'}">${e.type_etat||'—'}</span></td>
+            <td>${e.bien||'—'}</td>
+            <td><strong>${e.locataire||'—'}</strong></td>
+            <td><span class="b ${e.etat_general==='Bon'?'bg-g':e.etat_general==='Moyen'?'bg-o':'bg-r'}">${e.etat_general||'—'}</span></td>
+            <td style="font-size:11px">${e.observations||'—'}</td>
+            <td style="font-size:10px">${e.agent||'—'}</td>
+            ${canE?`<td style="display:flex;gap:4px">
+              <button onclick="editRow('etats_lieux','${e.id}','etats_lieux')" style="background:none;border:none;cursor:pointer;font-size:13px">✏️</button>
+              <button onclick="exportEtatDetailPDF('${e.id}')" style="background:none;border:none;cursor:pointer;font-size:13px">📄</button>
+            </td>`:''}
+          </tr>`).join('')}
+      </tbody></table></div>
+    </div>`;
+}
+
+async function savEtatLieux() {
+  const data = {
+    date: document.getElementById('el-date').value,
+    type_etat: document.getElementById('el-type').value,
+    bien: document.getElementById('el-bien').value,
+    locataire: document.getElementById('el-locataire').value,
+    etat_general: document.getElementById('el-etat').value,
+    observations: document.getElementById('el-obs').value,
+    pieces: document.getElementById('el-pieces').value,
+    equipements: document.getElementById('el-equip').value,
+    agent: document.getElementById('el-agent').value||userName,
+  };
+  await dbSave('etats_lieux', data, 'm-etat-lieux', 'etats_lieux', 'État des lieux enregistré ✓');
+}
+
+async function exportEtatPDF() {
+  const etats = await db('etats_lieux');
+  const cfg = getConfig();
+  const win = window.open('','_blank');
+  if (!win) return;
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>États des lieux</title>
+  <style>body{font-family:Arial;margin:40px;font-size:11px;color:#1a1a2e}h1{color:#1E1035;border-bottom:3px solid #D4A017;padding-bottom:8px}
+  table{width:100%;border-collapse:collapse}th{background:#1E1035;color:#fff;padding:6px;font-size:10px;text-align:left}
+  td{padding:5px;border-bottom:1px solid #eee}@media print{button{display:none}}</style></head>
+  <body>
+  <button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button>
+  <button onclick="window.print()" style="background:#1E1035;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-bottom:16px">🖨️ Imprimer</button>
+  <h1>📋 États des lieux — ${cfg.companyName||'Sarpa Immobilier'}</h1>
+  <table><thead><tr><th>Date</th><th>Type</th><th>Bien</th><th>Locataire</th><th>État</th><th>Observations</th><th>Agent</th></tr></thead>
+  <tbody>${(etats||[]).map(e=>`<tr><td>${e.date}</td><td>${e.type_etat}</td><td>${e.bien}</td><td>${e.locataire}</td><td>${e.etat_general}</td><td>${e.observations||'—'}</td><td>${e.agent}</td></tr>`).join('')}</tbody></table>
+  </body></html>`);
+  win.document.close();
+}
+
+async function exportEtatDetailPDF(id) {
+  const etats = await db('etats_lieux');
+  const e = (etats||[]).find(x=>String(x.id)===String(id));
+  if (!e) return;
+  const cfg = getConfig();
+  const win = window.open('','_blank');
+  if (!win) return;
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>État des lieux ${e.bien}</title>
+  <style>body{font-family:Arial;margin:50px;color:#1a1a2e;font-size:12px}
+  h1{color:#1E1035}.row{display:flex;gap:20px;margin-bottom:10px}.label{color:#666;min-width:150px}.val{font-weight:700}
+  .box{background:#f4f0ff;border-radius:8px;padding:16px;margin:14px 0}
+  .sig{border-top:2px solid #1E1035;padding-top:8px;text-align:center;color:#666;font-size:11px;margin-top:60px}
+  @media print{button{display:none}}</style></head>
+  <body>
+  <div style="display:flex;justify-content:space-between;margin-bottom:20px">
+    <div><strong style="font-size:20px;color:#1E1035">${cfg.companyName||'Sarpa Group'}</strong><br><small>Sarpa Immobilier</small></div>
+    <div style="text-align:right"><strong>État des lieux</strong><br><small>${e.date}</small></div>
+  </div>
+  <button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button>
+  <button onclick="window.print()" style="background:#1E1035;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-bottom:20px">🖨️ Imprimer</button>
+  <h1>📋 État des lieux — ${e.type_etat}</h1>
+  <div class="box">
+    <div class="row"><span class="label">Bien</span><span class="val">${e.bien}</span></div>
+    <div class="row"><span class="label">Locataire</span><span class="val">${e.locataire}</span></div>
+    <div class="row"><span class="label">Type</span><span class="val">${e.type_etat}</span></div>
+    <div class="row"><span class="label">Date</span><span class="val">${e.date}</span></div>
+    <div class="row"><span class="label">État général</span><span class="val">${e.etat_general}</span></div>
+  </div>
+  ${e.pieces?`<div class="box"><div style="font-weight:700;margin-bottom:8px">🚪 Pièces</div><div style="white-space:pre-line">${e.pieces}</div></div>`:''}
+  ${e.equipements?`<div class="box"><div style="font-weight:700;margin-bottom:8px">🔧 Équipements</div><div style="white-space:pre-line">${e.equipements}</div></div>`:''}
+  ${e.observations?`<div class="box"><div style="font-weight:700;margin-bottom:8px">📝 Observations</div>${e.observations}</div>`:''}
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:60px">
+    <div class="sig">Signature Locataire</div>
+    <div class="sig">Signature Agent — ${e.agent}</div>
+  </div>
+  </body></html>`);
+  win.document.close();
+}
+
+// ═══ LOYERS ═══
+async function renderLoyers() {
+  const loyers = await db('loyers');
+  const biens = await db('biens');
+  const canE = canEdit('loyers');
+  const today = new Date().toISOString().slice(0,10);
+  const m = new Date().toISOString().slice(0,7);
+  const mL = (loyers||[]).filter(l=>l.mois===m);
+  const payes = mL.filter(l=>l.statut==='Payé').length;
+  const enAttente = mL.filter(l=>l.statut==='En attente').length;
+  const retard = mL.filter(l=>l.statut==='En retard'||(l.statut==='En attente'&&l.date_echeance<today)).length;
+  const totalMois = mL.reduce((a,b)=>a+(+b.montant||0),0);
+  const encaisse = mL.filter(l=>l.statut==='Payé').reduce((a,b)=>a+(+b.montant||0),0);
+
+  document.getElementById('loyers-content').innerHTML = `
+    <div class="sh">
+      <div><div class="stl">Suivi Loyers</div><div class="sst">Gestion locative mensuelle</div></div>
+      <div style="display:flex;gap:6px">
+        <button class="btn bg2" onclick="exportLoyersPDF()" style="font-size:11px">📄 PDF</button>
+        ${canE?`<div style="display:flex;gap:6px">
+          <input type="month" value="${m}" onchange="window._loyerMonth=this.value;renderLoyers()" style="background:var(--sf2);border:1px solid var(--bd2);border-radius:6px;padding:4px 8px;color:var(--tx);font-size:11px">
+          <button class="btn bm" onclick="openM('m-loyer')" style="font-size:11px">+ Loyer</button>
+        </div>`:''}
+      </div>
+    </div>
+    <div class="kg" style="grid-template-columns:repeat(4,1fr);margin-bottom:14px">
+      <div class="kc kc-g"><div class="kl">Encaissé</div><div class="kv">${fmt(Math.round(encaisse/1000))}k</div><div class="ks">FCFA</div></div>
+      <div class="kc kc-b"><div class="kl">Attendu</div><div class="kv">${fmt(Math.round(totalMois/1000))}k</div><div class="ks">FCFA total</div></div>
+      <div class="kc kc-m"><div class="kl">En attente</div><div class="kv">${enAttente}</div><div class="ks">loyers</div></div>
+      <div class="kc kc-r"><div class="kl">En retard</div><div class="kv">${retard}</div><div class="ks">loyers</div></div>
+    </div>
+    ${retard>0?`<div class="al al-r">🔴 ${retard} loyer(s) en retard ce mois !</div>`:''}
+    <div class="card">
+      <div class="ch"><div class="ct">💰 Loyers — ${m}</div></div>
+      <div class="tw"><table><thead><tr>
+        <th>Bien</th><th>Locataire</th><th>Mois</th><th>Montant</th>
+        <th>Échéance</th><th>Date paiement</th><th>Mode</th><th>Statut</th>
+        ${canE?'<th></th>':''}
+      </tr></thead>
+      <tbody>${(loyers||[]).filter(l=>l.mois===(window._loyerMonth||m)).length===0
+        ? '<tr><td colspan="9" style="text-align:center;color:var(--tx3)">Aucun loyer ce mois</td></tr>'
+        : (loyers||[]).filter(l=>l.mois===(window._loyerMonth||m)).map(l=>{
+            const isRetard = l.statut!=='Payé'&&l.date_echeance&&l.date_echeance<today;
+            return `<tr>
+              <td><strong>${l.bien||'—'}</strong></td>
+              <td>${l.locataire||'—'}</td>
+              <td class="mono">${l.mois||'—'}</td>
+              <td><strong>${fmt(l.montant||0)} FCFA</strong></td>
+              <td class="mono" style="color:${isRetard?'var(--rd2)':'inherit'}">${l.date_echeance||'—'}${isRetard?' ⚠️':''}</td>
+              <td class="mono">${l.date_paiement||'—'}</td>
+              <td style="font-size:11px">${l.mode_paiement||'—'}</td>
+              <td><span class="b ${l.statut==='Payé'?'bg-g':l.statut==='En retard'?'bg-r':'bg-o'}">${l.statut||'—'}</span></td>
+              ${canE?`<td><button onclick="editRow('loyers','${l.id}','loyers')" style="background:none;border:none;cursor:pointer;font-size:13px">✏️</button></td>`:''}
+            </tr>`;
+          }).join('')}
+      </tbody></table></div>
+    </div>`;
+}
+
+async function savLoyer() {
+  const bien = document.getElementById('loy-bien').value;
+  if (!bien) { toast('Bien requis'); return; }
+  const data = {
+    bien, locataire: document.getElementById('loy-locataire').value,
+    mois: document.getElementById('loy-mois').value,
+    montant: +document.getElementById('loy-montant').value||0,
+    date_echeance: document.getElementById('loy-echeance').value,
+    date_paiement: document.getElementById('loy-paiement').value,
+    mode_paiement: document.getElementById('loy-mode').value,
+    statut: document.getElementById('loy-statut').value,
+    notes: document.getElementById('loy-notes').value,
+  };
+  await dbSave('loyers', data, 'm-loyer', 'loyers', 'Loyer enregistré ✓');
+}
+
+async function exportLoyersPDF() {
+  const loyers = await db('loyers');
+  const m = window._loyerMonth || new Date().toISOString().slice(0,7);
+  const mL = loyers.filter(l=>l.mois===m);
+  const cfg = getConfig();
+  const total = mL.reduce((a,b)=>a+(+b.montant||0),0);
+  const encaisse = mL.filter(l=>l.statut==='Payé').reduce((a,b)=>a+(+b.montant||0),0);
+  const win = window.open('','_blank');
+  if (!win) return;
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Loyers ${m}</title>
+  <style>body{font-family:Arial;margin:40px;font-size:11px;color:#1a1a2e}h1{color:#1E1035;border-bottom:3px solid #D4A017;padding-bottom:8px}
+  table{width:100%;border-collapse:collapse}th{background:#1E1035;color:#fff;padding:6px;font-size:10px;text-align:left}
+  td{padding:5px;border-bottom:1px solid #eee}tr:nth-child(even){background:#f9f9f9}
+  .kpi{display:inline-block;background:#f3eef9;padding:8px 14px;border-radius:6px;margin:4px;text-align:center}
+  .kv{font-size:16px;font-weight:800;color:#1E1035}.kl{font-size:9px;color:#666}
+  .green{color:#2e7d32;font-weight:700}.red{color:#c62828;font-weight:700}@media print{button{display:none}}</style></head>
+  <body>
+  <div style="display:flex;justify-content:space-between;margin-bottom:16px">
+    <strong style="font-size:18px;color:#1E1035">${cfg.companyName||'Sarpa'} — Suivi Loyers</strong>
+    <span>${m} — Par : ${userName}</span>
+  </div>
+  <button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button>
+  <button onclick="window.print()" style="background:#1E1035;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-bottom:16px">🖨️ Imprimer</button>
+  <h1>💰 Rapport Loyers — ${m}</h1>
+  <div>
+    <div class="kpi"><div class="kv">${mL.length}</div><div class="kl">Loyers</div></div>
+    <div class="kpi"><div class="kv green">+${fmt(encaisse)} FCFA</div><div class="kl">Encaissé</div></div>
+    <div class="kpi"><div class="kv red">${fmt(total-encaisse)} FCFA</div><div class="kl">Restant</div></div>
+  </div>
+  <table><thead><tr><th>Bien</th><th>Locataire</th><th>Montant</th><th>Échéance</th><th>Paiement</th><th>Mode</th><th>Statut</th></tr></thead>
+  <tbody>${mL.map(l=>`<tr><td><strong>${l.bien}</strong></td><td>${l.locataire}</td><td>${fmt(l.montant)} FCFA</td><td>${l.date_echeance||'—'}</td><td>${l.date_paiement||'—'}</td><td>${l.mode_paiement||'—'}</td><td class="${l.statut==='Payé'?'green':'red'}">${l.statut}</td></tr>`).join('')}</tbody></table>
+  </body></html>`);
+  win.document.close();
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('login-btn').addEventListener('click', doLogin);
   document.getElementById('l-code').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
@@ -5289,7 +6011,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
+
 </script>
+
 
 
 
