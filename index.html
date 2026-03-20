@@ -420,20 +420,7 @@ textarea{resize:vertical;min-height:70px}
   </div>
 
   <!-- TOURS -->
-  <div class="pg" id="pg-tours">
-    <div class="sh"><div><div class="stl">Tournées & Livraisons</div></div>
-      <button class="btn bm" onclick="openM('mt')">+ Tournée</button>
-    </div>
-    <div class="kg" style="grid-template-columns:repeat(4,1fr)">
-      <div class="kc kc-m"><div class="kl">Aujourd'hui</div><div class="kv" id="to-td">—</div><div class="ks">tournées</div></div>
-      <div class="kc kc-g"><div class="kl">Volume livré</div><div class="kv" id="to-v">—</div><div class="ks">m³ auj.</div></div>
-      <div class="kc kc-p"><div class="kl">Ponctualité</div><div class="kv" id="to-p">—</div><div class="ks">%</div></div>
-      <div class="kc kc-b"><div class="kl">Km parcourus</div><div class="kv" id="to-k">—</div><div class="ks">auj.</div></div>
-    </div>
-    <div class="card sp"><div class="ch"><div class="ct">◎ Registre tournées</div><div class="rt-indicator"><span class="rt-dot"></span></div></div>
-      <div class="tw"><table><thead><tr><th>Date</th><th>Camion</th><th>Chauffeur</th><th>Destination</th><th>Vol.</th><th>Km</th><th>Départ</th><th>Retour</th><th>Ponct.</th></tr></thead><tbody id="tto"></tbody></table></div>
-    </div>
-  </div>
+  
 
   <!-- MAINTENANCE -->
   <div class="pg" id="pg-maintenance">
@@ -645,6 +632,22 @@ textarea{resize:vertical;min-height:70px}
 <!-- ═══ FACTURES ═══ -->
 <div class="pg" id="pg-factures">
   <div id="fac-content"></div>
+</div>
+
+
+<!-- ═══ POINTAGE ═══ -->
+<div class="pg" id="pg-pointage">
+  <div id="pt-content"></div>
+</div>
+
+<!-- ═══ OPENING ═══ -->
+<div class="pg" id="pg-opening">
+  <div id="opening-content"></div>
+</div>
+
+<!-- ═══ CLOSING ═══ -->
+<div class="pg" id="pg-closing">
+  <div id="closing-content"></div>
 </div>
 
 </div><!-- /mn -->
@@ -1162,7 +1165,32 @@ textarea{resize:vertical;min-height:70px}
   <div class="fg"><label>Notes</label><textarea id="fac-notes" rows="2" placeholder="Observations, conditions de paiement..."></textarea></div>
   <div class="mf"><button class="btn bg2" onclick="closeM('m-facture')">Annuler</button><button class="btn bm" onclick="savFacture()">Enregistrer</button></div>
 </div></div>
+
+<!-- MODAL POINTAGE BATCH -->
+<div class="mo" id="m-pointage"><div class="md" style="max-width:700px">
+  <div class="mh">
+    <div><div class="mt">⏰ Pointage du <span id="pt-batch-date"></span></div></div>
+    <button class="mc" onclick="closeM('m-pointage')">✕</button>
+  </div>
+  <div id="pt-batch-list" style="max-height:60vh;overflow-y:auto"></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-pointage')">Annuler</button><button class="btn bm" onclick="savPointageBatch()">💾 Enregistrer tout</button></div>
+</div></div>
+
+<!-- MODAL SHIFT ITEM -->
+<div class="mo" id="m-shift-item"><div class="md">
+  <div class="mh"><div class="mt">➕ Ajouter un point</div><button class="mc" onclick="closeM('m-shift-item')">✕</button></div>
+  <input type="hidden" id="shift-item-type">
+  <input type="hidden" id="shift-item-dept">
+  <div style="background:var(--sf2);border-radius:6px;padding:8px;margin-bottom:12px;font-size:12px;color:var(--tx2)">
+    Département : <strong id="shift-item-dept-label"></strong>
+  </div>
+  <div class="fg"><label>Titre du point</label><input type="text" id="shift-item-titre" placeholder="Ex: Nettoyage malaxeur effectué"></div>
+  <div class="fg"><label>Description (optionnel)</label><textarea id="shift-item-desc" rows="2" placeholder="Instructions détaillées..."></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-shift-item')">Annuler</button><button class="btn bm" onclick="savShiftItem()">Ajouter</button></div>
+</div></div>
 <script>
+
+
 
 
 
@@ -1182,16 +1210,26 @@ textarea{resize:vertical;min-height:70px}
 
 const ROLE_CODES = {
   'DG4X9K2M': { role:'dg',                    name:'Directeur Général'              },
-  'OP7R3N8W': { role:'directeur',              name:'Directeur Opérations'           },
-  'CR5T1P6Q': { role:'coordinatrice',          name:'Coordinatrice Holding'          },
-  'CB2H8L4V': { role:'responsable_centrale',   name:'Resp. Centrale à Béton'         },
-  'FL9M3D7J': { role:'responsable_flotte',     name:'Resp. Flotte Camions'           },
-  'CT6A2R5B': { role:'comptabilite',           name:'Comptabilité'                   },
-  'RH1K7N3E': { role:'rh',                     name:'Ressources Humaines'            },
-  'CM4W9T2F': { role:'commercial',             name:'Commercial'                     },
-  'IM8S5G1Y': { role:'immobilier',             name:'Agence Immobilière'             },
-  'GS1X4B7N': { role:'guest',                  name:'Invité 1'                       },
-  'GS2M9K3P': { role:'guest',                  name:'Invité 2'                       },
+  'OP7R3N8W': { role:'directeur',              name:'Dir. Opérations & Logistique'  },
+  'CR5T1P6Q': { role:'coordinatrice',          name:'Coordinatrice Sarpa Group'     },
+  'CB2H8L4V': { role:'responsable_centrale',   name:'Resp. Production Béton'        },
+  'FL9M3D7J': { role:'responsable_flotte',     name:'Manager Sarpa Logistics'       },
+  'CT6A2R5B': { role:'comptabilite',           name:'Comptabilité'                  },
+  'RH1K7N3E': { role:'rh',                     name:'Ressources Humaines'           },
+  'CM4W9T2F': { role:'commercial',             name:'Commercial'                    },
+  'IM8S5G1Y': { role:'immobilier',             name:'Manager Sarpa Immobilier'      },
+  'GS1X4B7N': { role:'guest',                  name:'Invité 1'                      },
+  'GS2M9K3P': { role:'guest',                  name:'Invité 2'                      },
+  '0ASD7GU9': { role:'manager_beton',      name:'Manager Sarpa Béton'           },
+  'KGJIZJSD': { role:'manager_logistics', name:'Manager Sarpa Logistics N2'  },
+  'S2C3CZHI': { role:'manager_immo',       name:'Manager Sarpa Immobilier N2'  },
+  '29UK0GBI': { role:'resp_production',   name:'Resp. Production Béton N2'    },
+  'ZRBPQ2LK': { role:'resp_qualite',      name:'Responsable Qualité'           },
+  'L191ZO9N': { role:'resp_info',          name:'Responsable Informatique'      },
+  'FCFU5KL3': { role:'comptable_beton',   name:'Comptable Sarpa Béton'         },
+  'GGEKSN6P': { role:'comptable_immo',    name:'Comptable Sarpa Immobilier'    },
+  'HNR8805S': { role:'comptable_logistics', name:'Comptable Sarpa Logistics' },
+  '5SCCAR70': { role:'commercial',             name:'Commercial 2'                  },
 };
 
 const SB_URL = 'https://ijnfostobsaaxdzdfoum.supabase.co';
@@ -1269,67 +1307,85 @@ async function initGoogleSheets() {
 }
 
 // ═══ ROLES ═══
-const ALL = ['dashboard','production','stocks','quality','fleet','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','rh','formation','planning','carburant','checklist','messages','annuaire','conges','partenariats','objectifs','graphiques','journal','livraisons','factures'];
+const ALL = ['dashboard','production','stocks','quality','fleet','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','rh','formation','planning','carburant','checklist','messages','annuaire','conges','partenariats','objectifs','graphiques','journal','livraisons','factures','pointage','opening','closing'];
 const ROLES = {
-  dg:                   { label:'Directeur Général',              badge:'rb-director', pages:ALL },
-  directeur:            { label:'Dir. Opérations & Logistique',   badge:'rb-director', pages:ALL },
-  coordinatrice:        { label:'Coordinatrice Holding',          badge:'rb-coord',    pages:['dashboard','production','stocks','fournisseurs','projets','partenaires','accidents','planning','messages','annuaire','livraisons','factures'] },
-  responsable_centrale: { label:'Resp. Centrale à Béton',         badge:'rb-resp',     pages:['dashboard','production','stocks','quality','accidents','planning','messages','annuaire','livraisons','factures'] },
-  responsable_flotte:   { label:'Resp. Flotte Camions',           badge:'rb-resp',     pages:['dashboard','fleet','maintenance','accidents','planning','carburant','checklist','messages','annuaire','livraisons','factures'] },
-  comptabilite:         { label:'Comptabilité',                   badge:'rb-resp',     pages:['dashboard','finances','fournisseurs','rapports','messages','annuaire','objectifs','factures','livraisons','stocks'] },
-  rh:                   { label:'Ressources Humaines',            badge:'rb-coord',    pages:['dashboard','rh','formation','accidents','conges','messages','annuaire','factures','livraisons'] },
-  commercial:           { label:'Commercial',                     badge:'rb-coord',    pages:['dashboard','projets','fournisseurs','partenaires','partenariats','messages','annuaire','livraisons','factures'] },
-  immobilier:           { label:'Agence Immobilière',             badge:'rb-coord',    pages:['dashboard','projets','partenaires','partenariats','messages','annuaire','factures'] },
-  guest:                { label:'Invité',                          badge:'rb-guest',    pages:['dashboard','planning','projets','partenariats'] },
+  dg                       : { label:'Directeur Général', badge:'rb-director', pages:['dashboard','production','stocks','quality','fleet','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','rh','formation','planning','carburant','checklist','messages','annuaire','conges','partenariats','objectifs','graphiques','journal','livraisons','factures','pointage','opening','closing'] },
+  directeur                : { label:'Dir. Opérations & Logistique', badge:'rb-director', pages:['dashboard','production','stocks','quality','fleet','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','rh','formation','planning','carburant','checklist','messages','annuaire','conges','partenariats','objectifs','graphiques','journal','livraisons','factures','pointage','opening','closing'] },
+  coordinatrice            : { label:'Coordinatrice Sarpa Group', badge:'rb-coord', pages:['dashboard','stocks','fournisseurs','projets','partenaires','accidents','planning','messages','annuaire','livraisons','factures','partenariats','objectifs','conges','formation','rapports'] },
+  manager_beton            : { label:'Manager Sarpa Béton', badge:'rb-beton', pages:['dashboard','production','stocks','quality','accidents','planning','livraisons','factures','messages','annuaire','fournisseurs','objectifs','opening','closing','pointage'] },
+  responsable_centrale     : { label:'Resp. Production Béton', badge:'rb-beton', pages:['dashboard','production','stocks','quality','accidents','planning','livraisons','factures','messages','annuaire','fournisseurs','opening','closing','pointage'] },
+  resp_production          : { label:'Resp. Production', badge:'rb-beton', pages:['dashboard','production','stocks','quality','accidents','messages','annuaire','opening','closing','pointage'] },
+  resp_qualite             : { label:'Responsable Qualité', badge:'rb-qual', pages:['dashboard','quality','production','rapports','accidents','messages','annuaire','evaluations'] },
+  manager_logistics        : { label:'Manager Sarpa Logistics', badge:'rb-flotte', pages:['dashboard','fleet','maintenance','livraisons','planning','carburant','checklist','accidents','factures','messages','annuaire','fournisseurs','objectifs','opening','closing','pointage'] },
+  responsable_flotte       : { label:'Resp. Flotte', badge:'rb-flotte', pages:['dashboard','fleet','maintenance','livraisons','planning','carburant','checklist','accidents','factures','messages','annuaire','opening','closing','pointage'] },
+  manager_immo             : { label:'Manager Sarpa Immobilier', badge:'rb-immo', pages:['dashboard','projets','partenaires','partenariats','livraisons','factures','messages','annuaire','fournisseurs','objectifs'] },
+  immobilier               : { label:'Agence Immobilière', badge:'rb-immo', pages:['dashboard','projets','partenaires','partenariats','livraisons','factures','messages','annuaire'] },
+  resp_info                : { label:'Resp. Informatique', badge:'rb-info', pages:['dashboard','parametres','users','journal','graphiques','rapports','messages','annuaire','evaluations'] },
+  comptabilite             : { label:'Comptabilité', badge:'rb-compta', pages:['dashboard','finances','factures','fournisseurs','rapports','messages','annuaire','objectifs','livraisons','stocks','commandes'] },
+  comptable_beton          : { label:'Comptable Béton', badge:'rb-compta', pages:['dashboard','finances','factures','fournisseurs','messages','annuaire','stocks'] },
+  comptable_immo           : { label:'Comptable Immobilier', badge:'rb-compta', pages:['dashboard','finances','factures','projets','messages','annuaire'] },
+  comptable_logistics      : { label:'Comptable Logistics', badge:'rb-compta', pages:['dashboard','finances','factures','livraisons','carburant','messages','annuaire'] },
+  rh                       : { label:'Ressources Humaines', badge:'rb-rh', pages:['dashboard','rh','formation','accidents','conges','messages','annuaire','factures','livraisons','pointage','opening','closing'] },
+  commercial               : { label:'Commercial', badge:'rb-comm', pages:['dashboard','projets','fournisseurs','partenaires','partenariats','messages','annuaire','livraisons','factures','planning'] },
+  guest                    : { label:'Invité', badge:'rb-guest', pages:['dashboard','planning','projets','partenariats'] },
 };
 
 const TITLES = {
-  dashboard:'Tableau de bord', production:'Production béton', stocks:'Stocks & Approvisionnements',
-  quality:'Contrôle qualité', fleet:'Flotte de Camions', tours:'Tournées & Livraisons',
-  maintenance:'Maintenance', accidents:'Accidents & Sécurité', fournisseurs:'Fournisseurs',
-  projets:'Projets & Chantiers', partenaires:'Partenaires', finances:'Finances & Budget',
-  evaluations:'Évaluations', rapports:'Rapports consolidés', parametres:'Paramètres',
-  users:'Utilisateurs', rh:'Employés & RH', formation:'Formations'
+  dashboard:'Tableau de bord', production:'Production Béton', stocks:'Stocks & Approvisionnement',
+  quality:'Contrôle Qualité', fleet:'Flotte de Camions', maintenance:'Maintenance',
+  accidents:'Accidents & Sécurité', fournisseurs:'Fournisseurs', projets:'Projets & Chantiers',
+  partenaires:'Partenaires', finances:'Finances & Budget', evaluations:'Évaluations',
+  rapports:'Rapports consolidés', parametres:'Paramètres', users:'Utilisateurs',
+  rh:'Employés & RH', formation:'Formations', planning:'Planning Opérationnel',
+  carburant:'Suivi Carburant', checklist:'Checklist Préventive', messages:'Messages & Notes',
+  annuaire:'Clients & Fournisseurs', conges:'Congés & Absences', partenariats:'Partenariats',
+  objectifs:'Objectifs Mensuels', graphiques:'Graphiques & Analyses',
+  journal:'Journal des modifications', livraisons:'Livraisons', factures:'Factures',
+  pointage:'Pointage Équipes', opening:'Opening — Ouverture', closing:'Closing — Fermeture',
 };
 
 const NAV = [
   { s:'Vue globale' },
-  { id:'dashboard',   ic:'◈', lb:'Tableau de bord' },
-  { s:'Centrale à Béton' },
-  { id:'production',  ic:'🏗', lb:'Production' },
-  { id:'stocks',      ic:'📦', lb:'Stocks & Appro',      bg:'nb-s' },
-  { id:'quality',     ic:'✦', lb:'Qualité' },
-  { s:'Flotte & Terrain' },
-  { id:'fleet',       ic:'🚛', lb:'Flotte',               bg:'nb-f' },
-  { id:'maintenance', ic:'⚙', lb:'Maintenance' },
+  { id:'dashboard',    ic:'◈',  lb:'Tableau de bord' },
+  { s:'Sarpa Béton' },
+  { id:'production',   ic:'🏗', lb:'Production' },
+  { id:'stocks',       ic:'📦', lb:'Stocks & Appro',       bg:'nb-s' },
+  { id:'quality',      ic:'✦',  lb:'Qualité' },
+  { s:'Sarpa Logistics' },
+  { id:'fleet',        ic:'🚛', lb:'Flotte',               bg:'nb-f' },
+  { id:'maintenance',  ic:'⚙',  lb:'Maintenance' },
+  { id:'livraisons',   ic:'🚚', lb:'Livraisons',           bg:'nb-liv' },
   { s:'Planning & Terrain' },
-  { id:'livraisons',  ic:'🚚', lb:'Livraisons',           bg:'nb-liv' },
-  { id:'planning',    ic:'📅', lb:'Planning opérationnel', bg:'nb-plan' },
-  { id:'carburant',   ic:'⛽', lb:'Suivi carburant' },
-  { id:'checklist',   ic:'🔧', lb:'Checklist préventive' },
+  { id:'planning',     ic:'📅', lb:'Planning opérationnel', bg:'nb-plan' },
+  { id:'carburant',    ic:'⛽', lb:'Suivi carburant' },
+  { id:'checklist',    ic:'🔧', lb:'Checklist préventive' },
   { s:'Opérations' },
-  { id:'accidents',   ic:'🚨', lb:'Accidents & Sécurité', bg:'nb-acc' },
-  { id:'fournisseurs',ic:'🏭', lb:'Fournisseurs' },
-  { id:'projets',     ic:'📋', lb:'Projets & Chantiers' },
-  { id:'partenaires', ic:'🤝', lb:'Partenaires' },
-  { id:'factures',    ic:'🧾', lb:'Factures' },
-  { s:'Équipe & Communication' },
-  { id:'messages',    ic:'💬', lb:'Messages',              bg:'nb-msg' },
-  { id:'annuaire',    ic:'📒', lb:'Annuaire interne' },
-  { id:'conges',      ic:'🗓', lb:'Congés & Absences' },
-  { id:'rh',          ic:'👤', lb:'Employés' },
-  { id:'formation',   ic:'🎓', lb:'Formations' },
-  { s:'Partenariats & Objectifs' },
-  { id:'partenariats',ic:'🤝', lb:'Partenariats' },
-  { id:'objectifs',   ic:'📊', lb:'Objectifs mensuels' },
-  { s:'🔒 Direction uniquement' },
-  { id:'finances',    ic:'💰', lb:'Finances & Budget',    dir:true },
-  { id:'evaluations', ic:'📊', lb:'Évaluations',           dir:true },
-  { id:'rapports',    ic:'▣', lb:'Rapports consolidés',   dir:true },
-  { id:'graphiques',  ic:'📈', lb:'Graphiques & Analyses', dir:true },
-  { id:'journal',     ic:'🔍', lb:'Journal modifications',  dir:true },
-  { id:'parametres',  ic:'⚙', lb:'Paramètres app.',        dir:true },
-  { id:'users',       ic:'👥', lb:'Utilisateurs',           dir:true },
+  { id:'accidents',    ic:'🚨', lb:'Accidents & Sécurité', bg:'nb-acc' },
+  { id:'fournisseurs', ic:'🏭', lb:'Fournisseurs' },
+  { id:'projets',      ic:'📋', lb:'Projets & Chantiers' },
+  { id:'partenaires',  ic:'🤝', lb:'Partenaires' },
+  { id:'factures',     ic:'🧾', lb:'Factures' },
+  { s:'Commercial' },
+  { id:'annuaire',     ic:'📒', lb:'Clients & Fournisseurs' },
+  { id:'partenariats', ic:'🤝', lb:'Partenariats' },
+  { s:'Finance & Comptabilité' },
+  { id:'finances',     ic:'💰', lb:'Finances & Budget',    dir:true },
+  { id:'objectifs',    ic:'📊', lb:'Objectifs mensuels' },
+  { s:'RH & Équipe' },
+  { id:'rh',           ic:'👤', lb:'Employés' },
+  { id:'formation',    ic:'🎓', lb:'Formations' },
+  { id:'conges',       ic:'🗓', lb:'Congés & Absences' },
+  { id:'messages',     ic:'💬', lb:'Messages',             bg:'nb-msg' },
+  { id:'pointage',     ic:'⏰', lb:'Pointage',             bg:'nb-pt' },
+  { id:'opening',      ic:'🌅', lb:'Opening — Ouverture' },
+  { id:'closing',      ic:'🌙', lb:'Closing — Fermeture' },
+  { s:'🔒 Direction & Analyse' },
+  { id:'graphiques',   ic:'📈', lb:'Graphiques & Analyses', dir:true },
+  { id:'evaluations',  ic:'📊', lb:'Évaluations',           dir:true },
+  { id:'rapports',     ic:'▣',  lb:'Rapports consolidés',   dir:true },
+  { id:'journal',      ic:'🔍', lb:'Journal modifications',  dir:true },
+  { id:'parametres',   ic:'⚙',  lb:'Paramètres app.',        dir:true },
+  { id:'users',        ic:'👥', lb:'Utilisateurs',           dir:true },
 ];
 
 // ═══ AUTH ═══
@@ -1823,7 +1879,8 @@ async function render(p) {
     planning:renderPlanning, annuaire:renderAnnuaire, messages:renderMessages,
     carburant:renderCarburant, objectifs:renderObjectifs, conges:renderConges,
     checklist:renderChecklist, partenariats:renderPartenariats,
-    graphiques:renderGraphiques, journal:renderJournal, livraisons:renderLivraisons, factures:renderFactures
+    graphiques:renderGraphiques, journal:renderJournal, livraisons:renderLivraisons, factures:renderFactures,
+    pointage:renderPointage, opening:renderOpening, closing:renderClosing
   };
   if (map[p]) await map[p]();
 }
@@ -2599,31 +2656,42 @@ function applyAppearanceValues(cfg) {
 }
 
 async function renderUsers() {
-  if (userRole!=='directeur'&&userRole!=='dg') {
-    document.getElementById('users-content').innerHTML = '<div class="director-lock"><div class="lock-icon">🔒</div><div class="lock-title">Accès Direction uniquement</div></div>';
+  if (userRole!=='directeur'&&userRole!=='dg'&&userRole!=='resp_info') {
+    document.getElementById('users-content').innerHTML = '<div class="director-lock"><div class="lock-icon">🔒</div><div class="lock-title">Accès Direction & Informatique uniquement</div></div>';
     return;
   }
   document.getElementById('users-content').innerHTML = `
-    <div class="sh"><div class="stl">Utilisateurs & Accès</div></div>
+    <div class="sh"><div><div class="stl">Utilisateurs & Accès</div><div class="sst">21 utilisateurs — Confidentiel</div></div>
+    ${userRole==='directeur'||userRole==='dg'?`<button class="btn bm" onclick="openM('m-change-code')" style="font-size:11px">🔑 Modifier un code</button>`:''}
+    </div>
     <div class="card">
-      <div class="ch"><div class="ct">👥 Codes par département</div></div>
-      <div class="tw"><table><thead><tr><th>Département</th><th>Code</th><th>Permissions</th></tr></thead>
+      <div class="ch"><div class="ct">👥 Tous les accès</div></div>
+      <div class="tw"><table><thead><tr><th>Nom / Poste</th><th>Code d'accès</th><th>Filière</th></tr></thead>
       <tbody>
-        <tr><td><strong>Directeur Général</strong></td><td class="mono">DG4X9K2M</td><td><span class="b bg-m">Accès total</span></td></tr>
-        <tr><td><strong>Dir. Opérations</strong></td><td class="mono">OP7R3N8W</td><td><span class="b bg-m">Accès total + Admin</span></td></tr>
-        <tr><td>Coordinatrice</td><td class="mono">CR5T1P6Q</td><td><span class="b bg-p">Dashboard, stocks, tournées</span></td></tr>
-        <tr><td>Resp. Centrale Béton</td><td class="mono">CB2H8L4V</td><td><span class="b bg-p">Production, qualité, stocks</span></td></tr>
-        <tr><td>Resp. Flotte</td><td class="mono">FL9M3D7J</td><td><span class="b bg-p">Flotte, tournées, maintenance</span></td></tr>
-        <tr><td>Comptabilité</td><td class="mono">CT6A2R5B</td><td><span class="b bg-p">Finances, fournisseurs</span></td></tr>
-        <tr><td>RH</td><td class="mono">RH1K7N3E</td><td><span class="b bg-p">Employés, formations</span></td></tr>
-        <tr><td>Commercial</td><td class="mono">CM4W9T2F</td><td><span class="b bg-p">Projets, partenaires</span></td></tr>
-        <tr><td>Immobilier</td><td class="mono">IM8S5G1Y</td><td><span class="b bg-p">Projets, partenaires</span></td></tr>
-        <tr><td>Invité 1</td><td class="mono">GS1X4B7N</td><td><span class="b bg-x">Lecture seule</span></td></tr>
-        <tr><td>Invité 2</td><td class="mono">GS2M9K3P</td><td><span class="b bg-x">Lecture seule</span></td></tr>
+        <tr><td><strong>Directeur Général</strong></td><td class=\"mono\">DG4X9K2M</td><td><span class=\"b bg-m\">Direction</span></td></tr>
+        <tr><td><strong>Dir. Opérations & Logistique</strong></td><td class=\"mono\">OP7R3N8W</td><td><span class=\"b bg-m\">Direction</span></td></tr>
+        <tr><td><strong>Coordinatrice Sarpa Group</strong></td><td class=\"mono\">CR5T1P6Q</td><td><span class=\"b bg-p\">Direction</span></td></tr>
+        <tr><td><strong>Resp. Production Béton</strong></td><td class=\"mono\">CB2H8L4V</td><td><span class=\"b bg-p\">Sarpa Béton</span></td></tr>
+        <tr><td><strong>Manager Sarpa Logistics</strong></td><td class=\"mono\">FL9M3D7J</td><td><span class=\"b bg-p\">Sarpa Logistics</span></td></tr>
+        <tr><td><strong>Comptabilité</strong></td><td class=\"mono\">CT6A2R5B</td><td><span class=\"b bg-p\">Finance</span></td></tr>
+        <tr><td><strong>Ressources Humaines</strong></td><td class=\"mono\">RH1K7N3E</td><td><span class=\"b bg-p\">RH</span></td></tr>
+        <tr><td><strong>Commercial</strong></td><td class=\"mono\">CM4W9T2F</td><td><span class=\"b bg-p\">Commercial</span></td></tr>
+        <tr><td><strong>Manager Sarpa Immobilier</strong></td><td class=\"mono\">IM8S5G1Y</td><td><span class=\"b bg-p\">Sarpa Immobilier</span></td></tr>
+        <tr><td><strong>Invité 1</strong></td><td class=\"mono\">GS1X4B7N</td><td><span class=\"b bg-x\">Invité</span></td></tr>
+        <tr><td><strong>Invité 2</strong></td><td class=\"mono\">GS2M9K3P</td><td><span class=\"b bg-x\">Invité</span></td></tr>
+        <tr><td><strong>Manager Sarpa Béton</strong></td><td class=\"mono\">0ASD7GU9</td><td><span class=\"b bg-p\">Sarpa Béton</span></td></tr>
+        <tr><td><strong>Manager Sarpa Logistics N2</strong></td><td class=\"mono\">KGJIZJSD</td><td><span class=\"b bg-p\">Sarpa Logistics</span></td></tr>
+        <tr><td><strong>Manager Sarpa Immobilier N2</strong></td><td class=\"mono\">S2C3CZHI</td><td><span class=\"b bg-p\">Sarpa Immobilier</span></td></tr>
+        <tr><td><strong>Resp. Production Béton N2</strong></td><td class=\"mono\">29UK0GBI</td><td><span class=\"b bg-p\">Sarpa Béton</span></td></tr>
+        <tr><td><strong>Responsable Qualité</strong></td><td class=\"mono\">ZRBPQ2LK</td><td><span class=\"b bg-p\">Sarpa Béton</span></td></tr>
+        <tr><td><strong>Responsable Informatique</strong></td><td class=\"mono\">L191ZO9N</td><td><span class=\"b bg-p\">Informatique</span></td></tr>
+        <tr><td><strong>Comptable Sarpa Béton</strong></td><td class=\"mono\">FCFU5KL3</td><td><span class=\"b bg-p\">Finance Béton</span></td></tr>
+        <tr><td><strong>Comptable Sarpa Immobilier</strong></td><td class=\"mono\">GGEKSN6P</td><td><span class=\"b bg-p\">Finance Immo</span></td></tr>
+        <tr><td><strong>Comptable Sarpa Logistics</strong></td><td class=\"mono\">HNR8805S</td><td><span class=\"b bg-p\">Finance Logistics</span></td></tr>
+        <tr><td><strong>Commercial 2</strong></td><td class=\"mono\">5SCCAR70</td><td><span class=\"b bg-p\">Commercial</span></td></tr>
       </tbody></table></div>
     </div>`;
 }
-
 async function renderRH() {
   const emps = await db('employes');
   const actifs = (emps||[]).filter(e=>e.statut==='Actif');
@@ -4658,6 +4726,538 @@ async function exportFacturesPDF() {
   logAction('export','factures',{periode:period});
 }
 
+
+// ═══ POINTAGE ═══
+async function renderPointage() {
+  const today = new Date().toISOString().slice(0,10);
+  const m = new Date().toISOString().slice(0,7);
+  const [emps, pointages] = await Promise.all([db('employes'), db('pointages')]);
+  const canP = canEdit('pointage');
+  const todayP = (pointages||[]).filter(p=>p.date===today);
+  const mP = (pointages||[]).filter(p=>p.date?.startsWith(m));
+  const presents = todayP.filter(p=>p.statut==='Présent').length;
+  const absents = todayP.filter(p=>p.statut==='Absent').length;
+  const retards = todayP.filter(p=>p.statut==='Retard').length;
+
+  // Filter emps by dept based on role
+  let myEmps = emps||[];
+  if (userRole==='responsable_centrale') myEmps = myEmps.filter(e=>e.departement==='Centrale à Béton');
+  else if (userRole==='responsable_flotte') myEmps = myEmps.filter(e=>e.departement==='Flotte Camions');
+
+  document.getElementById('pt-content').innerHTML = `
+    <div class="sh">
+      <div><div class="stl">Pointage Équipes</div><div class="sst">${today}</div></div>
+      <div style="display:flex;gap:6px">
+        <button class="btn bg2" onclick="exportPointagePDF()" style="font-size:11px">📄 Rapport PDF</button>
+        ${canP?`<button class="btn bm" onclick="openPointageJour()" style="font-size:11px">⏰ Pointer aujourd'hui</button>`:''}
+      </div>
+    </div>
+
+    <div class="kg" style="grid-template-columns:repeat(4,1fr);margin-bottom:14px">
+      <div class="kc kc-g"><div class="kl">Présents</div><div class="kv">${presents}</div><div class="ks">aujourd'hui</div></div>
+      <div class="kc kc-r"><div class="kl">Absents</div><div class="kv">${absents}</div><div class="ks">aujourd'hui</div></div>
+      <div class="kc kc-m"><div class="kl">Retards</div><div class="kv">${retards}</div><div class="ks">aujourd'hui</div></div>
+      <div class="kc kc-b"><div class="kl">Pointages</div><div class="kv">${mP.length}</div><div class="ks">ce mois</div></div>
+    </div>
+
+    <!-- TABS -->
+    <div style="display:flex;gap:6px;margin-bottom:14px">
+      <button onclick="showPtTab('aujourdhui')" id="pttab-aujourdhui" class="btn bm" style="font-size:11px">📅 Aujourd'hui</button>
+      <button onclick="showPtTab('historique')" id="pttab-historique" class="btn bg2" style="font-size:11px">📋 Historique</button>
+      <button onclick="showPtTab('rapport')" id="pttab-rapport" class="btn bg2" style="font-size:11px">📊 Rapport mensuel</button>
+    </div>
+
+    <!-- AUJOURD'HUI -->
+    <div id="ptsec-aujourdhui">
+      <div class="card">
+        <div class="ch"><div class="ct">⏰ Pointage du ${today}</div></div>
+        <div class="tw"><table><thead><tr>
+          <th>Employé</th><th>Département</th><th>Statut</th><th>Arrivée</th><th>Départ</th>
+          <th>Heures</th><th>H.Sup</th><th>Motif absence</th><th>Pointé par</th>
+          ${canP?'<th></th>':''}
+        </tr></thead>
+        <tbody>${myEmps.length===0?'<tr><td colspan="10" style="text-align:center;color:var(--tx3)">Aucun employé dans votre département</td></tr>':
+          myEmps.map(e=>{
+            const p = todayP.find(p=>p.employe_id===String(e.id)||p.employe_nom===e.nom);
+            const heures = p?.heure_arrivee&&p?.heure_depart ? calcHeures(p.heure_arrivee,p.heure_depart) : '—';
+            const hsup = p?.heure_arrivee&&p?.heure_depart ? calcHSup(p.heure_arrivee,p.heure_depart) : '—';
+            const stColors = {'Présent':'bg-g','Absent':'bg-r','Retard':'bg-o','Maladie':'bg-p','Congé':'bg-b'};
+            return `<tr>
+              <td><strong>${e.nom} ${e.prenom||''}</strong></td>
+              <td><span class="b bg-p" style="font-size:10px">${e.departement||'—'}</span></td>
+              <td>${p?`<span class="b ${stColors[p.statut]||'bg-x'}">${p.statut}</span>`:'<span style="color:var(--tx3);font-size:11px">Non pointé</span>'}</td>
+              <td class="mono">${p?.heure_arrivee||'—'}</td>
+              <td class="mono">${p?.heure_depart||'—'}</td>
+              <td><strong>${heures}</strong></td>
+              <td style="color:${hsup!=='—'&&hsup!=='0h00'?'var(--must2)':'var(--tx3)'}">${hsup}</td>
+              <td style="font-size:11px;color:var(--rd2)">${p?.motif_absence||'—'}</td>
+              <td style="font-size:10px;color:var(--tx3)">${p?.pointe_par||'—'}</td>
+              ${canP?`<td><button onclick="openPointageEmp('${e.id}','${e.nom} ${e.prenom||''}')" style="background:var(--must);border:none;border-radius:4px;padding:3px 8px;cursor:pointer;font-size:10px;color:var(--bg)">${p?'✏️':'⏰'}</button></td>`:''}
+            </tr>`;
+          }).join('')}
+        </tbody></table></div>
+      </div>
+    </div>
+
+    <!-- HISTORIQUE -->
+    <div id="ptsec-historique" style="display:none">
+      <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center">
+        <span style="font-size:11px;color:var(--tx3)">Filtrer :</span>
+        <input type="month" value="${m}" id="pt-filter-month" onchange="filterPointageHisto()" style="background:var(--sf2);border:1px solid var(--bd2);border-radius:6px;padding:4px 8px;color:var(--tx);font-size:11px">
+        <select id="pt-filter-emp" onchange="filterPointageHisto()" style="background:var(--sf2);border:1px solid var(--bd2);border-radius:6px;padding:4px 8px;color:var(--tx);font-size:11px">
+          <option value="">Tous les employés</option>
+          ${myEmps.map(e=>`<option value="${e.nom}">${e.nom} ${e.prenom||''}</option>`).join('')}
+        </select>
+      </div>
+      <div class="card">
+        <div class="ch"><div class="ct">📋 Historique des pointages</div></div>
+        <div class="tw"><table><thead><tr>
+          <th>Date</th><th>Employé</th><th>Statut</th><th>Arrivée</th><th>Départ</th><th>Heures</th><th>H.Sup</th><th>Motif</th><th>Par</th>
+        </tr></thead>
+        <tbody id="t-pt-histo">${renderPointageRows(pointages||[], null, null)}</tbody></table></div>
+      </div>
+    </div>
+
+    <!-- RAPPORT MENSUEL -->
+    <div id="ptsec-rapport" style="display:none">
+      <div id="pt-rapport-content">${renderRapportMensuel(pointages||[], myEmps, m)}</div>
+    </div>`;
+
+  showPtTab('aujourdhui');
+}
+
+function calcHeures(arrivee, depart) {
+  if (!arrivee||!depart) return '—';
+  const [h1,m1]=arrivee.split(':').map(Number);
+  const [h2,m2]=depart.split(':').map(Number);
+  const diff = (h2*60+m2)-(h1*60+m1);
+  if (diff<=0) return '—';
+  return `${Math.floor(diff/60)}h${String(diff%60).padStart(2,'0')}`;
+}
+
+function calcHSup(arrivee, depart, base=8) {
+  if (!arrivee||!depart) return '—';
+  const [h1,m1]=arrivee.split(':').map(Number);
+  const [h2,m2]=depart.split(':').map(Number);
+  const diff = (h2*60+m2)-(h1*60+m1);
+  const hsup = diff - base*60;
+  if (hsup<=0) return '—';
+  return `+${Math.floor(hsup/60)}h${String(hsup%60).padStart(2,'0')}`;
+}
+
+function renderPointageRows(pointages, filterMonth, filterEmp) {
+  let rows = pointages;
+  if (filterMonth) rows = rows.filter(p=>p.date?.startsWith(filterMonth));
+  if (filterEmp) rows = rows.filter(p=>p.employe_nom===filterEmp);
+  if (rows.length===0) return '<tr><td colspan="9" style="text-align:center;color:var(--tx3)">Aucun pointage</td></tr>';
+  const stColors = {'Présent':'bg-g','Absent':'bg-r','Retard':'bg-o','Maladie':'bg-p','Congé':'bg-b'};
+  return rows.map(p=>`<tr>
+    <td class="mono">${p.date||'—'}</td>
+    <td><strong>${p.employe_nom||'—'}</strong></td>
+    <td><span class="b ${stColors[p.statut]||'bg-x'}">${p.statut}</span></td>
+    <td class="mono">${p.heure_arrivee||'—'}</td>
+    <td class="mono">${p.heure_depart||'—'}</td>
+    <td>${calcHeures(p.heure_arrivee,p.heure_depart)}</td>
+    <td style="color:var(--must2)">${calcHSup(p.heure_arrivee,p.heure_depart)}</td>
+    <td style="font-size:11px;color:var(--rd2)">${p.motif_absence||'—'}</td>
+    <td style="font-size:10px;color:var(--tx3)">${p.pointe_par||'—'}</td>
+  </tr>`).join('');
+}
+
+function renderRapportMensuel(pointages, emps, m) {
+  if (emps.length===0) return '<div style="color:var(--tx3);text-align:center;padding:20px">Aucun employé</div>';
+  const mP = pointages.filter(p=>p.date?.startsWith(m));
+  const jours = new Date(m.slice(0,4), m.slice(5,7), 0).getDate();
+  return `<div class="card"><div class="ch"><div class="ct">📊 Rapport mensuel — ${m}</div></div>
+    <div class="tw"><table><thead><tr>
+      <th>Employé</th><th>Présents</th><th>Absents</th><th>Retards</th><th>Maladies</th>
+      <th>Total heures</th><th>H.Sup total</th><th>Taux présence</th>
+    </tr></thead><tbody>
+    ${emps.map(e=>{
+      const ep = mP.filter(p=>p.employe_nom===e.nom);
+      const pres = ep.filter(p=>p.statut==='Présent').length;
+      const abs = ep.filter(p=>p.statut==='Absent').length;
+      const ret = ep.filter(p=>p.statut==='Retard').length;
+      const mal = ep.filter(p=>p.statut==='Maladie').length;
+      const totalMin = ep.reduce((a,p)=>{
+        if (!p.heure_arrivee||!p.heure_depart) return a;
+        const [h1,m1]=p.heure_arrivee.split(':').map(Number);
+        const [h2,m2]=p.heure_depart.split(':').map(Number);
+        return a + Math.max(0,(h2*60+m2)-(h1*60+m1));
+      },0);
+      const hsupMin = Math.max(0, totalMin - (pres+ret)*8*60);
+      const taux = Math.round((pres+ret)/Math.max(jours,1)*100);
+      const tc = taux>=90?'var(--gn2)':taux>=70?'var(--must2)':'var(--rd2)';
+      return `<tr>
+        <td><strong>${e.nom} ${e.prenom||''}</strong></td>
+        <td style="color:var(--gn2);font-weight:700">${pres}</td>
+        <td style="color:var(--rd2);font-weight:700">${abs}</td>
+        <td style="color:var(--must2)">${ret}</td>
+        <td style="color:var(--ac2)">${mal}</td>
+        <td>${Math.floor(totalMin/60)}h${String(totalMin%60).padStart(2,'0')}</td>
+        <td style="color:var(--must2)">${hsupMin>0?`+${Math.floor(hsupMin/60)}h${String(hsupMin%60).padStart(2,'0')}`:'—'}</td>
+        <td><span style="color:${tc};font-weight:800">${taux}%</span></td>
+      </tr>`;
+    }).join('')}
+    </tbody></table></div></div>`;
+}
+
+function showPtTab(tab) {
+  ['aujourdhui','historique','rapport'].forEach(t=>{
+    const s=document.getElementById('ptsec-'+t);
+    const b=document.getElementById('pttab-'+t);
+    if(s) s.style.display=t===tab?'':'none';
+    if(b) { b.className=t===tab?'btn bm':'btn bg2'; b.style.fontSize='11px'; }
+  });
+}
+
+function filterPointageHisto() {
+  db('pointages').then(p=>{
+    const m = document.getElementById('pt-filter-month')?.value;
+    const emp = document.getElementById('pt-filter-emp')?.value;
+    document.getElementById('t-pt-histo').innerHTML = renderPointageRows(p||[], m, emp);
+  });
+}
+
+async function openPointageJour() {
+  // Opens batch pointing modal
+  const emps = await db('employes');
+  let myEmps = emps||[];
+  if (userRole==='responsable_centrale') myEmps = myEmps.filter(e=>e.departement==='Centrale à Béton');
+  else if (userRole==='responsable_flotte') myEmps = myEmps.filter(e=>e.departement==='Flotte Camions');
+  const today = new Date().toISOString().slice(0,10);
+  const existing = await db('pointages');
+  const todayP = existing.filter(p=>p.date===today);
+
+  document.getElementById('pt-batch-list').innerHTML = myEmps.map(e=>{
+    const p = todayP.find(x=>x.employe_nom===e.nom);
+    return `<div style="background:var(--sf2);border-radius:8px;padding:10px;margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <strong style="color:var(--tx)">${e.nom} ${e.prenom||''}</strong>
+        <span class="b bg-p" style="font-size:10px">${e.departement}</span>
+      </div>
+      <div class="fr" style="gap:8px">
+        <div class="fg" style="flex:2"><label>Statut</label>
+          <select id="pt-${e.id}-st" style="width:100%">
+            <option value="Présent" ${p?.statut==='Présent'?'selected':''}>✅ Présent</option>
+            <option value="Retard" ${p?.statut==='Retard'?'selected':''}>⚠️ Retard</option>
+            <option value="Absent" ${p?.statut==='Absent'?'selected':''}>❌ Absent</option>
+            <option value="Maladie" ${p?.statut==='Maladie'?'selected':''}>🏥 Maladie</option>
+            <option value="Congé" ${p?.statut==='Congé'?'selected':''}>🌴 Congé</option>
+          </select>
+        </div>
+        <div class="fg" style="flex:1"><label>Arrivée</label><input type="time" id="pt-${e.id}-arr" value="${p?.heure_arrivee||'08:00'}"></div>
+        <div class="fg" style="flex:1"><label>Départ</label><input type="time" id="pt-${e.id}-dep" value="${p?.heure_depart||''}"></div>
+        <div class="fg" style="flex:3"><label>Motif si absent</label><input type="text" id="pt-${e.id}-mot" value="${p?.motif_absence||''}" placeholder="Motif absence/retard..."></div>
+      </div>
+      <input type="hidden" id="pt-${e.id}-eid" value="${e.id}">
+      <input type="hidden" id="pt-${e.id}-nom" value="${e.nom} ${e.prenom||''}">
+      <input type="hidden" id="pt-${e.id}-pid" value="${p?.id||''}">
+    </div>`;
+  }).join('');
+  document.getElementById('pt-batch-date').textContent = today;
+  openM('m-pointage');
+}
+
+async function openPointageEmp(empId, empNom) {
+  const emps = await db('employes');
+  const existing = await db('pointages');
+  const today = new Date().toISOString().slice(0,10);
+  const e = (emps||[]).find(x=>String(x.id)===String(empId));
+  const p = (existing||[]).find(x=>x.employe_nom===empNom&&x.date===today);
+  // Reuse batch modal with single employee
+  document.getElementById('pt-batch-list').innerHTML = `<div style="background:var(--sf2);border-radius:8px;padding:10px">
+    <strong style="color:var(--tx)">${empNom}</strong>
+    <div class="fr" style="gap:8px;margin-top:8px">
+      <div class="fg" style="flex:2"><label>Statut</label>
+        <select id="pt-${empId}-st" style="width:100%">
+          <option value="Présent" ${p?.statut==='Présent'?'selected':''}>✅ Présent</option>
+          <option value="Retard" ${p?.statut==='Retard'?'selected':''}>⚠️ Retard</option>
+          <option value="Absent" ${p?.statut==='Absent'?'selected':''}>❌ Absent</option>
+          <option value="Maladie" ${p?.statut==='Maladie'?'selected':''}>🏥 Maladie</option>
+          <option value="Congé" ${p?.statut==='Congé'?'selected':''}>🌴 Congé</option>
+        </select>
+      </div>
+      <div class="fg" style="flex:1"><label>Arrivée</label><input type="time" id="pt-${empId}-arr" value="${p?.heure_arrivee||'08:00'}"></div>
+      <div class="fg" style="flex:1"><label>Départ</label><input type="time" id="pt-${empId}-dep" value="${p?.heure_depart||''}"></div>
+      <div class="fg" style="flex:3"><label>Motif si absent</label><input type="text" id="pt-${empId}-mot" value="${p?.motif_absence||''}" placeholder="Motif..."></div>
+    </div>
+    <input type="hidden" id="pt-${empId}-eid" value="${empId}">
+    <input type="hidden" id="pt-${empId}-nom" value="${empNom}">
+    <input type="hidden" id="pt-${empId}-pid" value="${p?.id||''}">
+  </div>`;
+  document.getElementById('pt-batch-date').textContent = new Date().toISOString().slice(0,10);
+  openM('m-pointage');
+}
+
+async function savPointageBatch() {
+  const today = new Date().toISOString().slice(0,10);
+  const inputs = document.querySelectorAll('[id^="pt-"][id$="-eid"]');
+  for (const input of inputs) {
+    const base = input.id.replace('-eid','').replace('pt-','');
+    const empId = input.value;
+    const empNom = document.getElementById(`pt-${base}-nom`)?.value;
+    const pidEl = document.getElementById(`pt-${base}-pid`);
+    const pid = pidEl?.value;
+    const data = {
+      date: today,
+      employe_id: empId,
+      employe_nom: empNom,
+      statut: document.getElementById(`pt-${base}-st`)?.value||'Présent',
+      heure_arrivee: document.getElementById(`pt-${base}-arr`)?.value||'',
+      heure_depart: document.getElementById(`pt-${base}-dep`)?.value||'',
+      motif_absence: document.getElementById(`pt-${base}-mot`)?.value||'',
+      pointe_par: userName,
+      departement: userRole
+    };
+    if (pid) {
+      await db('pointages','PATCH', data, {id: pid});
+    } else {
+      await db('pointages','POST', {...data, created_by: userName});
+    }
+  }
+  logAction('insert','pointages',{date:today, par:userName});
+  closeM('m-pointage');
+  toast('Pointage enregistré ✓');
+  render('pointage');
+}
+
+async function exportPointagePDF() {
+  const [emps, pointages] = await Promise.all([db('employes'), db('pointages')]);
+  const m = new Date().toISOString().slice(0,7);
+  let myEmps = emps||[];
+  if (userRole==='responsable_centrale') myEmps = myEmps.filter(e=>e.departement==='Centrale à Béton');
+  else if (userRole==='responsable_flotte') myEmps = myEmps.filter(e=>e.departement==='Flotte Camions');
+  const mP = (pointages||[]).filter(p=>p.date?.startsWith(m));
+  const cfg = getConfig();
+
+  const win = window.open('','_blank');
+  if (!win) { toast('Autorisez les popups'); return; }
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Rapport Pointage ${m}</title>
+  <style>body{font-family:Arial;margin:40px;color:#1a1a2e;font-size:12px}
+  h1{color:#1E1035;border-bottom:3px solid #D4A017;padding-bottom:8px}
+  h2{color:#3D1A6E;margin-top:16px;font-size:13px}
+  table{width:100%;border-collapse:collapse;margin-top:8px}
+  th{background:#1E1035;color:#fff;padding:6px;font-size:10px;text-align:left}
+  td{padding:5px 6px;border-bottom:1px solid #eee;font-size:10px}
+  tr:nth-child(even){background:#f9f9f9}
+  .kpi{display:inline-block;background:#f3eef9;border-radius:6px;padding:8px 14px;margin:4px;text-align:center}
+  .kv{font-size:18px;font-weight:800;color:#1E1035}.kl{font-size:9px;color:#666}
+  .green{color:#2e7d32;font-weight:700}.red{color:#c62828;font-weight:700}.orange{color:#e65100;font-weight:700}
+  @media print{button{display:none}}</style></head>
+  <body>
+  <div style="display:flex;justify-content:space-between;margin-bottom:16px">
+    <div><div style="font-size:20px;font-weight:800;color:#1E1035">${cfg.companyName||'Sarpa Group'}</div><div style="color:#666;font-size:10px">Rapport de pointage mensuel</div></div>
+    <div style="text-align:right"><div style="font-weight:700">Mois : ${m}</div><div style="color:#666;font-size:10px">Par : ${userName}</div></div>
+  </div>
+  <button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button>
+  <button onclick="window.print()" style="background:#1E1035;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-bottom:16px">🖨️ Imprimer</button>
+  <h1>⏰ Rapport Pointage — ${m}</h1>
+  <h2>Résumé par employé</h2>
+  <table><thead><tr><th>Employé</th><th>Département</th><th>Présents</th><th>Absents</th><th>Retards</th><th>Maladies</th><th>Total heures</th><th>H.Sup</th><th>Taux présence</th></tr></thead>
+  <tbody>${myEmps.map(e=>{
+    const ep = mP.filter(p=>p.employe_nom===e.nom);
+    const pres=ep.filter(p=>p.statut==='Présent').length;
+    const abs=ep.filter(p=>p.statut==='Absent').length;
+    const ret=ep.filter(p=>p.statut==='Retard').length;
+    const mal=ep.filter(p=>p.statut==='Maladie').length;
+    const totalMin=ep.reduce((a,p)=>{if(!p.heure_arrivee||!p.heure_depart)return a;const[h1,m1]=p.heure_arrivee.split(':').map(Number);const[h2,m2]=p.heure_depart.split(':').map(Number);return a+Math.max(0,(h2*60+m2)-(h1*60+m1));},0);
+    const hsupMin=Math.max(0,totalMin-(pres+ret)*8*60);
+    const taux=Math.round((pres+ret)/Math.max(new Date(m.slice(0,4),m.slice(5,7),0).getDate(),1)*100);
+    return `<tr><td><strong>${e.nom} ${e.prenom||''}</strong></td><td>${e.departement||'—'}</td>
+      <td class="green">${pres}</td><td class="red">${abs}</td><td class="orange">${ret}</td><td>${mal}</td>
+      <td>${Math.floor(totalMin/60)}h${String(totalMin%60).padStart(2,'0')}</td>
+      <td>${hsupMin>0?`+${Math.floor(hsupMin/60)}h${String(hsupMin%60).padStart(2,'0')}`:'—'}</td>
+      <td class="${taux>=90?'green':taux>=70?'orange':'red'}">${taux}%</td></tr>`;
+  }).join('')}</tbody></table>
+  <h2>Détail des pointages</h2>
+  <table><thead><tr><th>Date</th><th>Employé</th><th>Statut</th><th>Arrivée</th><th>Départ</th><th>Heures</th><th>Motif</th><th>Pointé par</th></tr></thead>
+  <tbody>${mP.map(p=>`<tr><td>${p.date}</td><td>${p.employe_nom}</td><td>${p.statut}</td><td>${p.heure_arrivee||'—'}</td><td>${p.heure_depart||'—'}</td><td>${calcHeures(p.heure_arrivee,p.heure_depart)}</td><td>${p.motif_absence||'—'}</td><td>${p.pointe_par||'—'}</td></tr>`).join('')}</tbody></table>
+  </body></html>`);
+  win.document.close();
+}
+
+// ═══ OPENING & CLOSING ═══
+async function renderOpening() {
+  await renderChecklistShift('opening');
+}
+async function renderClosing() {
+  await renderChecklistShift('closing');
+}
+
+async function renderChecklistShift(type) {
+  const isOpening = type==='opening';
+  const label = isOpening ? 'Opening — Ouverture' : 'Closing — Fermeture';
+  const icon = isOpening ? '🌅' : '🌙';
+  const today = new Date().toISOString().slice(0,10);
+  const canP = canEdit(type);
+  const canConfig = userRole==='directeur'||userRole==='dg'||userRole==='responsable_centrale'||userRole==='responsable_flotte';
+
+  const [items, completions] = await Promise.all([db(`${type}_items`), db(`${type}_completions`)]);
+  const todayC = (completions||[]).filter(c=>c.date===today);
+
+  // Filter by dept
+  let deptFilter = null;
+  if (userRole==='responsable_centrale') deptFilter='centrale';
+  else if (userRole==='responsable_flotte') deptFilter='flotte';
+
+  const centralItems = (items||[]).filter(i=>i.departement==='centrale'||(deptFilter===null));
+  const flotteItems  = (items||[]).filter(i=>i.departement==='flotte'||(deptFilter===null));
+
+  const renderSection = (sItems, dept, deptLabel) => {
+    if (deptFilter && deptFilter!==dept) return '';
+    const totalI = sItems.filter(i=>i.departement===dept).length;
+    const doneI = sItems.filter(i=>i.departement===dept).filter(i=>todayC.find(c=>c.item_id===String(i.id)&&c.fait)).length;
+    const pct = totalI>0 ? Math.round(doneI/totalI*100) : 0;
+    const pctColor = pct>=100?'var(--gn2)':pct>=70?'var(--must2)':'var(--rd2)';
+    return `<div class="card" style="margin-bottom:14px">
+      <div class="ch">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="ct">${deptLabel}</div>
+          <span style="font-size:12px;color:${pctColor};font-weight:800">${doneI}/${totalI} — ${pct}%</span>
+        </div>
+        ${canConfig?`<div style="display:flex;gap:6px">
+          <button onclick="openAddItem('${type}','${dept}')" class="btn bg2" style="font-size:10px">+ Point</button>
+        </div>`:''}
+      </div>
+      <div class="pb" style="margin-bottom:14px"><div class="pf" style="width:${pct}%;background:${pctColor}"></div></div>
+      ${sItems.filter(i=>i.departement===dept).map(item=>{
+        const comp = todayC.find(c=>c.item_id===String(item.id));
+        const isDone = comp?.fait=='1'||comp?.fait===true||comp?.fait===1;
+        return `<div style="display:flex;gap:12px;align-items:flex-start;padding:10px;background:${isDone?'rgba(46,213,115,.05)':'var(--sf2)'};border-radius:8px;margin-bottom:6px;border-left:3px solid ${isDone?'var(--gn2)':'var(--sf3)'}">
+          <input type="checkbox" ${isDone?'checked':''} onchange="toggleItem('${type}','${item.id}',this.checked,'${item.departement}')"
+            style="width:18px;height:18px;cursor:pointer;accent-color:var(--must2);flex-shrink:0;margin-top:2px" ${!canP?'disabled':''}>
+          <div style="flex:1">
+            <div style="font-weight:${isDone?'400':'700'};color:${isDone?'var(--tx3)':'var(--tx)'};text-decoration:${isDone?'line-through':'none'};font-size:13px">${item.titre}</div>
+            ${item.description?`<div style="font-size:11px;color:var(--tx3);margin-top:2px">${item.description}</div>`:''}
+            ${isDone?`<div style="font-size:10px;color:var(--gn2);margin-top:4px">✅ Validé par <strong>${comp.valide_par}</strong> à ${comp.heure_validation||'—'}${comp.commentaire?' — '+comp.commentaire:''}</div>`:''}
+          </div>
+          ${isDone&&canP?`<button onclick="addCommentaire('${type}','${item.id}')" style="background:none;border:1px solid var(--bd2);border-radius:4px;padding:2px 6px;cursor:pointer;font-size:10px;color:var(--tx3)">💬</button>`:''}
+          ${canConfig?`<button onclick="deleteShiftItem('${type}','${item.id}')" style="background:none;border:none;cursor:pointer;font-size:12px;color:var(--rd2)" title="Supprimer">🗑</button>`:''}
+        </div>`;
+      }).join('')}
+    </div>`;
+  };
+
+  document.getElementById(`${type}-content`).innerHTML = `
+    <div class="sh">
+      <div><div class="stl">${icon} ${label}</div><div class="sst">${today}</div></div>
+      <div style="display:flex;gap:6px">
+        <button class="btn bg2" onclick="exportShiftPDF('${type}')" style="font-size:11px">📄 Export PDF</button>
+      </div>
+    </div>
+    ${renderSection(items||[], 'centrale', '🏗 Centrale à Béton')}
+    ${renderSection(items||[], 'flotte', '🚛 Flotte Camions')}
+    ${(items||[]).length===0?`<div class="al al-m">Aucun point de checklist configuré. ${canConfig?'Cliquez "+ Point" pour commencer.':''}</div>`:''}`;
+}
+
+async function toggleItem(type, itemId, checked, dept) {
+  const today = new Date().toISOString().slice(0,10);
+  const now = new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+  const existing = await db(`${type}_completions`);
+  const prev = (existing||[]).find(c=>c.item_id===String(itemId)&&c.date===today);
+  if (prev) {
+    await db(`${type}_completions`,'PATCH',{fait:checked?1:0, valide_par:userName, heure_validation:now},{id:prev.id});
+  } else {
+    await db(`${type}_completions`,'POST',{
+      item_id:String(itemId), date:today, fait:1,
+      valide_par:userName, heure_validation:now,
+      commentaire:'', created_by:userName
+    });
+  }
+  logAction(checked?'insert':'update',`${type}_completions`,{item_id:itemId,par:userName});
+  render(type);
+}
+
+async function addCommentaire(type, itemId) {
+  const comment = prompt('Ajouter un commentaire :');
+  if (comment===null) return;
+  const today = new Date().toISOString().slice(0,10);
+  const existing = await db(`${type}_completions`);
+  const prev = (existing||[]).find(c=>c.item_id===String(itemId)&&c.date===today);
+  if (prev) await db(`${type}_completions`,'PATCH',{commentaire:comment},{id:prev.id});
+  toast('Commentaire ajouté ✓');
+  render(type);
+}
+
+function openAddItem(type, dept) {
+  document.getElementById('shift-item-type').value = type;
+  document.getElementById('shift-item-dept').value = dept;
+  document.getElementById('shift-item-titre').value = '';
+  document.getElementById('shift-item-desc').value = '';
+  document.getElementById('shift-item-dept-label').textContent = dept==='centrale'?'🏗 Centrale à Béton':'🚛 Flotte Camions';
+  openM('m-shift-item');
+}
+
+async function savShiftItem() {
+  const type = document.getElementById('shift-item-type').value;
+  const titre = document.getElementById('shift-item-titre').value;
+  if (!titre) { toast('Titre requis'); return; }
+  await db(`${type}_items`,'POST',{
+    titre, departement: document.getElementById('shift-item-dept').value,
+    description: document.getElementById('shift-item-desc').value,
+    ordre: Date.now(), created_by: userName
+  });
+  closeM('m-shift-item');
+  toast('Point ajouté ✓');
+  render(type);
+}
+
+async function deleteShiftItem(type, id) {
+  if (!confirm('Supprimer ce point ?')) return;
+  await db(`${type}_items`,'DELETE',null,{id});
+  toast('Point supprimé');
+  render(type);
+}
+
+async function exportShiftPDF(type) {
+  const isOpening = type==='opening';
+  const label = isOpening?'Opening':'Closing';
+  const today = new Date().toISOString().slice(0,10);
+  const [items, completions] = await Promise.all([db(`${type}_items`), db(`${type}_completions`)]);
+  const todayC = (completions||[]).filter(c=>c.date===today);
+  const cfg = getConfig();
+
+  const renderSec = (dept, deptLabel) => {
+    const sItems = (items||[]).filter(i=>i.departement===dept);
+    const done = sItems.filter(i=>todayC.find(c=>c.item_id===String(i.id)&&(c.fait=='1'||c.fait===1)));
+    const pct = sItems.length>0?Math.round(done.length/sItems.length*100):0;
+    return `<h2>${deptLabel} — ${done.length}/${sItems.length} (${pct}%)</h2>
+      <table><thead><tr><th>Point</th><th>Statut</th><th>Validé par</th><th>Heure</th><th>Commentaire</th></tr></thead>
+      <tbody>${sItems.map(i=>{
+        const c=todayC.find(x=>x.item_id===String(i.id));
+        const done=c?.fait=='1'||c?.fait===1;
+        return `<tr><td>${i.titre}${i.description?`<br><small style="color:#666">${i.description}</small>`:''}</td>
+          <td>${done?'<span style="color:#2e7d32;font-weight:700">✅ Fait</span>':'<span style="color:#c62828">❌ Non fait</span>'}</td>
+          <td>${c?.valide_par||'—'}</td><td>${c?.heure_validation||'—'}</td><td>${c?.commentaire||'—'}</td></tr>`;
+      }).join('')}</tbody></table>`;
+  };
+
+  const win = window.open('','_blank');
+  if (!win) { toast('Autorisez les popups'); return; }
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${label} ${today}</title>
+  <style>body{font-family:Arial;margin:40px;color:#1a1a2e;font-size:12px}
+  h1{color:#1E1035;border-bottom:3px solid #D4A017;padding-bottom:8px}
+  h2{color:#3D1A6E;margin-top:16px;font-size:13px}
+  table{width:100%;border-collapse:collapse;margin-top:8px}
+  th{background:#1E1035;color:#fff;padding:6px;font-size:10px;text-align:left}
+  td{padding:5px 6px;border-bottom:1px solid #eee;font-size:10px}
+  tr:nth-child(even){background:#f9f9f9}
+  @media print{button{display:none}}</style></head>
+  <body>
+  <div style="display:flex;justify-content:space-between;margin-bottom:16px">
+    <div><div style="font-size:20px;font-weight:800;color:#1E1035">${cfg.companyName||'Sarpa Group'}</div></div>
+    <div style="text-align:right"><div style="font-weight:700">${label} — ${today}</div><div style="color:#666;font-size:10px">Par : ${userName}</div></div>
+  </div>
+  <button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button>
+  <button onclick="window.print()" style="background:#1E1035;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-bottom:16px">🖨️ Imprimer</button>
+  <h1>${isOpening?'🌅':'🌙'} Rapport ${label} — ${today}</h1>
+  ${renderSec('centrale','🏗 Centrale à Béton')}
+  ${renderSec('flotte','🚛 Flotte Camions')}
+  </body></html>`);
+  win.document.close();
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('login-btn').addEventListener('click', doLogin);
   document.getElementById('l-code').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
@@ -4687,7 +5287,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
+
+
 </script>
+
+
 
 
 
