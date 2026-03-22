@@ -322,8 +322,12 @@ textarea{resize:vertical;min-height:70px}
   <!-- DASHBOARD -->
   <div class="pg active" id="pg-dashboard">
     <div id="pending-val-alert"></div>
+    <div id="pending-val-alert"></div>
     <div id="dash-al" style="margin-bottom:14px"></div>
-    <div class="kg" id="dash-kpis">
+    <div class="kg" id="dash-kpis" style="grid-template-columns:repeat(4,1fr);margin-bottom:14px"></div>
+    <div class="g2" id="dash-filieres" style="margin-bottom:14px"></div>
+    <div class="g2" id="dash-finance-rh" style="margin-bottom:14px"></div>
+    <div class="kg" id="dash-kpis-old" style="display:none">
       <div class="kc kc-g"><div class="kl">Production aujourd'hui</div><div class="kv" id="d-p">—</div><div class="ks">m³ produits</div><div class="kt" id="d-pt">—</div></div>
       <div class="kc kc-p"><div class="kl">Disponibilité flotte</div><div class="kv" id="d-f">—</div><div class="ks">camions / total</div><div class="kt" id="d-ft">—</div></div>
       <div class="kc kc-m"><div class="kl">Tournées totales</div><div class="kv" id="d-to">—</div><div class="ks">enregistrées</div><div class="kt mt">Cumulé</div></div>
@@ -1357,6 +1361,8 @@ textarea{resize:vertical;min-height:70px}
 
 
 
+
+
 const ROLE_CODES = {
   'DG4X9K2M': { role:'dg',                    name:'Directeur Général'              },
   'OP7R3N8W': { role:'directeur',              name:'Dir. Opérations & Logistique'  },
@@ -1460,17 +1466,17 @@ const ALL = ['dashboard','production','stocks','quality','fleet','maintenance','
 const ROLES = {
   dg                       : { label:'Directeur Général', badge:'rb-director', pages:['dashboard','production','stocks','quality','fleet','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','rh','formation','planning','carburant','checklist','messages','annuaire','conges','partenariats','objectifs','graphiques','journal','livraisons','factures','pointage','opening','closing','biens','visites','contrats_immo','etats_lieux','loyers'] },
   directeur                : { label:'Dir. Opérations & Logistique', badge:'rb-director', pages:['dashboard','production','stocks','quality','fleet','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','rh','formation','planning','carburant','checklist','messages','annuaire','conges','partenariats','objectifs','graphiques','journal','livraisons','factures','pointage','opening','closing','biens','visites','contrats_immo','etats_lieux','loyers'] },
-  coordinatrice            : { label:'Coordinatrice Sarpa Groupe', badge:'rb-coord', pages:['dashboard','stocks','fournisseurs','projets','partenaires','accidents','planning','messages','annuaire','livraisons','factures','partenariats','objectifs','conges','formation','rapports','biens','visites','contrats_immo','etats_lieux','loyers'] },
+  coordinatrice            : { label:'Coordinatrice Sarpa Groupe', badge:'rb-coord', pages:['dashboard','stocks','fournisseurs','projets','partenaires','accidents','planning','messages','annuaire','livraisons','factures','partenariats','objectifs','conges','formation','rapports','pointage'] },
   manager_beton            : { label:'Manager Sarpa Béton', badge:'rb-beton', pages:['dashboard','production','stocks','quality','accidents','planning','livraisons','factures','messages','annuaire','fournisseurs','objectifs','opening','closing','pointage'] },
   responsable_centrale     : { label:'Resp. Production Béton', badge:'rb-beton', pages:['dashboard','production','stocks','quality','accidents','planning','livraisons','factures','messages','annuaire','fournisseurs','opening','closing','pointage'] },
   resp_production          : { label:'Resp. Production', badge:'rb-beton', pages:['dashboard','production','stocks','quality','accidents','messages','annuaire','opening','closing','pointage'] },
   resp_qualite             : { label:'Responsable Qualité', badge:'rb-qual', pages:['dashboard','quality','production','rapports','accidents','messages','annuaire','evaluations'] },
   manager_logistics        : { label:'Manager Sarpa Logistics', badge:'rb-flotte', pages:['dashboard','fleet','maintenance','livraisons','planning','carburant','checklist','accidents','factures','messages','annuaire','fournisseurs','objectifs','opening','closing','pointage'] },
   responsable_flotte       : { label:'Resp. Flotte', badge:'rb-flotte', pages:['dashboard','fleet','maintenance','livraisons','planning','carburant','checklist','accidents','factures','messages','annuaire','opening','closing','pointage'] },
-  manager_immo             : { label:'Manager Sarpa Immobilier', badge:'rb-immo', pages:['dashboard','projets','partenaires','partenariats','livraisons','factures','messages','annuaire','fournisseurs','objectifs','biens','visites','contrats_immo','etats_lieux','loyers'] },
-  immobilier               : { label:'Agence Immobilière', badge:'rb-immo', pages:['dashboard','projets','partenaires','partenariats','livraisons','factures','messages','annuaire','biens','visites','contrats_immo','etats_lieux','loyers'] },
+  manager_immo             : { label:'Manager Sarpa Immobilier', badge:'rb-immo', pages:['dashboard','biens','visites','contrats_immo','etats_lieux','loyers','projets','partenaires','partenariats','livraisons','factures','messages','annuaire','fournisseurs','objectifs'] },
+  immobilier               : { label:'Agence Immobilière', badge:'rb-immo', pages:['dashboard','biens','visites','contrats_immo','etats_lieux','loyers','projets','partenaires','partenariats','livraisons','factures','messages','annuaire'] },
   resp_info                : { label:'Resp. Informatique', badge:'rb-info', pages:['dashboard','parametres','users','journal','graphiques','rapports','messages','annuaire','evaluations'] },
-  comptabilite             : { label:'Comptabilité', badge:'rb-compta', pages:['dashboard','finances','factures','fournisseurs','rapports','messages','annuaire','objectifs','livraisons','stocks','commandes'] },
+  comptabilite             : { label:'Comptabilité', badge:'rb-compta', pages:['dashboard','finances','factures','fournisseurs','rapports','messages','annuaire','objectifs','livraisons','stocks'] },
   comptable_beton          : { label:'Comptable Béton', badge:'rb-compta', pages:['dashboard','finances','factures','fournisseurs','messages','annuaire','stocks'] },
   comptable_immo           : { label:'Comptable Immobilier', badge:'rb-compta', pages:['dashboard','finances','factures','projets','messages','annuaire','biens','loyers','contrats_immo'] },
   comptable_logistics      : { label:'Comptable Logistics', badge:'rb-compta', pages:['dashboard','finances','factures','livraisons','carburant','messages','annuaire'] },
@@ -2043,101 +2049,172 @@ async function render(p) {
 }
 
 async function renderDash() {
-  const [trucks,prods,tours,stocks,accidents,projets] = await Promise.all([
-    db('trucks'), db('productions'), db('tours'), db('stocks'),
-    db('accidents','GET',null,{statut:'Ouvert'}), db('projets','GET',null,{statut:'En cours'})
-  ]);
   const today = new Date().toISOString().slice(0,10);
-  const tv = (prods||[]).filter(p=>p.date===today).reduce((a,b)=>a+b.volume,0);
-  const ok = (trucks||[]).filter(t=>t.status==='operational').length;
-  const total = Math.max((trucks||[]).length, 1);
-  const pct = Math.round(ok/total*100);
-  const dn = (trucks||[]).filter(t=>t.status==='breakdown').length;
-  const mn = (trucks||[]).filter(t=>t.status==='maintenance').length;
-  const cim = (stocks||[]).find(s=>s.item==='ciment')||{current_qty:0,alert_qty:80,critical_qty:60};
-  const sa = (stocks||[]).filter(s=>s.current_qty<=s.alert_qty).length;
+  const m = new Date().toISOString().slice(0,7);
 
-  document.getElementById('d-p').textContent  = tv||'—';
-  document.getElementById('d-pt').textContent = tv>=280 ? '▲ Objectif atteint' : '▼ Sous objectif';
-  document.getElementById('d-pt').className   = 'kt '+(tv>=280?'up':'wn');
-  document.getElementById('d-f').textContent  = `${ok}/${total}`;
-  document.getElementById('d-ft').textContent = `${pct}% — Obj. 85%`;
-  document.getElementById('d-ft').className   = 'kt '+(pct>=85?'up':'dn');
-  document.getElementById('d-to').textContent = (tours||[]).length;
-  document.getElementById('d-al').textContent = sa+dn+(accidents||[]).length;
-  document.getElementById('d-alt').textContent= `${sa} stocks · ${dn} pannes · ${(accidents||[]).length} incidents`;
-  document.getElementById('d-alt').className  = 'kt '+((sa+dn+(accidents||[]).length)>0?'dn':'up');
-  document.getElementById('d-ci').textContent = `${cim.current_qty}T`;
-  document.getElementById('d-cit').textContent= cim.current_qty<=cim.critical_qty?'🔴 CRITIQUE':cim.current_qty<=cim.alert_qty?'🟡 Alerte':'✅ OK';
-  document.getElementById('d-cit').className  = 'kt '+(cim.current_qty<=cim.critical_qty?'dn':cim.current_qty<=cim.alert_qty?'wn':'up');
-  document.getElementById('d-proj').textContent = (projets||[]).length;
+  // Fetch all needed data in parallel
+  const [trucks, prods, stocks, livs, factures, loyers, biens, pointages, accidents, projets] = await Promise.all([
+    db('trucks'), db('productions'), db('stocks'), db('livraisons'),
+    db('factures'), db('loyers'), db('biens'), db('pointages'),
+    db('accidents'), db('projets')
+  ]);
 
-  const last7 = []; for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);last7.push(d.toISOString().slice(0,10));}
-  const dm = {}; (prods||[]).forEach(p=>{dm[p.date]=(dm[p.date]||0)+p.volume;});
-  const vals = last7.map(d=>dm[d]||0);
-  const mx = Math.max(...vals,1);
-  const DAYS = ['D','L','M','M','J','V','S'];
-  document.getElementById('ch-p').innerHTML = vals.map(v=>{
-    const h = Math.round(v/mx*70);
-    const c = v>=280?'var(--must)':v>0?'var(--or2)':'var(--sf3)';
-    return `<div class="cbar" style="height:${h||2}px;background:${c}" title="${v} m³"></div>`;
-  }).join('');
-  document.getElementById('ch-pl').innerHTML = last7.map((d,i)=>
-    `<div class="clb">${DAYS[new Date(d+'T12:00:00').getDay()]}<br>${vals[i]||0}</div>`
+  // ═══ SARPA BÉTON ═══
+  const mProds = (prods||[]).filter(p=>p.date?.startsWith(m));
+  const todayProds = (prods||[]).filter(p=>p.date===today);
+  const totProd = mProds.reduce((a,b)=>a+(+b.volume||0),0);
+  const todayProd = todayProds.reduce((a,b)=>a+(+b.volume||0),0);
+
+  // ═══ SARPA LOGISTICS ═══
+  const opTrucks = (trucks||[]).filter(t=>t.status==='operational').length;
+  const totalTrucks = (trucks||[]).length;
+  const pct = Math.round(opTrucks/Math.max(totalTrucks,1)*100);
+  const todayLivs = (livs||[]).filter(l=>l.date_depart?.startsWith(today));
+  const mLivs = (livs||[]).filter(l=>l.date_depart?.startsWith(m));
+  const pendingVal = (livs||[]).filter(l=>l.statut!=='Terminée'&&l.statut!=='Annulée'&&(!l.valide_centrale||!l.valide_flotte)).length;
+
+  // ═══ SARPA IMMOBILIER ═══
+  const biensOccupes = (biens||[]).filter(b=>b.statut==='Occupé').length;
+  const biensLibres = (biens||[]).filter(b=>b.statut==='Libre').length;
+  const loyersMois = (loyers||[]).filter(l=>l.mois===m);
+  const loyersPayes = loyersMois.filter(l=>l.statut==='Payé').reduce((a,b)=>a+(+b.montant||0),0);
+  const loyersTotal = loyersMois.reduce((a,b)=>a+(+b.montant||0),0);
+  const loyersRetard = loyersMois.filter(l=>l.statut!=='Payé'&&l.date_echeance&&l.date_echeance<today).length;
+
+  // ═══ FINANCE ═══
+  const mFacs = (factures||[]).filter(f=>f.date_facture?.startsWith(m));
+  const recettes = mFacs.filter(f=>f.sens==='recette').reduce((a,b)=>a+(+b.montant_total||0),0);
+  const depenses = mFacs.filter(f=>f.sens==='depense'||!f.sens).reduce((a,b)=>a+(+b.montant_total||0),0);
+  const facsEnRetard = (factures||[]).filter(f=>f.statut!=='Payée'&&f.date_echeance&&f.date_echeance<today).length;
+
+  // ═══ STOCKS ═══
+  const critStocks = (stocks||[]).filter(s=>+s.current_qty<=+s.critical_qty).length;
+  const lowStocks = (stocks||[]).filter(s=>+s.current_qty<=+s.min_qty&&+s.current_qty>+s.critical_qty).length;
+
+  // ═══ RH ═══
+  const todayPts = (pointages||[]).filter(p=>p.date===today);
+  const presents = todayPts.filter(p=>p.statut==='Présent'||p.statut==='Retard').length;
+  const absents = todayPts.filter(p=>p.statut==='Absent').length;
+
+  // ═══ INCIDENTS ═══
+  const accsOuverts = (accidents||[]).filter(a=>a.statut==='Ouvert').length;
+
+  // ═══ PROJETS ═══
+  const projsEnCours = (projets||[]).filter(p=>p.statut==='En cours').length;
+
+  // ═══ ALERTS ═══
+  const alerts = [];
+  if (critStocks > 0) alerts.push({type:'r', msg:`🔴 ${critStocks} stock(s) en niveau critique — Commander urgent`});
+  if (accsOuverts > 0) alerts.push({type:'r', msg:`🚨 ${accsOuverts} incident(s) de sécurité ouvert(s)`});
+  if (loyersRetard > 0) alerts.push({type:'r', msg:`💰 ${loyersRetard} loyer(s) en retard ce mois`});
+  if (facsEnRetard > 0) alerts.push({type:'m', msg:`🧾 ${facsEnRetard} facture(s) en retard de paiement`});
+  if (pendingVal > 0) alerts.push({type:'m', msg:`🚚 ${pendingVal} livraison(s) en attente de validation`});
+  if (lowStocks > 0) alerts.push({type:'m', msg:`📦 ${lowStocks} stock(s) bas — Réapprovisionner bientôt`});
+  if (pct < 70) alerts.push({type:'m', msg:`🚛 Disponibilité flotte faible : ${pct}%`});
+
+  document.getElementById('dash-al').innerHTML = alerts.map(a =>
+    `<div class="al al-${a.type==='r'?'r':'m'}" style="margin-bottom:6px">${a.msg}</div>`
   ).join('');
 
-  document.getElementById('d-fd').innerHTML = `
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:10px">
-      <div style="text-align:center;padding:10px;background:rgba(27,168,122,.12);border-radius:7px">
-        <div style="font-size:22px;font-weight:800;font-family:var(--fh)">${ok}</div>
-        <div style="font-size:10px;color:var(--tx3)">Op.</div>
-      </div>
-      <div style="text-align:center;padding:10px;background:rgba(240,85,69,.12);border-radius:7px">
-        <div style="font-size:22px;font-weight:800;font-family:var(--fh)">${dn}</div>
-        <div style="font-size:10px;color:var(--tx3)">Panne</div>
-      </div>
-      <div style="text-align:center;padding:10px;background:rgba(212,160,23,.12);border-radius:7px">
-        <div style="font-size:22px;font-weight:800;font-family:var(--fh)">${mn}</div>
-        <div style="font-size:10px;color:var(--tx3)">Maint.</div>
+  document.getElementById('dash-kpis').innerHTML = `
+    <!-- BÉTON -->
+    <div class="kc kc-b">
+      <div class="kl">Production aujourd'hui</div>
+      <div class="kv">${todayProd}</div>
+      <div class="ks">m³</div>
+      <div style="font-size:10px;color:var(--tx3);margin-top:4px">Ce mois : ${fmt(totProd)} m³</div>
+    </div>
+    <!-- LOGISTICS -->
+    <div class="kc kc-g">
+      <div class="kl">Flotte disponible</div>
+      <div class="kv">${opTrucks}/${totalTrucks}</div>
+      <div class="ks">${pct}% opérationnels</div>
+      <div style="font-size:10px;color:var(--tx3);margin-top:4px">Livraisons aujourd'hui : ${todayLivs.length}</div>
+    </div>
+    <!-- IMMOBILIER -->
+    <div class="kc kc-m">
+      <div class="kl">Biens immobiliers</div>
+      <div class="kv">${biensOccupes}</div>
+      <div class="ks">occupés / ${(biens||[]).length} total</div>
+      <div style="font-size:10px;color:var(--tx3);margin-top:4px">Libres : ${biensLibres}</div>
+    </div>
+    <!-- FINANCE -->
+    <div class="kc kc-r">
+      <div class="kl">Loyers encaissés</div>
+      <div class="kv">${fmt(Math.round(loyersPayes/1000))}k</div>
+      <div class="ks">/ ${fmt(Math.round(loyersTotal/1000))}k FCFA</div>
+      <div style="font-size:10px;color:${loyersRetard>0?'var(--rd2)':'var(--tx3)'};margin-top:4px">${loyersRetard>0?loyersRetard+' en retard':'Tout à jour ✅'}</div>
+    </div>`;
+
+  // Section filières
+  document.getElementById('dash-filieres').innerHTML = `
+    <div class="card" style="cursor:pointer" onclick="go('production')">
+      <div class="ch"><div class="ct">🏗 Sarpa Béton</div></div>
+      <div class="kg" style="grid-template-columns:repeat(3,1fr)">
+        <div class="kc kc-b"><div class="kl">Production mois</div><div class="kv">${fmt(totProd)}</div><div class="ks">m³</div></div>
+        <div class="kc kc-g"><div class="kl">Stocks OK</div><div class="kv">${(stocks||[]).length - critStocks - lowStocks}</div><div class="ks">sur ${(stocks||[]).length}</div></div>
+        <div class="kc kc-r"><div class="kl">Stocks critiques</div><div class="kv">${critStocks}</div><div class="ks">urgents</div></div>
       </div>
     </div>
-    <div class="pb"><div class="pf" style="width:${pct}%;background:${pct>=85?'var(--must)':'var(--rd2)'}"></div></div>
-    <div style="display:flex;justify-content:space-between;margin-top:3px;margin-bottom:8px">
-      <span style="font-size:10px;color:var(--tx3)">${pct}%</span>
-      <span style="font-size:10px;color:${pct>=85?'var(--must2)':'var(--rd2)'}">Obj. 85%</span>
+
+    <div class="card" style="cursor:pointer" onclick="go('livraisons')">
+      <div class="ch"><div class="ct">🚛 Sarpa Logistics</div></div>
+      <div class="kg" style="grid-template-columns:repeat(3,1fr)">
+        <div class="kc kc-g"><div class="kl">Livraisons ce mois</div><div class="kv">${mLivs.length}</div><div class="ks">missions</div></div>
+        <div class="kc kc-b"><div class="kl">Camions disponibles</div><div class="kv">${opTrucks}</div><div class="ks">/ ${totalTrucks}</div></div>
+        <div class="kc kc-m"><div class="kl">En attente validation</div><div class="kv">${pendingVal}</div><div class="ks">livraisons</div></div>
+      </div>
     </div>
-    ${(trucks||[]).filter(t=>t.status!=='operational').map(t=>`
-      <div class="al ${t.status==='breakdown'?'al-r':'al-m'}">
-        <span>${t.status==='breakdown'?'🔴':'🟡'}</span>
-        <div><strong>${t.id}</strong> — ${t.description||'En traitement'}</div>
-      </div>`).join('')}
-  `;
 
-  document.getElementById('d-acc').innerHTML = (accidents||[]).length===0
-    ? '<div class="al al-g">✅ Aucun incident ouvert</div>'
-    : (accidents||[]).slice(0,3).map(a=>`
-      <div class="al ${a.gravite==='grave'?'al-r':a.gravite==='moyen'?'al-o':'al-m'}">
-        <span>${a.gravite==='grave'?'🔴':a.gravite==='moyen'?'🟠':'🟡'}</span>
-        <div><strong>${a.type_incident}</strong> — ${a.lieu}</div>
-      </div>`).join('');
+    <div class="card" style="cursor:pointer" onclick="go('biens')">
+      <div class="ch"><div class="ct">🏠 Sarpa Immobilier</div></div>
+      <div class="kg" style="grid-template-columns:repeat(3,1fr)">
+        <div class="kc kc-b"><div class="kl">Biens occupés</div><div class="kv">${biensOccupes}</div><div class="ks">loués/vendus</div></div>
+        <div class="kc kc-g"><div class="kl">Loyers encaissés</div><div class="kv">${fmt(Math.round(loyersPayes/1000))}k</div><div class="ks">FCFA</div></div>
+        <div class="kc kc-r"><div class="kl">Loyers en retard</div><div class="kv">${loyersRetard}</div><div class="ks">ce mois</div></div>
+      </div>
+    </div>`;
 
-  const crit = (stocks||[]).filter(s=>s.current_qty<=s.alert_qty);
-  document.getElementById('d-st').innerHTML = crit.length===0
-    ? '<div class="al al-g">✅ Tous les stocks corrects</div>'
-    : crit.map(s=>`
-      <div class="al ${s.current_qty<=s.critical_qty?'al-r':'al-m'}">
-        <span>${s.current_qty<=s.critical_qty?'🔴':'🟡'}</span>
-        <div><strong>${s.label}</strong> — ${s.current_qty} ${s.unit}${s.current_qty<=s.critical_qty?' — COMMANDER EN URGENCE':''}</div>
-      </div>`).join('');
+  // Finance & RH
+  document.getElementById('dash-finance-rh').innerHTML = `
+    <div class="card">
+      <div class="ch"><div class="ct">💰 Finance ce mois</div><button class="btn bg2" style="font-size:10px" onclick="go('factures')">Voir tout</button></div>
+      <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--sf3)">
+        <span style="color:var(--gn2);font-weight:700">💰 Recettes</span>
+        <strong style="color:var(--gn2)">+${fmt(Math.round(recettes))} FCFA</strong>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--sf3)">
+        <span style="color:var(--rd2);font-weight:700">💸 Dépenses</span>
+        <strong style="color:var(--rd2)">-${fmt(Math.round(depenses))} FCFA</strong>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:10px 0">
+        <span style="font-weight:700">📊 Solde net</span>
+        <strong style="color:${recettes-depenses>=0?'var(--gn2)':'var(--rd2)'}">
+          ${recettes-depenses>=0?'+':''}${fmt(Math.round(recettes-depenses))} FCFA
+        </strong>
+      </div>
+      ${facsEnRetard>0?`<div class="al al-r" style="margin-top:8px">⚠️ ${facsEnRetard} facture(s) en retard</div>`:''}
+    </div>
 
-  const als = [];
-  if (cim.current_qty<=cim.critical_qty) als.push({c:'al-r', m:`🔴 Stock ciment critique : ${cim.current_qty}T — Commander immédiatement`});
-  if (dn>=3) als.push({c:'al-r', m:`🔴 ${dn} camions en panne simultanément`});
-  if (pct<80) als.push({c:'al-m', m:`🟡 Disponibilité flotte ${pct}% — sous le seuil (85%)`});
-  if ((accidents||[]).length>0) als.push({c:'al-r', m:`🚨 ${(accidents||[]).length} incident(s) de sécurité ouvert(s)`});
-  document.getElementById('dash-al').innerHTML = als.map(a=>`<div class="al ${a.c}">${a.m}</div>`).join('');
+    <div class="card">
+      <div class="ch"><div class="ct">👷 Équipe aujourd'hui</div><button class="btn bg2" style="font-size:10px" onclick="go('pointage')">Pointer</button></div>
+      <div style="display:flex;gap:12px;margin-bottom:10px">
+        <div style="flex:1;text-align:center;background:var(--gn2)20;border-radius:8px;padding:10px">
+          <div style="font-size:22px;font-weight:800;color:var(--gn2)">${presents}</div>
+          <div style="font-size:10px;color:var(--tx3)">Présents</div>
+        </div>
+        <div style="flex:1;text-align:center;background:var(--rd2)20;border-radius:8px;padding:10px">
+          <div style="font-size:22px;font-weight:800;color:var(--rd2)">${absents}</div>
+          <div style="font-size:10px;color:var(--tx3)">Absents</div>
+        </div>
+        <div style="flex:1;text-align:center;background:var(--ac2)20;border-radius:8px;padding:10px">
+          <div style="font-size:22px;font-weight:800;color:var(--ac2)">${projsEnCours}</div>
+          <div style="font-size:10px;color:var(--tx3)">Projets actifs</div>
+        </div>
+      </div>
+      ${accsOuverts>0?`<div class="al al-r">🚨 ${accsOuverts} incident(s) ouvert(s)</div>`:'<div class="al al-g">✅ Aucun incident ouvert</div>'}
+    </div>`;
 }
-
 async function renderProd() {
   const m = new Date().toISOString().slice(0,7);
   const prods = await db('productions');
@@ -6253,6 +6330,141 @@ async function exportLoyersPDF() {
   win.document.close();
 }
 
+
+// ══════ PDF EXPORTS — tous modules ══════
+
+async function exportProductionPDF() {
+  const d=await db('productions'),cfg=getConfig(),m=new Date().toISOString().slice(0,7);
+  const mp=(d||[]).filter(p=>p.date?.startsWith(m)),tot=mp.reduce((a,b)=>a+(+b.volume||0),0);
+  const w=window.open('','_blank');if(!w)return;
+  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial;margin:40px;font-size:11px}h1{color:#1E1035;border-bottom:3px solid #D4A017;padding-bottom:8px}table{width:100%;border-collapse:collapse}th{background:#1E1035;color:#fff;padding:6px;font-size:10px;text-align:left}td{padding:5px;border-bottom:1px solid #eee}@media print{button{display:none}}</style></head><body><button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button><button onclick="window.print()" style="background:#1E1035;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-bottom:16px">🖨️ Imprimer</button><h1>🏗 Production Béton — '+m+' — Total: '+fmt(tot)+' m³</h1><table><thead><tr><th>Date</th><th>Formulation</th><th>Volume m³</th><th>Opérateur</th><th>Statut</th><th>Notes</th></tr></thead><tbody>'+
+    (d||[]).map(p=>'<tr><td>'+p.date+'</td><td>'+p.formulation+'</td><td>'+p.volume+'</td><td>'+p.operateur+'</td><td>'+p.statut+'</td><td>'+(p.notes||'')+'</td></tr>').join('')+
+  '</tbody></table></body></html>');w.document.close();
+}
+async function exportStocksPDF() {
+  const d=await db('stocks'),cfg=getConfig();
+  const w=window.open('','_blank');if(!w)return;
+  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial;margin:40px;font-size:11px}h1{color:#1E1035;border-bottom:3px solid #D4A017;padding-bottom:8px}table{width:100%;border-collapse:collapse}th{background:#1E1035;color:#fff;padding:6px;font-size:10px;text-align:left}td{padding:5px;border-bottom:1px solid #eee}.r{color:#c62828;font-weight:700}.o{color:#e65100;font-weight:700}.g{color:#2e7d32}@media print{button{display:none}}</style></head><body><button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button><button onclick="window.print()" style="background:#1E1035;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-bottom:16px">🖨️ Imprimer</button><h1>📦 Stocks — '+new Date().toLocaleDateString("fr-FR")+'</h1><table><thead><tr><th>Produit</th><th>Catégorie</th><th>Stock</th><th>Unité</th><th>Min</th><th>Critique</th><th>Statut</th></tr></thead><tbody>'+
+    (d||[]).map(s=>{const c=+s.current_qty<=+s.critical_qty?'r':+s.current_qty<=+s.min_qty?'o':'g';return'<tr><td>'+s.product_name+'</td><td>'+s.category+'</td><td class="'+c+'">'+s.current_qty+'</td><td>'+s.unit+'</td><td>'+s.min_qty+'</td><td>'+s.critical_qty+'</td><td class="'+c+'">'+(+s.current_qty<=+s.critical_qty?'🔴 CRITIQUE':+s.current_qty<=+s.min_qty?'🟡 BAS':'✅ OK')+'</td></tr>';}).join('')+
+  '</tbody></table></body></html>');w.document.close();
+}
+async function exportQualitePDF() {
+  const d=await db('quality'),m=new Date().toISOString().slice(0,7);
+  const w=window.open('','_blank');if(!w)return;
+  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial;margin:40px;font-size:11px}h1{color:#1E1035;border-bottom:3px solid #D4A017;padding-bottom:8px}table{width:100%;border-collapse:collapse}th{background:#1E1035;color:#fff;padding:6px;font-size:10px;text-align:left}td{padding:5px;border-bottom:1px solid #eee}@media print{button{display:none}}</style></head><body><button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button><button onclick="window.print()" style="background:#1E1035;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-bottom:16px">🖨️ Imprimer</button><h1>✦ Contrôle Qualité — '+m+'</h1><table><thead><tr><th>Date</th><th>Formulation</th><th>Type</th><th>Résultat</th><th>Opérateur</th><th>Statut</th></tr></thead><tbody>'+
+    (d||[]).map(q=>'<tr><td>'+(q.date||'—')+'</td><td>'+(q.formulation||'—')+'</td><td>'+(q.type_controle||'—')+'</td><td>'+(q.resultat||'—')+'</td><td>'+(q.operateur||'—')+'</td><td style="color:'+(q.statut==='Non conforme'?'#c62828':'#2e7d32')+';font-weight:700">'+(q.statut||'—')+'</td></tr>').join('')+
+  '</tbody></table></body></html>');w.document.close();
+}
+async function exportMaintenancePDF() {
+  const d=await db('maintenances'),m=new Date().toISOString().slice(0,7);
+  const mm=(d||[]).filter(x=>x.date?.startsWith(m)),tot=mm.reduce((a,b)=>a+(+b.cout||0),0);
+  const w=window.open('','_blank');if(!w)return;
+  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial;margin:40px;font-size:11px}h1{color:#1E1035;border-bottom:3px solid #D4A017;padding-bottom:8px}table{width:100%;border-collapse:collapse}th{background:#1E1035;color:#fff;padding:6px;font-size:10px;text-align:left}td{padding:5px;border-bottom:1px solid #eee}@media print{button{display:none}}</style></head><body><button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button><button onclick="window.print()" style="background:#1E1035;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-bottom:16px">🖨️ Imprimer</button><h1>🔧 Maintenance — '+m+' — Coût: '+fmt(tot)+' FCFA</h1><table><thead><tr><th>Date</th><th>Camion</th><th>Type</th><th>Description</th><th>Coût</th><th>Statut</th></tr></thead><tbody>'+
+    (d||[]).map(x=>'<tr><td>'+(x.date||'—')+'</td><td>'+(x.camion||'—')+'</td><td>'+(x.type||'—')+'</td><td>'+(x.description||'—')+'</td><td>'+fmt(x.cout||0)+' FCFA</td><td>'+(x.statut||'—')+'</td></tr>').join('')+
+  '</tbody></table></body></html>');w.document.close();
+}
+async function exportCarburantPDF() {
+  const d=await db('carburant'),m=new Date().toISOString().slice(0,7);
+  const mc=(d||[]).filter(c=>c.date?.startsWith(m));
+  const totL=mc.reduce((a,b)=>a+(+b.litres||0),0),totC=mc.reduce((a,b)=>a+(+b.cout_total||0),0);
+  const w=window.open('','_blank');if(!w)return;
+  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial;margin:40px;font-size:11px}h1{color:#1E1035;border-bottom:3px solid #D4A017;padding-bottom:8px}table{width:100%;border-collapse:collapse}th{background:#1E1035;color:#fff;padding:6px;font-size:10px;text-align:left}td{padding:5px;border-bottom:1px solid #eee}@media print{button{display:none}}</style></head><body><button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button><button onclick="window.print()" style="background:#1E1035;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-bottom:16px">🖨️ Imprimer</button><h1>⛽ Carburant — '+m+' — '+fmt(totL)+'L — '+fmt(totC)+' FCFA</h1><table><thead><tr><th>Date</th><th>Camion</th><th>Litres</th><th>Prix/L</th><th>Total</th><th>Km</th><th>Station</th></tr></thead><tbody>'+
+    mc.map(c=>'<tr><td>'+(c.date||'—')+'</td><td>'+(c.camion||'—')+'</td><td>'+(c.litres||0)+' L</td><td>'+fmt(c.prix_litre||0)+' FCFA</td><td>'+fmt(c.cout_total||0)+' FCFA</td><td>'+(c.km_releve||'—')+'</td><td>'+(c.station||'—')+'</td></tr>').join('')+
+  '</tbody></table></body></html>');w.document.close();
+}
+async function exportChecklistPDF() {
+  const d=await db('checklist'),m=new Date().toISOString().slice(0,7);
+  const mc=(d||[]).filter(c=>c.date?.startsWith(m));
+  const w=window.open('','_blank');if(!w)return;
+  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial;margin:40px;font-size:11px}h1{color:#1E1035;border-bottom:3px solid #D4A017;padding-bottom:8px}table{width:100%;border-collapse:collapse}th{background:#1E1035;color:#fff;padding:6px;font-size:10px;text-align:left}td{padding:5px;border-bottom:1px solid #eee}@media print{button{display:none}}</style></head><body><button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button><button onclick="window.print()" style="background:#1E1035;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-bottom:16px">🖨️ Imprimer</button><h1>🔧 Checklist Préventive — '+m+'</h1><table><thead><tr><th>Date</th><th>Camion</th><th>Type</th><th>Km actuel</th><th>Prochain km</th><th>Coût</th><th>Statut</th></tr></thead><tbody>'+
+    mc.map(c=>'<tr><td>'+(c.date||'—')+'</td><td>'+(c.camion||'—')+'</td><td>'+(c.type_controle||'—')+'</td><td>'+(c.km_actuel||'—')+'</td><td>'+(c.prochain_km||'—')+'</td><td>'+fmt(c.cout||0)+' FCFA</td><td>'+(c.statut||'—')+'</td></tr>').join('')+
+  '</tbody></table></body></html>');w.document.close();
+}
+async function exportPlanningPDF() {
+  const d=await db('planning'),today=new Date().toISOString().slice(0,10);
+  const up=(d||[]).filter(p=>p.date>=today).slice(0,50);
+  const w=window.open('','_blank');if(!w)return;
+  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial;margin:40px;font-size:11px}h1{color:#1E1035;border-bottom:3px solid #D4A017;padding-bottom:8px}table{width:100%;border-collapse:collapse}th{background:#1E1035;color:#fff;padding:6px;font-size:10px;text-align:left}td{padding:5px;border-bottom:1px solid #eee}@media print{button{display:none}}</style></head><body><button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button><button onclick="window.print()" style="background:#1E1035;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-bottom:16px">🖨️ Imprimer</button><h1>📅 Planning Opérationnel — à partir du '+today+'</h1><table><thead><tr><th>Date</th><th>Type</th><th>Camion</th><th>Chauffeur</th><th>Début</th><th>Fin</th><th>Description</th><th>Statut</th></tr></thead><tbody>'+
+    up.map(p=>'<tr><td>'+(p.date||'—')+'</td><td>'+(p.type_operation||'—')+'</td><td>'+(p.camion||'—')+'</td><td>'+(p.chauffeur||'—')+'</td><td>'+(p.heure_debut||'—')+'</td><td>'+(p.heure_fin||'—')+'</td><td>'+(p.description||'—')+'</td><td>'+(p.statut||'—')+'</td></tr>').join('')+
+  '</tbody></table></body></html>');w.document.close();
+}
+async function exportAccidentsPDF() {
+  const d=await db('accidents'),cfg=getConfig();
+  const ouv=(d||[]).filter(a=>a.statut==='Ouvert').length;
+  const w=window.open('','_blank');if(!w)return;
+  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial;margin:40px;font-size:11px}h1{color:#1E1035;border-bottom:3px solid #D4A017;padding-bottom:8px}table{width:100%;border-collapse:collapse}th{background:#1E1035;color:#fff;padding:6px;font-size:10px;text-align:left}td{padding:5px;border-bottom:1px solid #eee}.r{color:#c62828;font-weight:700}@media print{button{display:none}}</style></head><body><button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button><button onclick="window.print()" style="background:#1E1035;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-bottom:16px">🖨️ Imprimer</button><h1>🚨 Accidents & Sécurité — '+ouv+' ouverts / '+(d||[]).length+' total</h1><table><thead><tr><th>Date</th><th>Type</th><th>Gravité</th><th>Description</th><th>Employé</th><th>Camion</th><th>Statut</th></tr></thead><tbody>'+
+    (d||[]).map(a=>'<tr><td>'+(a.date||'—')+'</td><td>'+(a.type_accident||'—')+'</td><td class="'+(a.gravite==='Grave'||a.gravite==='Critique'?'r':'')+'">'+(a.gravite||'—')+'</td><td>'+(a.description||'—')+'</td><td>'+(a.employe||'—')+'</td><td>'+(a.camion||'—')+'</td><td class="'+(a.statut==='Ouvert'?'r':'')+'">'+(a.statut||'—')+'</td></tr>').join('')+
+  '</tbody></table></body></html>');w.document.close();
+}
+async function exportProjetsPDF() {
+  const d=await db('projets');
+  const w=window.open('','_blank');if(!w)return;
+  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial;margin:40px;font-size:11px}h1{color:#1E1035;border-bottom:3px solid #D4A017;padding-bottom:8px}table{width:100%;border-collapse:collapse}th{background:#1E1035;color:#fff;padding:6px;font-size:10px;text-align:left}td{padding:5px;border-bottom:1px solid #eee}@media print{button{display:none}}</style></head><body><button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button><button onclick="window.print()" style="background:#1E1035;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-bottom:16px">🖨️ Imprimer</button><h1>📋 Projets & Chantiers — '+(d||[]).filter(p=>p.statut==="En cours").length+' en cours</h1><table><thead><tr><th>Nom</th><th>Client</th><th>Localisation</th><th>Budget</th><th>Début</th><th>Fin</th><th>Statut</th></tr></thead><tbody>'+
+    (d||[]).map(p=>'<tr><td><strong>'+(p.nom||'—')+'</strong></td><td>'+(p.client||'—')+'</td><td>'+(p.localisation||'—')+'</td><td>'+fmt(p.budget||0)+' FCFA</td><td>'+(p.date_debut||'—')+'</td><td>'+(p.date_fin||'—')+'</td><td>'+(p.statut||'—')+'</td></tr>').join('')+
+  '</tbody></table></body></html>');w.document.close();
+}
+async function exportFinancesPDF() {
+  const d=await db('finances'),m=new Date().toISOString().slice(0,7);
+  const mf=(d||[]).filter(f=>f.date?.startsWith(m));
+  const rec=mf.filter(f=>f.type==='Recette').reduce((a,b)=>a+(+b.montant||0),0);
+  const dep=mf.filter(f=>f.type==='Dépense').reduce((a,b)=>a+(+b.montant||0),0);
+  const w=window.open('','_blank');if(!w)return;
+  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial;margin:40px;font-size:11px}h1{color:#1E1035;border-bottom:3px solid #D4A017;padding-bottom:8px}table{width:100%;border-collapse:collapse}th{background:#1E1035;color:#fff;padding:6px;font-size:10px;text-align:left}td{padding:5px;border-bottom:1px solid #eee}.g{color:#2e7d32;font-weight:700}.r{color:#c62828;font-weight:700}@media print{button{display:none}}</style></head><body><button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button><button onclick="window.print()" style="background:#1E1035;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-bottom:16px">🖨️ Imprimer</button><h1>💰 Finances — '+m+'</h1><div style="display:flex;gap:16px;margin-bottom:16px"><div style="background:#f3eef9;padding:12px;border-radius:8px;flex:1;text-align:center"><div class="g" style="font-size:16px">+'+fmt(rec)+' FCFA</div><div>Recettes</div></div><div style="background:#f3eef9;padding:12px;border-radius:8px;flex:1;text-align:center"><div class="r" style="font-size:16px">-'+fmt(dep)+' FCFA</div><div>Dépenses</div></div><div style="background:#f3eef9;padding:12px;border-radius:8px;flex:1;text-align:center"><div style="font-size:16px;color:'+(rec-dep>=0?'#2e7d32':'#c62828')+'">'+fmt(rec-dep)+' FCFA</div><div>Solde</div></div></div><table><thead><tr><th>Date</th><th>Type</th><th>Catégorie</th><th>Montant</th><th>Notes</th></tr></thead><tbody>'+
+    mf.map(f=>'<tr><td>'+(f.date||'—')+'</td><td class="'+(f.type==="Recette"?'g':'r')+'">'+(f.type||'—')+'</td><td>'+(f.categorie||'—')+'</td><td class="'+(f.type==="Recette"?'g':'r')+'">'+(f.type==="Recette"?'+':'-')+fmt(f.montant||0)+' FCFA</td><td>'+(f.notes||'—')+'</td></tr>').join('')+
+  '</tbody></table></body></html>');w.document.close();
+}
+async function exportRHPDF() {
+  const d=await db('employes'),cfg=getConfig();
+  const act=(d||[]).filter(e=>e.statut==='Actif').length;
+  const w=window.open('','_blank');if(!w)return;
+  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial;margin:40px;font-size:11px}h1{color:#1E1035;border-bottom:3px solid #D4A017;padding-bottom:8px}table{width:100%;border-collapse:collapse}th{background:#1E1035;color:#fff;padding:6px;font-size:10px;text-align:left}td{padding:5px;border-bottom:1px solid #eee}@media print{button{display:none}}</style></head><body><button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button><button onclick="window.print()" style="background:#1E1035;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-bottom:16px">🖨️ Imprimer</button><h1>👷 Employés — '+act+' actifs / '+(d||[]).length+' total</h1><table><thead><tr><th>Nom</th><th>Prénom</th><th>Poste</th><th>Département</th><th>Contrat</th><th>Date entrée</th><th>Téléphone</th><th>Statut</th></tr></thead><tbody>'+
+    (d||[]).map(e=>'<tr><td><strong>'+(e.nom||'—')+'</strong></td><td>'+(e.prenom||'—')+'</td><td>'+(e.poste||'—')+'</td><td>'+(e.departement||'—')+'</td><td>'+(e.type_contrat||'—')+'</td><td>'+(e.date_entree||'—')+'</td><td>'+(e.telephone||'—')+'</td><td>'+(e.statut||'—')+'</td></tr>').join('')+
+  '</tbody></table></body></html>');w.document.close();
+}
+async function exportFormationPDF() {
+  const d=await db('formations');
+  const tot=(d||[]).reduce((a,b)=>a+(+b.cout||0),0);
+  const w=window.open('','_blank');if(!w)return;
+  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial;margin:40px;font-size:11px}h1{color:#1E1035;border-bottom:3px solid #D4A017;padding-bottom:8px}table{width:100%;border-collapse:collapse}th{background:#1E1035;color:#fff;padding:6px;font-size:10px;text-align:left}td{padding:5px;border-bottom:1px solid #eee}@media print{button{display:none}}</style></head><body><button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button><button onclick="window.print()" style="background:#1E1035;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-bottom:16px">🖨️ Imprimer</button><h1>🎓 Formations — Coût total: '+fmt(tot)+' FCFA</h1><table><thead><tr><th>Titre</th><th>Employé</th><th>Organisme</th><th>Début</th><th>Fin</th><th>Coût</th><th>Statut</th></tr></thead><tbody>'+
+    (d||[]).map(f=>'<tr><td><strong>'+(f.titre||'—')+'</strong></td><td>'+(f.employe||'—')+'</td><td>'+(f.organisme||'—')+'</td><td>'+(f.date_debut||'—')+'</td><td>'+(f.date_fin||'—')+'</td><td>'+fmt(f.cout||0)+' FCFA</td><td>'+(f.statut||'—')+'</td></tr>').join('')+
+  '</tbody></table></body></html>');w.document.close();
+}
+async function exportCongesPDF() {
+  const d=await db('conges'),m=new Date().toISOString().slice(0,7);
+  const mc=(d||[]).filter(c=>c.date_debut?.startsWith(m));
+  const w=window.open('','_blank');if(!w)return;
+  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial;margin:40px;font-size:11px}h1{color:#1E1035;border-bottom:3px solid #D4A017;padding-bottom:8px}table{width:100%;border-collapse:collapse}th{background:#1E1035;color:#fff;padding:6px;font-size:10px;text-align:left}td{padding:5px;border-bottom:1px solid #eee}@media print{button{display:none}}</style></head><body><button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button><button onclick="window.print()" style="background:#1E1035;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-bottom:16px">🖨️ Imprimer</button><h1>🗓 Congés & Absences — '+m+'</h1><table><thead><tr><th>Employé</th><th>Type</th><th>Début</th><th>Fin</th><th>Jours</th><th>Motif</th><th>Statut</th></tr></thead><tbody>'+
+    (d||[]).map(c=>'<tr><td><strong>'+(c.employe||'—')+'</strong></td><td>'+(c.type_conge||'—')+'</td><td>'+(c.date_debut||'—')+'</td><td>'+(c.date_fin||'—')+'</td><td>'+(c.nb_jours||'—')+'</td><td>'+(c.motif||'—')+'</td><td>'+(c.statut||'—')+'</td></tr>').join('')+
+  '</tbody></table></body></html>');w.document.close();
+}
+async function exportAnnuairePDF() {
+  const d=await db('annuaire');
+  const w=window.open('','_blank');if(!w)return;
+  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial;margin:40px;font-size:11px}h1{color:#1E1035;border-bottom:3px solid #D4A017;padding-bottom:8px}table{width:100%;border-collapse:collapse}th{background:#1E1035;color:#fff;padding:6px;font-size:10px;text-align:left}td{padding:5px;border-bottom:1px solid #eee}@media print{button{display:none}}</style></head><body><button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button><button onclick="window.print()" style="background:#1E1035;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-bottom:16px">🖨️ Imprimer</button><h1>📒 Annuaire interne — '+(d||[]).length+' contacts</h1><table><thead><tr><th>Nom</th><th>Poste</th><th>Département</th><th>Téléphone</th><th>Email</th></tr></thead><tbody>'+
+    (d||[]).map(c=>'<tr><td><strong>'+(c.nom||'—')+'</strong></td><td>'+(c.poste||'—')+'</td><td>'+(c.departement||'—')+'</td><td>'+(c.telephone||'—')+'</td><td>'+(c.email||'—')+'</td></tr>').join('')+
+  '</tbody></table></body></html>');w.document.close();
+}
+async function exportRapportPDF() {
+  const [pr,tr,li,st,ac,fi]=await Promise.all([db('productions'),db('trucks'),db('livraisons'),db('stocks'),db('accidents'),db('finances')]);
+  const cfg=getConfig(),m=new Date().toISOString().slice(0,7);
+  const mPr=(pr||[]).filter(p=>p.date?.startsWith(m)),tot=mPr.reduce((a,b)=>a+(+b.volume||0),0);
+  const opT=(tr||[]).filter(t=>t.status==='operational').length;
+  const mLi=(li||[]).filter(l=>l.date_depart?.startsWith(m));
+  const mFi=(fi||[]).filter(f=>f.date?.startsWith(m));
+  const rec=mFi.filter(f=>f.type==='Recette').reduce((a,b)=>a+(+b.montant||0),0);
+  const dep=mFi.filter(f=>f.type==='Dépense').reduce((a,b)=>a+(+b.montant||0),0);
+  const w=window.open('','_blank');if(!w)return;
+  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial;margin:40px;font-size:12px;color:#1a1a2e}h1{color:#1E1035;border-bottom:3px solid #D4A017;padding-bottom:8px}h2{color:#3D1A6E;margin-top:20px}.kpi{display:inline-block;background:#f3eef9;border-radius:8px;padding:10px 16px;margin:4px;text-align:center;min-width:120px}.kv{font-size:18px;font-weight:800;color:#1E1035}.kl{font-size:9px;color:#666}.g{color:#2e7d32;font-weight:700}.r{color:#c62828;font-weight:700}@media print{button{display:none}}</style></head><body><div style="display:flex;justify-content:space-between;margin-bottom:20px"><div><div style="font-size:22px;font-weight:800;color:#1E1035">'+(cfg.companyName||'Sarpa Groupe')+'</div><div>Rapport Consolidé — Toutes filières</div></div><div style="text-align:right"><strong>'+m+'</strong><br>'+new Date().toLocaleDateString("fr-FR")+' — '+userName+'</div></div><button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button><button onclick="window.print()" style="background:#1E1035;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-bottom:20px">🖨️ Imprimer</button><h1>▣ Rapport Consolidé — '+m+'</h1><h2>🏗 Sarpa Béton</h2><div><div class="kpi"><div class="kv">'+fmt(tot)+'</div><div class="kl">m³ produits</div></div><div class="kpi"><div class="kv">'+(st||[]).filter(s=>+s.current_qty<=+s.critical_qty).length+'</div><div class="kl">Stocks critiques</div></div></div><h2>🚛 Sarpa Logistics</h2><div><div class="kpi"><div class="kv">'+opT+'/'+(tr||[]).length+'</div><div class="kl">Camions opérat.</div></div><div class="kpi"><div class="kv">'+mLi.length+'</div><div class="kl">Livraisons</div></div><div class="kpi"><div class="kv">'+(ac||[]).filter(a=>a.statut==='Ouvert').length+'</div><div class="kl">Incidents ouverts</div></div></div><h2>💰 Finance</h2><div><div class="kpi"><div class="kv g">+'+fmt(rec)+'</div><div class="kl">Recettes FCFA</div></div><div class="kpi"><div class="kv r">-'+fmt(dep)+'</div><div class="kl">Dépenses FCFA</div></div><div class="kpi"><div class="kv '+(rec-dep>=0?'g':'r')+'">'+fmt(rec-dep)+'</div><div class="kl">Solde FCFA</div></div></div></body></html>');w.document.close();
+}
+async function exportJournalPDF() {
+  const d=await db('journal');
+  const rec=(d||[]).slice(-100).reverse();
+  const w=window.open('','_blank');if(!w)return;
+  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial;margin:40px;font-size:11px}h1{color:#1E1035;border-bottom:3px solid #D4A017;padding-bottom:8px}table{width:100%;border-collapse:collapse}th{background:#1E1035;color:#fff;padding:6px;font-size:10px;text-align:left}td{padding:5px;border-bottom:1px solid #eee;font-size:10px}@media print{button{display:none}}</style></head><body><button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button><button onclick="window.print()" style="background:#1E1035;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-bottom:16px">🖨️ Imprimer</button><h1>🔍 Journal des modifications — 100 dernières</h1><table><thead><tr><th>Date</th><th>Utilisateur</th><th>Action</th><th>Module</th><th>Détails</th></tr></thead><tbody>'+
+    rec.map(l=>'<tr><td>'+(l.created_at||l.date||'—')+'</td><td><strong>'+(l.user_name||'—')+'</strong></td><td>'+(l.action||'—')+'</td><td>'+(l.table_name||'—')+'</td><td style="font-size:9px;color:#666">'+(typeof l.details==="string"?l.details.slice(0,80):'—')+'</td></tr>').join('')+
+  '</tbody></table></body></html>');w.document.close();
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('login-btn').addEventListener('click', doLogin);
   document.getElementById('l-code').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
@@ -6288,7 +6500,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
+
+
 </script>
+
+
 
 
 
