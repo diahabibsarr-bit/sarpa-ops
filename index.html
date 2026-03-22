@@ -1356,6 +1356,7 @@ textarea{resize:vertical;min-height:70px}
 
 
 
+
 const ROLE_CODES = {
   'DG4X9K2M': { role:'dg',                    name:'Directeur Général'              },
   'OP7R3N8W': { role:'directeur',              name:'Dir. Opérations & Logistique'  },
@@ -2478,8 +2479,8 @@ async function renderRapports() {
 }
 
 async function renderParams() {
-  if (userRole!=='directeur'&&userRole!=='dg') {
-    document.getElementById('param-content').innerHTML = '<div class="director-lock"><div class="lock-icon">🔒</div><div class="lock-title">Accès Direction uniquement</div></div>';
+  if (userRole!=='directeur'&&userRole!=='dg'&&userRole!=='resp_info') {
+    document.getElementById('param-content').innerHTML = '<div class="director-lock"><div class="lock-icon">🔒</div><div class="lock-title">Accès Direction & Informatique uniquement</div></div>';
     return;
   }
   const trucks = await db('trucks');
@@ -2491,12 +2492,21 @@ async function renderParams() {
     <!-- TABS -->
     <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px" id="param-tabs">
       ${[
-        ['flotte','🚛 Flotte'],['centrale','🏗 Centrale'],['stocks','📦 Stocks'],
-        ['rh','👷 RH'],['finances','💰 Finances'],['fournisseurs','🏭 Fournisseurs'],
-        ['projets','📋 Projets'],['carburant','⛽ Carburant'],['maintenance','🔧 Maintenance'],
-        ['objectifs','📊 Objectifs'],['notifications','🔔 Alertes'],['acces','🔐 Accès'],
-        ['apparence','🎨 Apparence']
-      ].map(([id,lb])=>`<button onclick="showParamTab('${id}')" id="ptab-${id}" class="btn" style="font-size:11px;padding:6px 10px">${lb}</button>`).join('')}
+        ['flotte','🚛 Flotte'],['centrale','🏗 Centrale'],['qualite','✦ Qualité'],
+        ['stocks','📦 Stocks'],['livraisons','🚚 Livraisons'],['planning','📅 Planning'],
+        ['carburant','⛽ Carburant'],['maintenance','🔧 Maintenance'],['checklist','✅ Checklist'],
+        ['accidents','🚨 Accidents'],['fournisseurs','🏭 Fournisseurs'],
+        ['biens','🏠 Immo — Biens'],['visites','👥 Immo — Visites'],
+        ['contrats','📄 Immo — Contrats'],['loyers','💰 Immo — Loyers'],
+        ['projets','📋 Projets'],['partenaires','🤝 Partenaires'],
+        ['partenariats','🤝 Partenariats'],['factures','🧾 Factures'],
+        ['annuaire','📒 Clients'],['finances','💰 Finances'],['objectifs','📊 Objectifs'],
+        ['rh','👷 RH'],['formation','🎓 Formations'],['conges','🗓 Congés'],
+        ['messages','💬 Messages'],['pointage','⏰ Pointage'],
+        ['opening','🌅 Opening'],['closing','🌙 Closing'],
+        ['evaluations','📊 Évaluations'],['rapports','▣ Rapports'],
+        ['notifications','🔔 Alertes'],['acces','🔐 Accès'],['apparence','🎨 Apparence']
+      ].map(([id,lb])=>`<button onclick="showParamTab('${id}')" id="ptab-${id}" class="btn" style="font-size:11px;padding:5px 8px">${lb}</button>`).join('')}
     </div>
 
     <!-- FLOTTE -->
@@ -2512,9 +2522,9 @@ async function renderParams() {
       </div>
       <div class="card sp">
         <div class="ch"><div class="ct">⚙️ Paramètres flotte</div></div>
-        <div class="fg"><label>Seuil disponibilité objectif (%)</label><input type="number" id="cfg-fleet-pct" value="${cfg.fleetTarget||85}" min="0" max="100"></div>
+        <div class="fg"><label>Seuil disponibilité objectif (%)</label><input type="number" id="cfg-fleet-pct" value="${cfg.fleetTarget||85}"></div>
         <div class="fg"><label>Alerte vidange (km)</label><input type="number" id="cfg-vidange-km" value="${cfg.vidangeKm||5000}"></div>
-        <div class="fg"><label>Types de camions disponibles</label><textarea id="cfg-truck-types" rows="4">${(cfg.truckTypes||['Toupie 8m³','Toupie 6m³','Benne 10T','Plateau','Citerne','Camion malaxeur','Camionnette']).join('\n')}</textarea></div>
+        <div class="fg"><label>Types de camions</label><textarea id="cfg-truck-types" rows="4">${(cfg.truckTypes||['Toupie 8m³','Toupie 6m³','Benne 10T','Plateau','Citerne','Camion malaxeur','Camionnette']).join('\n')}</textarea></div>
         <button class="btn bm" onclick="saveConfig('flotte')">💾 Enregistrer</button>
       </div>
     </div>
@@ -2530,36 +2540,86 @@ async function renderParams() {
       </div>
     </div>
 
+    <!-- QUALITE -->
+    <div id="psec-qualite" class="psec" style="display:none">
+      <div class="card sp">
+        <div class="ch"><div class="ct">✦ Qualité</div></div>
+        <div class="fg"><label>Types de contrôle qualité</label><textarea id="cfg-qualite-types" rows="4">${(cfg.qualiteTypes||['Résistance compression','Affaissement','Teneur eau','Granulométrie','Autre']).join('\n')}</textarea></div>
+        <div class="fg"><label>Seuil non-conformité alerte (%)</label><input type="number" id="cfg-qualite-seuil" value="${cfg.qualiteSeuil||5}"></div>
+        <button class="btn bm" onclick="saveConfig('qualite')">💾 Enregistrer</button>
+      </div>
+    </div>
+
     <!-- STOCKS -->
     <div id="psec-stocks" class="psec" style="display:none">
       <div class="card sp">
-        <div class="ch"><div class="ct">📦 Stocks — Seuils d'alerte</div></div>
-        <p style="font-size:12px;color:var(--tx3);margin-bottom:12px">Modifiez directement dans l'onglet Stocks → bouton "Mettre à jour stock"</p>
+        <div class="ch"><div class="ct">📦 Stocks</div></div>
         <div class="fg"><label>Unités disponibles</label><textarea id="cfg-units" rows="4">${(cfg.units||['T','L','u','kg','m³','sac']).join('\n')}</textarea></div>
+        <div class="fg"><label>Seuil alerte stock critique (%)</label><input type="number" id="cfg-stock-seuil" value="${cfg.alertStock||20}"></div>
         <button class="btn bm" onclick="saveConfig('stocks')">💾 Enregistrer</button>
       </div>
     </div>
 
-    <!-- RH -->
-    <div id="psec-rh" class="psec" style="display:none">
+    <!-- LIVRAISONS -->
+    <div id="psec-livraisons" class="psec" style="display:none">
       <div class="card sp">
-        <div class="ch"><div class="ct">👷 Ressources Humaines</div></div>
-        <div class="fg"><label>Départements</label><textarea id="cfg-depts" rows="6">${(cfg.departements||['Direction','Centrale à Béton','Flotte Camions','Comptabilité','RH','Commercial','Agence Immobilière']).join('\n')}</textarea></div>
-        <div class="fg"><label>Types de contrat</label><textarea id="cfg-contrats" rows="4">${(cfg.contrats||['CDI','CDD','Stage','Consultant','Journalier']).join('\n')}</textarea></div>
-        <div class="fg"><label>Types de congés</label><textarea id="cfg-conge-types" rows="4">${(cfg.congeTypes||['Congé annuel','Congé maladie','Absence justifiée','Absence injustifiée','Congé exceptionnel']).join('\n')}</textarea></div>
-        <button class="btn bm" onclick="saveConfig('rh')">💾 Enregistrer</button>
+        <div class="ch"><div class="ct">🚚 Livraisons</div></div>
+        <div class="fg"><label>Types de missions</label><textarea id="cfg-mission-types" rows="5">${(cfg.missionTypes||['Livraison béton','Livraison briques','Livraison fer','Livraison engrais','Livraison matériaux','Transport A→B','Collecte fournisseur','Transfert interne','Autre']).join('\n')}</textarea></div>
+        <div class="fg"><label>Coût par km (FCFA)</label><input type="number" id="cfg-cout-km" value="${cfg.coutKm||150}"></div>
+        <button class="btn bm" onclick="saveConfig('livraisons')">💾 Enregistrer</button>
       </div>
     </div>
 
-    <!-- FINANCES -->
-    <div id="psec-finances" class="psec" style="display:none">
+    <!-- PLANNING -->
+    <div id="psec-planning" class="psec" style="display:none">
       <div class="card sp">
-        <div class="ch"><div class="ct">💰 Finances</div></div>
-        <div class="fg"><label>Catégories de recettes</label><textarea id="cfg-recettes" rows="4">${(cfg.recettes||['Vente béton','Livraison','Location','Autre recette']).join('\n')}</textarea></div>
-        <div class="fg"><label>Catégories de charges</label><textarea id="cfg-charges" rows="5">${(cfg.charges||['Carburant','Maintenance','Salaires','Matières premières','Loyer','Charges diverses']).join('\n')}</textarea></div>
-        <div class="fg"><label>Budget mensuel total (FCFA)</label><input type="number" id="cfg-budget" value="${cfg.budgetMensuel||0}"></div>
-        <div class="fg"><label>Devise principale</label><select id="cfg-devise"><option ${cfg.devise==='FCFA'?'selected':''}>FCFA</option><option ${cfg.devise==='EUR'?'selected':''}>EUR</option><option ${cfg.devise==='USD'?'selected':''}>USD</option></select></div>
-        <button class="btn bm" onclick="saveConfig('finances')">💾 Enregistrer</button>
+        <div class="ch"><div class="ct">📅 Planning opérationnel</div></div>
+        <div class="fg"><label>Types d'opérations</label><textarea id="cfg-plan-types" rows="4">${(cfg.planTypes||['Livraison','Ramasse','Production','Transfert','Maintenance','Autre']).join('\n')}</textarea></div>
+        <div class="fg"><label>Statuts disponibles</label><textarea id="cfg-plan-status" rows="4">${(cfg.planStatus||['Planifié','Confirmé','En cours','Terminé','Annulé']).join('\n')}</textarea></div>
+        <button class="btn bm" onclick="saveConfig('planning')">💾 Enregistrer</button>
+      </div>
+    </div>
+
+    <!-- CARBURANT -->
+    <div id="psec-carburant" class="psec" style="display:none">
+      <div class="card sp">
+        <div class="ch"><div class="ct">⛽ Carburant</div></div>
+        <div class="fg"><label>Prix référence / litre (FCFA)</label><input type="number" id="cfg-prix-carb" value="${cfg.prixCarburant||850}"></div>
+        <div class="fg"><label>Conso. standard Toupie (L/100km)</label><input type="number" id="cfg-conso-toupie" value="${cfg.consoToupie||35}"></div>
+        <div class="fg"><label>Conso. standard Benne (L/100km)</label><input type="number" id="cfg-conso-benne" value="${cfg.consoBenne||28}"></div>
+        <div class="fg"><label>Stations habituelles</label><textarea id="cfg-stations" rows="3">${(cfg.stations||['Total Energies','Shell','Oibia','Autre']).join('\n')}</textarea></div>
+        <button class="btn bm" onclick="saveConfig('carburant')">💾 Enregistrer</button>
+      </div>
+    </div>
+
+    <!-- MAINTENANCE -->
+    <div id="psec-maintenance" class="psec" style="display:none">
+      <div class="card sp">
+        <div class="ch"><div class="ct">🔧 Maintenance</div></div>
+        <div class="fg"><label>Types d'intervention</label><textarea id="cfg-maint-types" rows="4">${(cfg.maintTypes||['Préventif','Curatif','Urgent','Révision périodique','Contrôle technique']).join('\n')}</textarea></div>
+        <div class="fg"><label>Fréquence révision Toupie (km)</label><input type="number" id="cfg-rev-toupie" value="${cfg.revToupie||25000}"></div>
+        <div class="fg"><label>Fréquence révision Benne (km)</label><input type="number" id="cfg-rev-benne" value="${cfg.revBenne||20000}"></div>
+        <div class="fg"><label>Prestataires maintenance</label><textarea id="cfg-prestataires" rows="3">${(cfg.prestataires||['Garage Central','Mercedes Service','Atelier Interne']).join('\n')}</textarea></div>
+        <button class="btn bm" onclick="saveConfig('maintenance')">💾 Enregistrer</button>
+      </div>
+    </div>
+
+    <!-- CHECKLIST -->
+    <div id="psec-checklist" class="psec" style="display:none">
+      <div class="card sp">
+        <div class="ch"><div class="ct">✅ Checklist préventive</div></div>
+        <div class="fg"><label>Types de contrôle</label><textarea id="cfg-check-types" rows="5">${(cfg.checkTypes||['Vidange','Contrôle technique','Révision freins','Vérification pneus','Contrôle moteur','Contrôle bétonnière','Autre']).join('\n')}</textarea></div>
+        <button class="btn bm" onclick="saveConfig('checklist')">💾 Enregistrer</button>
+      </div>
+    </div>
+
+    <!-- ACCIDENTS -->
+    <div id="psec-accidents" class="psec" style="display:none">
+      <div class="card sp">
+        <div class="ch"><div class="ct">🚨 Accidents & Sécurité</div></div>
+        <div class="fg"><label>Types d'accident</label><textarea id="cfg-acc-types" rows="4">${(cfg.accTypes||['Accident de travail','Accident de circulation','Incident matériel','Incident sécurité','Autre']).join('\n')}</textarea></div>
+        <div class="fg"><label>Niveaux de gravité</label><textarea id="cfg-acc-grav" rows="3">${(cfg.accGrav||['Léger','Moyen','Grave','Critique']).join('\n')}</textarea></div>
+        <button class="btn bm" onclick="saveConfig('accidents')">💾 Enregistrer</button>
       </div>
     </div>
 
@@ -2570,6 +2630,46 @@ async function renderParams() {
         <div class="fg"><label>Catégories fournisseurs</label><textarea id="cfg-four-cats" rows="6">${(cfg.fourCats||['Ciment','Sable & Granulats','Adjuvants','Carburant','Pièces détachées','Pneus','Équipements','Services','Autre']).join('\n')}</textarea></div>
         <div class="fg"><label>Conditions de paiement</label><textarea id="cfg-paiement" rows="3">${(cfg.paiement||['Comptant','30 jours','60 jours','À la livraison']).join('\n')}</textarea></div>
         <button class="btn bm" onclick="saveConfig('fournisseurs')">💾 Enregistrer</button>
+      </div>
+    </div>
+
+    <!-- BIENS IMMO -->
+    <div id="psec-biens" class="psec" style="display:none">
+      <div class="card sp">
+        <div class="ch"><div class="ct">🏠 Biens Immobiliers</div></div>
+        <div class="fg"><label>Types de biens</label><textarea id="cfg-bien-types" rows="4">${(cfg.bienTypes||['Appartement','Villa','Bureau','Local commercial','Terrain','Immeuble','Autre']).join('\n')}</textarea></div>
+        <div class="fg"><label>Statuts disponibles</label><textarea id="cfg-bien-status" rows="3">${(cfg.bienStatus||['Libre','Occupé','En rénovation','À vendre']).join('\n')}</textarea></div>
+        <button class="btn bm" onclick="saveConfig('biens')">💾 Enregistrer</button>
+      </div>
+    </div>
+
+    <!-- VISITES IMMO -->
+    <div id="psec-visites" class="psec" style="display:none">
+      <div class="card sp">
+        <div class="ch"><div class="ct">👥 Visites & Prospects</div></div>
+        <div class="fg"><label>Niveaux d'intérêt</label><textarea id="cfg-interet" rows="3">${(cfg.interetLevels||['Très intéressé','Intéressé','Neutre','Pas intéressé']).join('\n')}</textarea></div>
+        <div class="fg"><label>Types d'opération</label><textarea id="cfg-op-types" rows="3">${(cfg.opTypes||['Location','Vente','Achat']).join('\n')}</textarea></div>
+        <button class="btn bm" onclick="saveConfig('visites')">💾 Enregistrer</button>
+      </div>
+    </div>
+
+    <!-- CONTRATS IMMO -->
+    <div id="psec-contrats" class="psec" style="display:none">
+      <div class="card sp">
+        <div class="ch"><div class="ct">📄 Contrats Immobilier</div></div>
+        <div class="fg"><label>Types de contrats</label><textarea id="cfg-contrat-types" rows="4">${(cfg.contratTypes||['Bail location','Promesse de vente','Acte de vente','Location commerciale','Autre']).join('\n')}</textarea></div>
+        <div class="fg"><label>Préfixe numérotation</label><input type="text" id="cfg-contrat-prefix" value="${cfg.contratPrefix||'CTR-IMM'}" placeholder="CTR-IMM"></div>
+        <button class="btn bm" onclick="saveConfig('contrats')">💾 Enregistrer</button>
+      </div>
+    </div>
+
+    <!-- LOYERS -->
+    <div id="psec-loyers" class="psec" style="display:none">
+      <div class="card sp">
+        <div class="ch"><div class="ct">💰 Suivi Loyers</div></div>
+        <div class="fg"><label>Jour d'échéance mensuel</label><input type="number" id="cfg-loyer-jour" value="${cfg.loyerJour||5}" min="1" max="28" placeholder="5"></div>
+        <div class="fg"><label>Modes de paiement</label><textarea id="cfg-loyer-modes" rows="4">${(cfg.loyerModes||['Wave','Orange Money','Transfert bancaire','Chèque','Espèces']).join('\n')}</textarea></div>
+        <button class="btn bm" onclick="saveConfig('loyers')">💾 Enregistrer</button>
       </div>
     </div>
 
@@ -2584,39 +2684,163 @@ async function renderParams() {
       </div>
     </div>
 
-    <!-- CARBURANT -->
-    <div id="psec-carburant" class="psec" style="display:none">
+    <!-- PARTENAIRES -->
+    <div id="psec-partenaires" class="psec" style="display:none">
       <div class="card sp">
-        <div class="ch"><div class="ct">⛽ Carburant</div></div>
-        <div class="fg"><label>Prix référence / litre (FCFA)</label><input type="number" id="cfg-prix-carb" value="${cfg.prixCarburant||850}"></div>
-        <div class="fg"><label>Consommation standard Toupie (L/100km)</label><input type="number" id="cfg-conso-toupie" value="${cfg.consoToupie||35}"></div>
-        <div class="fg"><label>Consommation standard Benne (L/100km)</label><input type="number" id="cfg-conso-benne" value="${cfg.consoBenne||28}"></div>
-        <div class="fg"><label>Stations habituelles</label><textarea id="cfg-stations" rows="3">${(cfg.stations||['Total Energies','Shell','Oibia','Autre']).join('\n')}</textarea></div>
-        <button class="btn bm" onclick="saveConfig('carburant')">💾 Enregistrer</button>
+        <div class="ch"><div class="ct">🤝 Partenaires</div></div>
+        <div class="fg"><label>Types de partenaires</label><textarea id="cfg-part-types" rows="4">${(cfg.partTypes||['Fournisseur stratégique','Client régulier','Sous-traitant','Institution financière','Organisme public','Autre']).join('\n')}</textarea></div>
+        <button class="btn bm" onclick="saveConfig('partenaires')">💾 Enregistrer</button>
       </div>
     </div>
 
-    <!-- MAINTENANCE -->
-    <div id="psec-maintenance" class="psec" style="display:none">
+    <!-- PARTENARIATS -->
+    <div id="psec-partenariats" class="psec" style="display:none">
       <div class="card sp">
-        <div class="ch"><div class="ct">🔧 Maintenance</div></div>
-        <div class="fg"><label>Types d'intervention</label><textarea id="cfg-maint-types" rows="5">${(cfg.maintTypes||['Préventif','Curatif','Urgent','Révision périodique','Contrôle technique']).join('\n')}</textarea></div>
-        <div class="fg"><label>Fréquence révision Toupie (km)</label><input type="number" id="cfg-rev-toupie" value="${cfg.revToupie||25000}"></div>
-        <div class="fg"><label>Fréquence révision Benne (km)</label><input type="number" id="cfg-rev-benne" value="${cfg.revBenne||20000}"></div>
-        <div class="fg"><label>Prestataires maintenance</label><textarea id="cfg-prestataires" rows="3">${(cfg.prestataires||['Garage Central','Mercedes Service','Atelier Interne']).join('\n')}</textarea></div>
-        <button class="btn bm" onclick="saveConfig('maintenance')">💾 Enregistrer</button>
+        <div class="ch"><div class="ct">🤝 Partenariats stratégiques</div></div>
+        <div class="fg"><label>Types de partenariats</label><textarea id="cfg-partenariat-types" rows="4">${(cfg.partenariatTypes||['Fournisseur stratégique','Client régulier','Sous-traitant','Institution financière','Organisme public','Autre']).join('\n')}</textarea></div>
+        <div class="fg"><label>Statuts disponibles</label><textarea id="cfg-partenariat-status" rows="3">${(cfg.partenariatStatus||['Actif','En négociation','Suspendu','Terminé']).join('\n')}</textarea></div>
+        <button class="btn bm" onclick="saveConfig('partenariats')">💾 Enregistrer</button>
+      </div>
+    </div>
+
+    <!-- FACTURES -->
+    <div id="psec-factures" class="psec" style="display:none">
+      <div class="card sp">
+        <div class="ch"><div class="ct">🧾 Factures</div></div>
+        <div class="fg"><label>Types de factures</label><textarea id="cfg-fac-types" rows="6">${(cfg.facTypes||['Achat matières premières','Vente / Livraison client','Maintenance & Réparation','Salaires & RH','Carburant','Loyer & Charges fixes','Facture fournisseur','Avoir','Proforma','Autre']).join('\n')}</textarea></div>
+        <div class="fg"><label>TVA par défaut (%)</label><input type="number" id="cfg-tva-def" value="${cfg.tvaDefault||18}" min="0"></div>
+        <button class="btn bm" onclick="saveConfig('factures')">💾 Enregistrer</button>
+      </div>
+    </div>
+
+    <!-- ANNUAIRE / CLIENTS -->
+    <div id="psec-annuaire" class="psec" style="display:none">
+      <div class="card sp">
+        <div class="ch"><div class="ct">📒 Clients & Fournisseurs</div></div>
+        <div class="fg"><label>Filières disponibles</label><textarea id="cfg-filieres" rows="3">${(cfg.filieres||['Sarpa Béton','Sarpa Logistics','Sarpa Immobilier','Général']).join('\n')}</textarea></div>
+        <div class="fg"><label>Types de contacts</label><textarea id="cfg-contact-types" rows="3">${(cfg.contactTypes||['Client','Fournisseur','Prospect','Partenaire','Sous-traitant']).join('\n')}</textarea></div>
+        <button class="btn bm" onclick="saveConfig('annuaire')">💾 Enregistrer</button>
+      </div>
+    </div>
+
+    <!-- FINANCES -->
+    <div id="psec-finances" class="psec" style="display:none">
+      <div class="card sp">
+        <div class="ch"><div class="ct">💰 Finances & Budget</div></div>
+        <div class="fg"><label>Catégories de recettes</label><textarea id="cfg-recettes" rows="4">${(cfg.recettes||['Vente béton','Livraison','Location','Autre recette']).join('\n')}</textarea></div>
+        <div class="fg"><label>Catégories de charges</label><textarea id="cfg-charges" rows="5">${(cfg.charges||['Carburant','Maintenance','Salaires','Matières premières','Loyer','Charges diverses']).join('\n')}</textarea></div>
+        <div class="fg"><label>Budget mensuel total (FCFA)</label><input type="number" id="cfg-budget" value="${cfg.budgetMensuel||0}"></div>
+        <div class="fg"><label>Devise principale</label><select id="cfg-devise"><option ${cfg.devise==='FCFA'?'selected':''}>FCFA</option><option ${cfg.devise==='EUR'?'selected':''}>EUR</option><option ${cfg.devise==='USD'?'selected':''}>USD</option></select></div>
+        <button class="btn bm" onclick="saveConfig('finances')">💾 Enregistrer</button>
       </div>
     </div>
 
     <!-- OBJECTIFS -->
     <div id="psec-objectifs" class="psec" style="display:none">
       <div class="card sp">
-        <div class="ch"><div class="ct">📊 Objectifs globaux</div></div>
-        <div class="fg"><label>Objectif production mensuel (m³)</label><input type="number" id="cfg-obj-prod" value="${cfg.objProd||6000}"></div>
-        <div class="fg"><label>Objectif tournées mensuel</label><input type="number" id="cfg-obj-tours" value="${cfg.objTours||200}"></div>
+        <div class="ch"><div class="ct">📊 Objectifs mensuels</div></div>
+        <div class="fg"><label>Objectif production (m³/mois)</label><input type="number" id="cfg-obj-prod" value="${cfg.objProd||6000}"></div>
+        <div class="fg"><label>Objectif tournées / mois</label><input type="number" id="cfg-obj-tours" value="${cfg.objTours||200}"></div>
         <div class="fg"><label>Objectif disponibilité flotte (%)</label><input type="number" id="cfg-obj-fleet" value="${cfg.objFleet||85}"></div>
         <div class="fg"><label>Objectif CA mensuel (FCFA)</label><input type="number" id="cfg-obj-ca" value="${cfg.objCA||0}"></div>
         <button class="btn bm" onclick="saveConfig('objectifs')">💾 Enregistrer</button>
+      </div>
+    </div>
+
+    <!-- RH -->
+    <div id="psec-rh" class="psec" style="display:none">
+      <div class="card sp">
+        <div class="ch"><div class="ct">👷 Ressources Humaines</div></div>
+        <div class="fg"><label>Départements</label><textarea id="cfg-depts" rows="6">${(cfg.departements||['Direction','Centrale à Béton','Flotte Camions','Comptabilité','RH','Commercial','Agence Immobilière']).join('\n')}</textarea></div>
+        <div class="fg"><label>Types de contrat</label><textarea id="cfg-contrats" rows="4">${(cfg.contrats||['CDI','CDD','Stage','Consultant','Journalier']).join('\n')}</textarea></div>
+        <button class="btn bm" onclick="saveConfig('rh')">💾 Enregistrer</button>
+      </div>
+    </div>
+
+    <!-- FORMATIONS -->
+    <div id="psec-formation" class="psec" style="display:none">
+      <div class="card sp">
+        <div class="ch"><div class="ct">🎓 Formations</div></div>
+        <div class="fg"><label>Types de formations</label><textarea id="cfg-form-types" rows="4">${(cfg.formTypes||['Formation interne','Formation externe','Certification','Stage','Autre']).join('\n')}</textarea></div>
+        <div class="fg"><label>Statuts</label><textarea id="cfg-form-status" rows="3">${(cfg.formStatus||['Planifiée','En cours','Terminée','Annulée']).join('\n')}</textarea></div>
+        <button class="btn bm" onclick="saveConfig('formation')">💾 Enregistrer</button>
+      </div>
+    </div>
+
+    <!-- CONGES -->
+    <div id="psec-conges" class="psec" style="display:none">
+      <div class="card sp">
+        <div class="ch"><div class="ct">🗓 Congés & Absences</div></div>
+        <div class="fg"><label>Types de congés</label><textarea id="cfg-conge-types" rows="4">${(cfg.congeTypes||['Congé annuel','Congé maladie','Absence justifiée','Absence injustifiée','Congé exceptionnel']).join('\n')}</textarea></div>
+        <div class="fg"><label>Jours ouvrés par semaine</label><input type="number" id="cfg-jours-ouvres" value="${cfg.joursOuvres||5}" min="1" max="7"></div>
+        <button class="btn bm" onclick="saveConfig('conges')">💾 Enregistrer</button>
+      </div>
+    </div>
+
+    <!-- MESSAGES -->
+    <div id="psec-messages" class="psec" style="display:none">
+      <div class="card sp">
+        <div class="ch"><div class="ct">💬 Messages</div></div>
+        <div class="fg"><label>Groupes de diffusion</label><textarea id="cfg-msg-groups" rows="4">${(cfg.msgGroups||['Tous','Direction','Centrale à Béton','Flotte Camions','RH','Comptabilité']).join('\n')}</textarea></div>
+        <button class="btn bm" onclick="saveConfig('messages')">💾 Enregistrer</button>
+      </div>
+    </div>
+
+    <!-- POINTAGE -->
+    <div id="psec-pointage" class="psec" style="display:none">
+      <div class="card sp">
+        <div class="ch"><div class="ct">⏰ Pointage</div></div>
+        <div class="fg"><label>Heure début shift standard</label><input type="time" id="cfg-shift-debut" value="${cfg.shiftDebut||'08:00'}"></div>
+        <div class="fg"><label>Heure fin shift standard</label><input type="time" id="cfg-shift-fin" value="${cfg.shiftFin||'17:00'}"></div>
+        <div class="fg"><label>Heures standard / jour</label><input type="number" id="cfg-heures-std" value="${cfg.heuresStd||8}" min="1" max="12"></div>
+        <button class="btn bm" onclick="saveConfig('pointage')">💾 Enregistrer</button>
+      </div>
+    </div>
+
+    <!-- OPENING -->
+    <div id="psec-opening" class="psec" style="display:none">
+      <div class="card sp">
+        <div class="ch"><div class="ct">🌅 Opening — Checklist ouverture</div></div>
+        <p style="font-size:12px;color:var(--tx3)">Les points de checklist sont configurables directement dans le module Opening en cliquant "+ Point".</p>
+        <div class="fg"><label>Heure cible ouverture Centrale</label><input type="time" id="cfg-open-centrale" value="${cfg.openCentrale||'07:00'}"></div>
+        <div class="fg"><label>Heure cible ouverture Flotte</label><input type="time" id="cfg-open-flotte" value="${cfg.openFlotte||'06:30'}"></div>
+        <button class="btn bm" onclick="saveConfig('opening')">💾 Enregistrer</button>
+      </div>
+    </div>
+
+    <!-- CLOSING -->
+    <div id="psec-closing" class="psec" style="display:none">
+      <div class="card sp">
+        <div class="ch"><div class="ct">🌙 Closing — Checklist fermeture</div></div>
+        <p style="font-size:12px;color:var(--tx3)">Les points de checklist sont configurables directement dans le module Closing en cliquant "+ Point".</p>
+        <div class="fg"><label>Heure cible fermeture Centrale</label><input type="time" id="cfg-close-centrale" value="${cfg.closeCentrale||'18:00'}"></div>
+        <div class="fg"><label>Heure cible fermeture Flotte</label><input type="time" id="cfg-close-flotte" value="${cfg.closeFlotte||'19:00'}"></div>
+        <div class="fg"><label>Score minimum acceptable (%)</label><input type="number" id="cfg-close-score" value="${cfg.closeScore||80}" min="0" max="100"></div>
+        <button class="btn bm" onclick="saveConfig('closing')">💾 Enregistrer</button>
+      </div>
+    </div>
+
+    <!-- EVALUATIONS -->
+    <div id="psec-evaluations" class="psec" style="display:none">
+      <div class="card sp">
+        <div class="ch"><div class="ct">📊 Évaluations</div></div>
+        <div class="fg"><label>Périodes d'évaluation</label><textarea id="cfg-eval-periods" rows="3">${(cfg.evalPeriods||['Mensuelle','Trimestrielle','Semestrielle','Annuelle']).join('\n')}</textarea></div>
+        <div class="fg"><label>Critères d'évaluation</label><textarea id="cfg-eval-criteria" rows="4">${(cfg.evalCriteria||['Performance','Ponctualité','Qualité','Initiative','Travail en équipe']).join('\n')}</textarea></div>
+        <button class="btn bm" onclick="saveConfig('evaluations')">💾 Enregistrer</button>
+      </div>
+    </div>
+
+    <!-- RAPPORTS -->
+    <div id="psec-rapports" class="psec" style="display:none">
+      <div class="card sp">
+        <div class="ch"><div class="ct">▣ Rapports consolidés</div></div>
+        <div class="fg"><label>Fréquence rapport automatique</label><select id="cfg-rapport-freq">
+          <option value="quotidien" ${cfg.rapportFreq==='quotidien'?'selected':''}>Quotidien</option>
+          <option value="hebdo" ${cfg.rapportFreq==='hebdo'?'selected':''}>Hebdomadaire</option>
+          <option value="mensuel" ${!cfg.rapportFreq||cfg.rapportFreq==='mensuel'?'selected':''}>Mensuel</option>
+        </select></div>
+        <div class="fg"><label>Email destinataire rapport</label><input type="email" id="cfg-rapport-email" value="${cfg.rapportEmail||''}" placeholder="direction@sarpa.sn"></div>
+        <button class="btn bm" onclick="saveConfig('rapports')">💾 Enregistrer</button>
       </div>
     </div>
 
@@ -2624,15 +2848,13 @@ async function renderParams() {
     <div id="psec-notifications" class="psec" style="display:none">
       <div class="card sp">
         <div class="ch"><div class="ct">🔔 Alertes & Notifications</div></div>
-        <div class="fg"><label>Alerte stock critique en dessous de (%)</label><input type="number" id="cfg-alert-stock" value="${cfg.alertStock||20}" min="0" max="100"></div>
-        <div class="fg"><label>Alerte km vidange (km sans vidange)</label><input type="number" id="cfg-alert-vidange" value="${cfg.alertVidange||5000}"></div>
+        <div class="fg"><label>Alerte stock critique en dessous de (%)</label><input type="number" id="cfg-alert-stock" value="${cfg.alertStock||20}"></div>
+        <div class="fg"><label>Alerte km vidange</label><input type="number" id="cfg-alert-vidange" value="${cfg.alertVidange||5000}"></div>
+        <div class="fg"><label>Alerte assurance (jours avant expiration)</label><input type="number" id="cfg-alert-assurance" value="${cfg.alertAssurance||30}"></div>
+        <div class="fg"><label>Alerte loyer retard (jours)</label><input type="number" id="cfg-alert-loyer" value="${cfg.alertLoyer||5}"></div>
         <div class="fg" style="display:flex;align-items:center;gap:10px">
           <input type="checkbox" id="cfg-alert-boot" ${cfg.alertBoot!==false?'checked':''}>
-          <label>Afficher alertes au démarrage</label>
-        </div>
-        <div class="fg" style="display:flex;align-items:center;gap:10px">
-          <input type="checkbox" id="cfg-alert-incident" ${cfg.alertIncident!==false?'checked':''}>
-          <label>Alerte incidents ouverts</label>
+          <label>Alertes au démarrage</label>
         </div>
         <button class="btn bm" onclick="saveConfig('notifications')">💾 Enregistrer</button>
       </div>
@@ -2641,17 +2863,27 @@ async function renderParams() {
     <!-- ACCES -->
     <div id="psec-acces" class="psec" style="display:none">
       <div class="card sp" style="margin-bottom:12px">
-        <div class="ch"><div class="ct">🔐 Codes d'accès</div></div>
-        <div class="tw"><table><thead><tr><th>Département</th><th>Code</th><th>Rôle</th></tr></thead><tbody>
-          <tr><td><strong>Directeur Général</strong></td><td class="mono">DG4X9K2M</td><td><span class="b bg-m">Admin total</span></td></tr>
-          <tr><td><strong>Dir. Opérations (vous)</strong></td><td class="mono">OP7R3N8W</td><td><span class="b bg-m">Admin total</span></td></tr>
-          <tr><td>Coordinatrice</td><td class="mono">CR5T1P6Q</td><td><span class="b bg-p">Opérations</span></td></tr>
-          <tr><td>Resp. Centrale Béton</td><td class="mono">CB2H8L4V</td><td><span class="b bg-p">Centrale</span></td></tr>
-          <tr><td>Resp. Flotte</td><td class="mono">FL9M3D7J</td><td><span class="b bg-p">Flotte</span></td></tr>
-          <tr><td>Comptabilité</td><td class="mono">CT6A2R5B</td><td><span class="b bg-p">Finances</span></td></tr>
-          <tr><td>RH</td><td class="mono">RH1K7N3E</td><td><span class="b bg-p">RH</span></td></tr>
-          <tr><td>Commercial</td><td class="mono">CM4W9T2F</td><td><span class="b bg-p">Commercial</span></td></tr>
-          <tr><td>Immobilier</td><td class="mono">IM8S5G1Y</td><td><span class="b bg-p">Immobilier</span></td></tr>
+        <div class="ch"><div class="ct">🔐 Codes d'accès — 21 utilisateurs</div></div>
+        <div class="tw"><table><thead><tr><th>Poste</th><th>Code</th><th>Filière</th></tr></thead><tbody>
+          <tr><td><strong>Directeur Général</strong></td><td class="mono">DG4X9K2M</td><td><span class="b bg-m">Direction</span></td></tr>
+          <tr><td><strong>Dir. Opérations & Logistique</strong></td><td class="mono">OP7R3N8W</td><td><span class="b bg-m">Direction</span></td></tr>
+          <tr><td>Coordinatrice Sarpa Groupe</td><td class="mono">CR5T1P6Q</td><td><span class="b bg-p">Direction</span></td></tr>
+          <tr><td>Manager Sarpa Béton</td><td class="mono">0ASD7GU9</td><td><span class="b bg-p">Béton</span></td></tr>
+          <tr><td>Manager Sarpa Logistics</td><td class="mono">FL9M3D7J</td><td><span class="b bg-p">Logistics</span></td></tr>
+          <tr><td>Manager Sarpa Immobilier</td><td class="mono">IM8S5G1Y</td><td><span class="b bg-p">Immobilier</span></td></tr>
+          <tr><td>Resp. Production Béton</td><td class="mono">CB2H8L4V</td><td><span class="b bg-p">Béton</span></td></tr>
+          <tr><td>Resp. Production Béton N2</td><td class="mono">29UK0GBI</td><td><span class="b bg-p">Béton</span></td></tr>
+          <tr><td>Responsable Qualité</td><td class="mono">ZRBPQ2LK</td><td><span class="b bg-p">Béton</span></td></tr>
+          <tr><td>Responsable Informatique</td><td class="mono">L191ZO9N</td><td><span class="b bg-p">IT</span></td></tr>
+          <tr><td>Comptable Sarpa Béton</td><td class="mono">FCFU5KL3</td><td><span class="b bg-p">Finance</span></td></tr>
+          <tr><td>Comptable Sarpa Immobilier</td><td class="mono">GGEKSN6P</td><td><span class="b bg-p">Finance</span></td></tr>
+          <tr><td>Comptable Sarpa Logistics</td><td class="mono">HNR8805S</td><td><span class="b bg-p">Finance</span></td></tr>
+          <tr><td>Ressources Humaines</td><td class="mono">RH1K7N3E</td><td><span class="b bg-p">RH</span></td></tr>
+          <tr><td>Commercial 1</td><td class="mono">CM4W9T2F</td><td><span class="b bg-p">Commercial</span></td></tr>
+          <tr><td>Commercial 2</td><td class="mono">5SCCAR70</td><td><span class="b bg-p">Commercial</span></td></tr>
+          <tr><td>Manager Logistics N2</td><td class="mono">KGJIZJSD</td><td><span class="b bg-p">Logistics</span></td></tr>
+          <tr><td>Manager Immobilier N2</td><td class="mono">S2C3CZHI</td><td><span class="b bg-p">Immobilier</span></td></tr>
+          <tr><td>Comptable CT</td><td class="mono">CT6A2R5B</td><td><span class="b bg-p">Finance</span></td></tr>
           <tr><td>Invité 1</td><td class="mono">GS1X4B7N</td><td><span class="b bg-x">Lecture</span></td></tr>
           <tr><td>Invité 2</td><td class="mono">GS2M9K3P</td><td><span class="b bg-x">Lecture</span></td></tr>
         </tbody></table></div>
@@ -2682,88 +2914,6 @@ async function renderParams() {
   `;
   showParamTab('flotte');
 }
-
-function showParamTab(tab) {
-  document.querySelectorAll('.psec').forEach(s=>s.style.display='none');
-  document.querySelectorAll('[id^="ptab-"]').forEach(b=>{b.style.background='';b.style.color='';});
-  const sec = document.getElementById('psec-'+tab);
-  const btn = document.getElementById('ptab-'+tab);
-  if (sec) sec.style.display='';
-  if (btn) { btn.style.background='var(--must)'; btn.style.color='var(--bg)'; }
-}
-
-function getConfig() {
-  try { return JSON.parse(localStorage.getItem('sarpa_config')||'{}'); } catch(e) { return {}; }
-}
-
-function saveConfig(section) {
-  const cfg = getConfig();
-  const toArr = id => (document.getElementById(id)?.value||'').split('\n').map(s=>s.trim()).filter(Boolean);
-  const toNum = id => +document.getElementById(id)?.value||0;
-  const toStr = id => document.getElementById(id)?.value||'';
-  const toBool = id => document.getElementById(id)?.checked||false;
-
-  if (section==='flotte') {
-    cfg.fleetTarget = toNum('cfg-fleet-pct');
-    cfg.vidangeKm = toNum('cfg-vidange-km');
-    cfg.truckTypes = toArr('cfg-truck-types');
-  } else if (section==='centrale') {
-    cfg.capaciteMax = toNum('cfg-cap-max');
-    cfg.prodObjectif = toNum('cfg-prod-obj');
-    cfg.formulations = toArr('cfg-formulations');
-  } else if (section==='stocks') {
-    cfg.units = toArr('cfg-units');
-  } else if (section==='rh') {
-    cfg.departements = toArr('cfg-depts');
-    cfg.contrats = toArr('cfg-contrats');
-    cfg.congeTypes = toArr('cfg-conge-types');
-  } else if (section==='finances') {
-    cfg.recettes = toArr('cfg-recettes');
-    cfg.charges = toArr('cfg-charges');
-    cfg.budgetMensuel = toNum('cfg-budget');
-    cfg.devise = toStr('cfg-devise');
-  } else if (section==='fournisseurs') {
-    cfg.fourCats = toArr('cfg-four-cats');
-    cfg.paiement = toArr('cfg-paiement');
-  } else if (section==='projets') {
-    cfg.projStatus = toArr('cfg-proj-status');
-    cfg.chantierTypes = toArr('cfg-chantier-types');
-    cfg.zones = toArr('cfg-zones');
-  } else if (section==='carburant') {
-    cfg.prixCarburant = toNum('cfg-prix-carb');
-    cfg.consoToupie = toNum('cfg-conso-toupie');
-    cfg.consoBenne = toNum('cfg-conso-benne');
-    cfg.stations = toArr('cfg-stations');
-  } else if (section==='maintenance') {
-    cfg.maintTypes = toArr('cfg-maint-types');
-    cfg.revToupie = toNum('cfg-rev-toupie');
-    cfg.revBenne = toNum('cfg-rev-benne');
-    cfg.prestataires = toArr('cfg-prestataires');
-  } else if (section==='objectifs') {
-    cfg.objProd = toNum('cfg-obj-prod');
-    cfg.objTours = toNum('cfg-obj-tours');
-    cfg.objFleet = toNum('cfg-obj-fleet');
-    cfg.objCA = toNum('cfg-obj-ca');
-  } else if (section==='notifications') {
-    cfg.alertStock = toNum('cfg-alert-stock');
-    cfg.alertVidange = toNum('cfg-alert-vidange');
-    cfg.alertBoot = toBool('cfg-alert-boot');
-    cfg.alertIncident = toBool('cfg-alert-incident');
-  } else if (section==='acces') {
-    cfg.sessionDays = +toStr('cfg-session');
-  } else if (section==='apparence') {
-    cfg.companyName = toStr('cfg-company');
-    cfg.initials = toStr('cfg-initials');
-    cfg.subtitle = toStr('cfg-subtitle');
-    cfg.primaryColor = toStr('cfg-color');
-    // Save apparence to Google Sheets so all users see it
-    saveAppearanceGlobal(cfg.companyName, cfg.initials, cfg.subtitle, cfg.primaryColor);
-  }
-  localStorage.setItem('sarpa_config', JSON.stringify(cfg));
-  logAction('update','config',{section});
-  toast(`✅ ${section} — paramètres enregistrés !`);
-}
-
 async function saveAppearanceGlobal(companyName, initials, subtitle, primaryColor) {
   // Delete existing config row then insert new one
   await db('config','DELETE',null,{key:'apparence'});
@@ -6016,7 +6166,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
+
 </script>
+
 
 
 
