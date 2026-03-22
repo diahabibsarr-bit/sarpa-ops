@@ -1337,7 +1337,37 @@ textarea{resize:vertical;min-height:70px}
   <div class="fg"><label>Notes</label><textarea id="loy-notes" rows="2"></textarea></div>
   <div class="mf"><button class="btn bg2" onclick="closeM('m-loyer')">Annuler</button><button class="btn bm" onclick="savLoyer()">Enregistrer</button></div>
 </div></div>
-<script>
+
+<!-- MODAL MODIFIER CODES -->
+<div class="mo" id="m-change-code"><div class="md" style="max-width:680px">
+  <div class="mh">
+    <div><div class="mt">🔑 Modifier codes & titres</div><div style="font-size:11px;color:var(--tx3)">Codes alphanumériques 6-8 caractères — actifs immédiatement</div></div>
+    <button class="mc" onclick="closeM('m-change-code')">✕</button>
+  </div>
+  <div style="max-height:60vh;overflow-y:auto">
+    <table style="width:100%;border-collapse:collapse">
+      <thead><tr style="background:var(--sf2)">
+        <th style="padding:8px 6px;font-size:10px;text-align:left;color:var(--tx3)">Rôle système</th>
+        <th style="padding:8px 6px;font-size:10px;text-align:left;color:var(--tx)">Titre / Nom du poste</th>
+        <th style="padding:8px 6px;font-size:10px;text-align:left;color:var(--tx)">Code d'accès</th>
+        <th style="padding:8px 6px;font-size:10px"></th>
+      </tr></thead>
+      <tbody id="cc-table-body"></tbody>
+    </table>
+  </div>
+  <div class="al al-m" style="margin:10px 0 6px">
+    🎲 = Générer un code aléatoire — Le code doit être unique et contenir 6-8 caractères (A-Z, 0-9)
+  </div>
+  <div class="mf">
+    <button class="btn bg2" onclick="closeM('m-change-code')">Annuler</button>
+    <button class="btn bm" onclick="saveAllCodes()">💾 Enregistrer tous les changements</button>
+  </div>
+</div></div><script>
+
+
+
+
+
 
 
 
@@ -3164,37 +3194,272 @@ async function renderUsers() {
     document.getElementById('users-content').innerHTML = '<div class="director-lock"><div class="lock-icon">🔒</div><div class="lock-title">Accès Direction & Informatique uniquement</div></div>';
     return;
   }
-  document.getElementById('users-content').innerHTML = `
-    <div class="sh"><div><div class="stl">Utilisateurs & Accès</div><div class="sst">21 utilisateurs — Confidentiel</div></div>
-    ${userRole==='directeur'||userRole==='dg'?`<button class="btn bm" onclick="openM('m-change-code')" style="font-size:11px">🔑 Modifier un code</button>`:''}
-    </div>
-    <div class="card">
-      <div class="ch"><div class="ct">👥 Tous les accès</div></div>
-      <div class="tw"><table><thead><tr><th>Nom / Poste</th><th>Code d'accès</th><th>Filière</th></tr></thead>
-      <tbody>
-        <tr><td><strong>Directeur Général</strong></td><td class=\"mono\">DG4X9K2M</td><td><span class=\"b bg-m\">Direction</span></td></tr>
-        <tr><td><strong>Dir. Opérations & Logistique</strong></td><td class=\"mono\">OP7R3N8W</td><td><span class=\"b bg-m\">Direction</span></td></tr>
-        <tr><td><strong>Coordinatrice Sarpa Groupe</strong></td><td class=\"mono\">CR5T1P6Q</td><td><span class=\"b bg-p\">Direction</span></td></tr>
-        <tr><td><strong>Resp. Production Béton</strong></td><td class=\"mono\">CB2H8L4V</td><td><span class=\"b bg-p\">Sarpa Béton</span></td></tr>
-        <tr><td><strong>Manager Sarpa Logistics</strong></td><td class=\"mono\">FL9M3D7J</td><td><span class=\"b bg-p\">Sarpa Logistics</span></td></tr>
-        <tr><td><strong>Comptabilité</strong></td><td class=\"mono\">CT6A2R5B</td><td><span class=\"b bg-p\">Finance</span></td></tr>
-        <tr><td><strong>Ressources Humaines</strong></td><td class=\"mono\">RH1K7N3E</td><td><span class=\"b bg-p\">RH</span></td></tr>
-        <tr><td><strong>Commercial</strong></td><td class=\"mono\">CM4W9T2F</td><td><span class=\"b bg-p\">Commercial</span></td></tr>
-        <tr><td><strong>Manager Sarpa Immobilier</strong></td><td class=\"mono\">IM8S5G1Y</td><td><span class=\"b bg-p\">Sarpa Immobilier</span></td></tr>
-        <tr><td><strong>Invité 1</strong></td><td class=\"mono\">GS1X4B7N</td><td><span class=\"b bg-x\">Invité</span></td></tr>
-        <tr><td><strong>Invité 2</strong></td><td class=\"mono\">GS2M9K3P</td><td><span class=\"b bg-x\">Invité</span></td></tr>
-        <tr><td><strong>Manager Sarpa Béton</strong></td><td class=\"mono\">0ASD7GU9</td><td><span class=\"b bg-p\">Sarpa Béton</span></td></tr>
-        <tr><td><strong>Manager Sarpa Logistics N2</strong></td><td class=\"mono\">KGJIZJSD</td><td><span class=\"b bg-p\">Sarpa Logistics</span></td></tr>
-        <tr><td><strong>Manager Sarpa Immobilier N2</strong></td><td class=\"mono\">S2C3CZHI</td><td><span class=\"b bg-p\">Sarpa Immobilier</span></td></tr>
-        <tr><td><strong>Resp. Production Béton N2</strong></td><td class=\"mono\">29UK0GBI</td><td><span class=\"b bg-p\">Sarpa Béton</span></td></tr>
-        <tr><td><strong>Responsable Qualité</strong></td><td class=\"mono\">ZRBPQ2LK</td><td><span class=\"b bg-p\">Sarpa Béton</span></td></tr>
-        <tr><td><strong>Responsable Informatique</strong></td><td class=\"mono\">L191ZO9N</td><td><span class=\"b bg-p\">Informatique</span></td></tr>
-        <tr><td><strong>Comptable Sarpa Béton</strong></td><td class=\"mono\">FCFU5KL3</td><td><span class=\"b bg-p\">Finance Béton</span></td></tr>
-        <tr><td><strong>Comptable Sarpa Immobilier</strong></td><td class=\"mono\">GGEKSN6P</td><td><span class=\"b bg-p\">Finance Immo</span></td></tr>
-        <tr><td><strong>Comptable Sarpa Logistics</strong></td><td class=\"mono\">HNR8805S</td><td><span class=\"b bg-p\">Finance Logistics</span></td></tr>
-        <tr><td><strong>Commercial 2</strong></td><td class=\"mono\">5SCCAR70</td><td><span class=\"b bg-p\">Commercial</span></td></tr>
-      </tbody></table></div>
-    </div>`;
+
+  const cfg = getConfig();
+  const customCodes = cfg.customCodes || {};
+  const canE = userRole==='directeur'||userRole==='dg';
+
+  const deptMap = {
+    dg:'Direction',directeur:'Direction',coordinatrice:'Direction',
+    manager_beton:'Sarpa Béton',responsable_centrale:'Sarpa Béton',
+    resp_production:'Sarpa Béton',resp_qualite:'Sarpa Béton',
+    manager_logistics:'Sarpa Logistics',responsable_flotte:'Sarpa Logistics',
+    manager_immo:'Sarpa Immobilier',immobilier:'Sarpa Immobilier',
+    resp_info:'Informatique',comptabilite:'Finance',
+    comptable_beton:'Finance Béton',comptable_immo:'Finance Immo',
+    comptable_logistics:'Finance Logistics',rh:'RH',
+    commercial:'Commercial',guest:'Invité'
+  };
+
+  const pc = document.getElementById('users-content');
+  pc.innerHTML = '';
+
+  // Header
+  const hdr = document.createElement('div');
+  hdr.className = 'sh';
+  const hdrLeft = document.createElement('div');
+  hdrLeft.innerHTML = '<div class="stl">Utilisateurs & Accès</div><div class="sst">' + Object.keys(ROLE_CODES).length + ' utilisateurs — Confidentiel</div>';
+  hdr.appendChild(hdrLeft);
+  if (canE) {
+    const btn = document.createElement('button');
+    btn.className = 'btn bm';
+    btn.style.fontSize = '11px';
+    btn.textContent = '🔑 Modifier codes & titres';
+    btn.onclick = openChangeCodeEditor;
+    hdr.appendChild(btn);
+  }
+  pc.appendChild(hdr);
+
+  // Table card
+  const card = document.createElement('div');
+  card.className = 'card';
+  let tableHTML = '<div class="ch"><div class="ct">👥 Tous les accès</div></div>';
+  tableHTML += '<div class="tw"><table><thead><tr>';
+  tableHTML += '<th>Poste / Titre</th><th>Code</th><th>Role</th><th>Filiere</th>';
+  if (canE) tableHTML += '<th>Action</th>';
+  tableHTML += '</tr></thead><tbody>';
+
+  for (const [origCode, info] of Object.entries(ROLE_CODES)) {
+    const custom = customCodes[info.role] || {};
+    const code = custom.code || origCode;
+    const name = custom.name || info.name;
+    const dept = deptMap[info.role] || info.role;
+    const badge = info.role==='dg'||info.role==='directeur' ? 'bg-m' : info.role==='guest' ? 'bg-x' : 'bg-p';
+
+    tableHTML += '<tr>';
+    tableHTML += '<td><strong>' + name + '</strong></td>';
+    tableHTML += '<td><span class="mono" style="font-size:13px;font-weight:800;color:var(--must2)">' + code + '</span></td>';
+    tableHTML += '<td style="font-size:10px;color:var(--tx3)">' + info.role + '</td>';
+    tableHTML += '<td><span class="b ' + badge + '">' + dept + '</span></td>';
+    if (canE) {
+      tableHTML += '<td><button data-role="' + info.role + '" data-code="' + code + '" data-name="' + name.replace(/'/g,"&#39;") + '" class="edit-code-btn" style="background:none;border:1px solid var(--bd2);border-radius:4px;padding:3px 8px;cursor:pointer;font-size:11px">✏️ Modifier</button></td>';
+    }
+    tableHTML += '</tr>';
+  }
+
+  tableHTML += '</tbody></table></div>';
+  tableHTML += '<div class="al al-m" style="margin-top:12px">⚠️ Les nouveaux codes sont actifs immédiatement. Communiquez-les aux personnes concernées.</div>';
+  card.innerHTML = tableHTML;
+  pc.appendChild(card);
+
+  // Bind edit buttons
+  pc.querySelectorAll('.edit-code-btn').forEach(btn => {
+    btn.onclick = () => openEditCode(btn.dataset.role, btn.dataset.code, btn.dataset.name);
+  });
+}
+
+function openChangeCodeEditor() {
+  buildCodeEditorTable(null);
+  openM('m-change-code');
+}
+
+function openEditCode(role, code, name) {
+  buildCodeEditorTable(role);
+  openM('m-change-code');
+  setTimeout(() => {
+    const el = document.getElementById('cc-code-' + role);
+    if (el) el.scrollIntoView({ behavior:'smooth', block:'center' });
+  }, 200);
+}
+
+function buildCodeEditorTable(highlightRole) {
+  const cfg = getConfig();
+  const customCodes = cfg.customCodes || {};
+  const tbody = document.getElementById('cc-table-body');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+
+  for (const [origCode, info] of Object.entries(ROLE_CODES)) {
+    const custom = customCodes[info.role] || {};
+    const currentCode = custom.code || origCode;
+    const currentName = custom.name || info.name;
+    const isHL = info.role === highlightRole;
+
+    const tr = document.createElement('tr');
+    if (isHL) tr.style.background = 'var(--must)20';
+
+    const tdRole = document.createElement('td');
+    tdRole.style.cssText = 'font-size:10px;color:var(--tx3);padding:5px 6px';
+    tdRole.textContent = info.role;
+
+    const tdName = document.createElement('td');
+    tdName.style.padding = '4px 6px';
+    const inpName = document.createElement('input');
+    inpName.type = 'text';
+    inpName.id = 'cc-name-' + info.role;
+    inpName.value = currentName;
+    inpName.style.cssText = 'width:100%;background:var(--sf2);border:1px solid ' + (isHL ? 'var(--must2)' : 'var(--bd2)') + ';border-radius:4px;padding:4px 6px;color:var(--tx);font-size:11px';
+    tdName.appendChild(inpName);
+
+    const tdCode = document.createElement('td');
+    tdCode.style.padding = '4px 6px';
+    const inpCode = document.createElement('input');
+    inpCode.type = 'text';
+    inpCode.id = 'cc-code-' + info.role;
+    inpCode.value = currentCode;
+    inpCode.maxLength = 8;
+    inpCode.style.cssText = 'width:100px;background:var(--sf2);border:1px solid ' + (isHL ? 'var(--must2)' : 'var(--bd2)') + ';border-radius:4px;padding:4px 6px;color:var(--must2);font-size:12px;font-weight:800;font-family:monospace;text-transform:uppercase';
+    inpCode.addEventListener('input', function() {
+      this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    });
+    tdCode.appendChild(inpCode);
+
+    const tdBtn = document.createElement('td');
+    tdBtn.style.padding = '4px 6px';
+    const genBtn = document.createElement('button');
+    genBtn.style.cssText = 'background:var(--sf2);border:1px solid var(--bd2);border-radius:4px;padding:3px 8px;cursor:pointer;font-size:11px';
+    genBtn.title = 'Générer un code aléatoire';
+    genBtn.textContent = '🎲';
+    genBtn.setAttribute('data-role', info.role);
+    genBtn.onclick = function() { genCode(this.getAttribute('data-role')); };
+    tdBtn.appendChild(genBtn);
+
+    tr.appendChild(tdRole);
+    tr.appendChild(tdName);
+    tr.appendChild(tdCode);
+    tr.appendChild(tdBtn);
+    tbody.appendChild(tr);
+  }
+}
+function genCode(role) {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let code = '';
+  for (let i=0; i<8; i++) code += chars[Math.floor(Math.random()*chars.length)];
+  const el = document.getElementById('cc-code-' + role);
+  if (el) el.value = code;
+}
+
+async function saveAllCodes() {
+  const customCodes = {};
+  const usedCodes = new Set();
+  const errors = [];
+
+  for (const [origCode, info] of Object.entries(ROLE_CODES)) {
+    const codeEl = document.getElementById('cc-code-' + info.role);
+    const nameEl = document.getElementById('cc-name-' + info.role);
+    if (!codeEl || !nameEl) continue;
+
+    const newCode = codeEl.value.trim().toUpperCase();
+    const newName = nameEl.value.trim();
+
+    if (newCode.length < 6) { errors.push(info.role + ': code trop court (min 6 caractères)'); continue; }
+    if (usedCodes.has(newCode)) { errors.push(newCode + ': code déjà utilisé'); continue; }
+    if (!newName) { errors.push(info.role + ': titre vide'); continue; }
+
+    usedCodes.add(newCode);
+    customCodes[info.role] = { code: newCode, name: newName };
+  }
+
+  if (errors.length > 0) { toast('⚠️ ' + errors[0]); return; }
+
+  // Save to config
+  const cfg = getConfig();
+  cfg.customCodes = customCodes;
+  localStorage.setItem('sarpa_cfg', JSON.stringify(cfg));
+
+  // Save to GS
+  try {
+    const existing = await db('config');
+    const cfgRow = (existing||[]).find(r=>r.key==='customCodes');
+    if (cfgRow) {
+      await db('config','PATCH',{value: JSON.stringify(customCodes)},{id: cfgRow.id});
+    } else {
+      await db('config','POST',{key:'customCodes', value: JSON.stringify(customCodes), created_by: userName});
+    }
+  } catch(e) { console.warn('GS save codes:', e); }
+
+  // Apply to ROLE_CODES in memory
+  for (const [origCode, info] of Object.entries({...ROLE_CODES})) {
+    const custom = customCodes[info.role];
+    if (!custom) continue;
+    if (custom.code !== origCode) {
+      ROLE_CODES[custom.code] = { role: info.role, name: custom.name };
+      delete ROLE_CODES[origCode];
+    } else {
+      ROLE_CODES[origCode].name = custom.name;
+    }
+  }
+
+  logAction('update','config',{action:'codes_updated', par:userName});
+  closeM('m-change-code');
+  toast('✅ Codes & titres mis à jour !');
+  render('users');
+}
+async function saveAllCodes() {
+  const cfg = getConfig();
+  const customCodes = {};
+  let errors = [];
+
+  // Collect all values
+  const usedCodes = new Set();
+  for(const [origCode, info] of Object.entries(ROLE_CODES)) {
+    const codeEl = document.getElementById('cc-code-'+info.role);
+    const nameEl = document.getElementById('cc-name-'+info.role);
+    if(!codeEl || !nameEl) continue;
+    const newCode = codeEl.value.trim().toUpperCase();
+    const newName = nameEl.value.trim();
+    if(newCode.length < 6) { errors.push(info.role+': code trop court (min 6)'); continue; }
+    if(usedCodes.has(newCode)) { errors.push(newCode+': code déjà utilisé par un autre rôle'); continue; }
+    usedCodes.add(newCode);
+    customCodes[info.role] = { code: newCode, name: newName };
+  }
+
+  if(errors.length > 0) {
+    toast('⚠️ Erreurs: '+errors[0]);
+    return;
+  }
+
+  // Save to config
+  cfg.customCodes = customCodes;
+  localStorage.setItem('sarpa_cfg', JSON.stringify(cfg));
+
+  // Also save to GS config table
+  const existing = await db('config');
+  const cfgRow = (existing||[]).find(r=>r.key==='customCodes');
+  if(cfgRow) {
+    await db('config','PATCH',{value: JSON.stringify(customCodes)},{id:cfgRow.id});
+  } else {
+    await db('config','POST',{key:'customCodes', value: JSON.stringify(customCodes), created_by: userName});
+  }
+
+  // Update ROLE_CODES in memory dynamically
+  for(const [origCode, info] of Object.entries(ROLE_CODES)) {
+    const custom = customCodes[info.role];
+    if(custom) {
+      // Remove old code entry if changed
+      if(custom.code !== origCode && ROLE_CODES[origCode]) {
+        ROLE_CODES[custom.code] = { role: info.role, name: custom.name };
+        delete ROLE_CODES[origCode];
+      } else {
+        ROLE_CODES[origCode].name = custom.name;
+      }
+    }
+  }
+
+  logAction('update','config',{action:'codes_updated',par:userName});
+  closeM('m-change-code');
+  toast('✅ Codes & titres mis à jour — actifs immédiatement !');
+  render('users');
 }
 async function renderRH() {
   const emps = await db('employes');
@@ -6502,7 +6767,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
+
+
+
+
+
 </script>
+
+
+
+
+
 
 
 
