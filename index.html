@@ -670,6 +670,30 @@ textarea{resize:vertical;min-height:70px}
 <!-- ═══ LOYERS ═══ -->
 <div class="pg" id="pg-loyers"><div id="loyers-content"></div></div>
 
+
+<!-- ═══ FINANCE FILIÈRES ═══ -->
+<div class="pg" id="pg-fin_beton"><div id="fin_beton-content"></div></div>
+<div class="pg" id="pg-fin_logistics"><div id="fin_logistics-content"></div></div>
+<div class="pg" id="pg-fin_immo"><div id="fin_immo-content"></div></div>
+
+<!-- ═══ BANQUES ═══ -->
+<div class="pg" id="pg-banques"><div id="banques-content"></div></div>
+
+<!-- ═══ RELEVÉS ═══ -->
+<div class="pg" id="pg-releves"><div id="releves-content"></div></div>
+
+<!-- ═══ RAPPROCHEMENT ═══ -->
+<div class="pg" id="pg-rapprochement"><div id="rapprochement-content"></div></div>
+
+<!-- ═══ CHÈQUES ═══ -->
+<div class="pg" id="pg-cheques"><div id="cheques-content"></div></div>
+
+<!-- ═══ ÉTATS FINANCIERS ═══ -->
+<div class="pg" id="pg-etats_fin"><div id="etats_fin-content"></div></div>
+
+<!-- ═══ RECHERCHE ═══ -->
+<div class="pg" id="pg-recherche"><div id="recherche-content"></div></div>
+
 </div><!-- /mn -->
 </div><!-- /app -->
 
@@ -1362,7 +1386,89 @@ textarea{resize:vertical;min-height:70px}
     <button class="btn bg2" onclick="closeM('m-change-code')">Annuler</button>
     <button class="btn bm" onclick="saveAllCodes()">💾 Enregistrer tous les changements</button>
   </div>
-</div></div><script>
+</div></div>
+<!-- MODAL BANQUE -->
+<div class="mo" id="m-banque"><div class="md">
+  <div class="mh"><div class="mt">🏦 Ajouter un compte bancaire</div><button class="mc" onclick="closeM('m-banque')">✕</button></div>
+  <div class="fr">
+    <div class="fg"><label>Nom de la banque</label><input type="text" id="bq-nom" placeholder="Ex: CBAO, Ecobank, BHS..."></div>
+    <div class="fg"><label>Nom du compte</label><input type="text" id="bq-compte" placeholder="Ex: Compte courant Béton"></div>
+  </div>
+  <div class="fg"><label>Filière</label><select id="bq-filiere">
+    <option>Sarpa Béton</option><option>Sarpa Logistics</option><option>Sarpa Immobilier</option><option>Général</option>
+  </select></div>
+  <div class="fr">
+    <div class="fg"><label>Numéro de compte</label><input type="text" id="bq-numero" placeholder="Ex: SN0001234567..."></div>
+    <div class="fg"><label>RIB / IBAN</label><input type="text" id="bq-rib"></div>
+  </div>
+  <div class="fr">
+    <div class="fg"><label>Agence</label><input type="text" id="bq-agence" placeholder="Ex: Plateau, Almadies..."></div>
+    <div class="fg"><label>Solde initial (FCFA)</label><input type="number" id="bq-solde" value="0"></div>
+    <div class="fg"><label>Devise</label><select id="bq-devise"><option>FCFA</option><option>EUR</option><option>USD</option></select></div>
+  </div>
+  <div class="fg"><label>Notes</label><textarea id="bq-notes" rows="2"></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-banque')">Annuler</button><button class="btn bm" onclick="savBanque()">Enregistrer</button></div>
+</div></div>
+
+<!-- MODAL RELEVÉ -->
+<div class="mo" id="m-releve"><div class="md">
+  <div class="mh"><div class="mt">📋 Nouveau mouvement bancaire</div><button class="mc" onclick="closeM('m-releve')">✕</button></div>
+  <div class="fr">
+    <div class="fg"><label>Date</label><input type="date" id="relev-date"></div>
+    <div class="fg"><label>Type</label><select id="relev-type">
+      <option>Entrée</option><option>Sortie</option>
+    </select></div>
+  </div>
+  <div class="fg"><label>Banque / Compte</label><select id="relev-banque" style="width:100%">
+    <option value="">— Sélectionner —</option>
+  </select></div>
+  <div class="fg"><label>Libellé</label><input type="text" id="relev-libelle" placeholder="Ex: Virement client XYZ, Paiement fournisseur..."></div>
+  <div class="fr">
+    <div class="fg"><label>Référence</label><input type="text" id="relev-ref" placeholder="N° virement, chèque..."></div>
+    <div class="fg"><label>Montant (FCFA)</label><input type="number" id="relev-montant" placeholder="0"></div>
+  </div>
+  <div class="fg"><label>Notes</label><textarea id="relev-notes" rows="2"></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-releve')">Annuler</button><button class="btn bm" onclick="savReleve()">Enregistrer</button></div>
+</div></div>
+
+<!-- MODAL CHÈQUE -->
+<div class="mo" id="m-cheque"><div class="md">
+  <div class="mh">
+    <div><div class="mt">📝 Nouveau chèque</div><div id="chq-type-label" style="font-size:11px;color:var(--tx3)"></div></div>
+    <button class="mc" onclick="closeM('m-cheque')">✕</button>
+  </div>
+  <input type="hidden" id="chq-type">
+  <div class="fr">
+    <div class="fg"><label>N° Chèque</label><input type="text" id="chq-numero" placeholder="Ex: 0012345"></div>
+    <div class="fg"><label>Banque / Compte</label><select id="chq-banque" style="width:100%">
+      <option value="">— Sélectionner —</option>
+    </select></div>
+  </div>
+  <div class="fg"><label>Bénéficiaire / Émetteur</label><input type="text" id="chq-beneficiaire" placeholder="Nom de la personne ou entreprise"></div>
+  <div class="fr">
+    <div class="fg"><label>Date d'émission</label><input type="date" id="chq-date"></div>
+    <div class="fg"><label>Date d'échéance</label><input type="date" id="chq-echeance"></div>
+    <div class="fg"><label>Montant (FCFA)</label><input type="number" id="chq-montant" placeholder="0"></div>
+  </div>
+  <div class="fg"><label>Statut</label><select id="chq-statut">
+    <option>En attente</option><option>Encaissé</option><option>Payé</option><option>Rejeté</option><option>Annulé</option>
+  </select></div>
+  <div class="fg"><label>Notes</label><textarea id="chq-notes" rows="2"></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-cheque')">Annuler</button><button class="btn bm" onclick="savCheque()">Enregistrer</button></div>
+</div></div>
+<script>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1492,26 +1598,26 @@ async function initGoogleSheets() {
 }
 
 // ═══ ROLES ═══
-const ALL = ['dashboard','production','stocks','quality','fleet','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','rh','formation','planning','carburant','checklist','messages','annuaire','conges','partenariats','objectifs','graphiques','journal','livraisons','factures','pointage','opening','closing','biens','visites','contrats_immo','etats_lieux','loyers'];
+const ALL = ['dashboard','production','stocks','quality','fleet','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','rh','formation','planning','carburant','checklist','messages','annuaire','conges','partenariats','objectifs','graphiques','journal','livraisons','factures','pointage','opening','closing','biens','visites','contrats_immo','etats_lieux','loyers','banques','releves','rapprochement','cheques','etats_fin','fin_beton','fin_logistics','fin_immo','recherche'];
 const ROLES = {
-  dg                       : { label:'Directeur Général', badge:'rb-director', pages:['dashboard','production','stocks','quality','fleet','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','rh','formation','planning','carburant','checklist','messages','annuaire','conges','partenariats','objectifs','graphiques','journal','livraisons','factures','pointage','opening','closing','biens','visites','contrats_immo','etats_lieux','loyers'] },
-  directeur                : { label:'Dir. Opérations & Logistique', badge:'rb-director', pages:['dashboard','production','stocks','quality','fleet','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','rh','formation','planning','carburant','checklist','messages','annuaire','conges','partenariats','objectifs','graphiques','journal','livraisons','factures','pointage','opening','closing','biens','visites','contrats_immo','etats_lieux','loyers'] },
-  coordinatrice            : { label:'Coordinatrice Sarpa Groupe', badge:'rb-coord', pages:['dashboard','stocks','fournisseurs','projets','partenaires','accidents','planning','messages','annuaire','livraisons','factures','partenariats','objectifs','conges','formation','rapports','pointage'] },
-  manager_beton            : { label:'Manager Sarpa Béton', badge:'rb-beton', pages:['dashboard','production','stocks','quality','accidents','planning','livraisons','factures','messages','annuaire','fournisseurs','objectifs','opening','closing','pointage'] },
-  responsable_centrale     : { label:'Resp. Production Béton', badge:'rb-beton', pages:['dashboard','production','stocks','quality','accidents','planning','livraisons','factures','messages','annuaire','fournisseurs','opening','closing','pointage'] },
-  resp_production          : { label:'Resp. Production', badge:'rb-beton', pages:['dashboard','production','stocks','quality','accidents','messages','annuaire','opening','closing','pointage'] },
-  resp_qualite             : { label:'Responsable Qualité', badge:'rb-qual', pages:['dashboard','quality','production','rapports','accidents','messages','annuaire','evaluations'] },
-  manager_logistics        : { label:'Manager Sarpa Logistics', badge:'rb-flotte', pages:['dashboard','fleet','maintenance','livraisons','planning','carburant','checklist','accidents','factures','messages','annuaire','fournisseurs','objectifs','opening','closing','pointage'] },
-  responsable_flotte       : { label:'Resp. Flotte', badge:'rb-flotte', pages:['dashboard','fleet','maintenance','livraisons','planning','carburant','checklist','accidents','factures','messages','annuaire','opening','closing','pointage'] },
-  manager_immo             : { label:'Manager Sarpa Immobilier', badge:'rb-immo', pages:['dashboard','biens','visites','contrats_immo','etats_lieux','loyers','projets','partenaires','partenariats','livraisons','factures','messages','annuaire','fournisseurs','objectifs'] },
-  immobilier               : { label:'Agence Immobilière', badge:'rb-immo', pages:['dashboard','biens','visites','contrats_immo','etats_lieux','loyers','projets','partenaires','partenariats','livraisons','factures','messages','annuaire'] },
-  resp_info                : { label:'Resp. Informatique', badge:'rb-info', pages:['dashboard','parametres','users','journal','graphiques','rapports','messages','annuaire','evaluations'] },
-  comptabilite             : { label:'Comptabilité', badge:'rb-compta', pages:['dashboard','finances','factures','fournisseurs','rapports','messages','annuaire','objectifs','livraisons','stocks'] },
-  comptable_beton          : { label:'Comptable Béton', badge:'rb-compta', pages:['dashboard','finances','factures','fournisseurs','messages','annuaire','stocks'] },
-  comptable_immo           : { label:'Comptable Immobilier', badge:'rb-compta', pages:['dashboard','finances','factures','projets','messages','annuaire','biens','loyers','contrats_immo'] },
-  comptable_logistics      : { label:'Comptable Logistics', badge:'rb-compta', pages:['dashboard','finances','factures','livraisons','carburant','messages','annuaire'] },
-  rh                       : { label:'Ressources Humaines', badge:'rb-rh', pages:['dashboard','rh','formation','accidents','conges','messages','annuaire','factures','livraisons','pointage','opening','closing'] },
-  commercial               : { label:'Commercial', badge:'rb-comm', pages:['dashboard','projets','fournisseurs','partenaires','partenariats','messages','annuaire','livraisons','factures','planning'] },
+  dg                       : { label:'Directeur Général', badge:'rb-director', pages:['dashboard','production','stocks','quality','fleet','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','rh','formation','planning','carburant','checklist','messages','annuaire','conges','partenariats','objectifs','graphiques','journal','livraisons','factures','pointage','opening','closing','biens','visites','contrats_immo','etats_lieux','loyers','banques','releves','rapprochement','cheques','etats_fin','fin_beton','fin_logistics','fin_immo','recherche'] },
+  directeur                : { label:'Dir. Opérations & Logistique', badge:'rb-director', pages:['dashboard','production','stocks','quality','fleet','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','rh','formation','planning','carburant','checklist','messages','annuaire','conges','partenariats','objectifs','graphiques','journal','livraisons','factures','pointage','opening','closing','biens','visites','contrats_immo','etats_lieux','loyers','banques','releves','rapprochement','cheques','etats_fin','fin_beton','fin_logistics','fin_immo','recherche'] },
+  coordinatrice            : { label:'Coordinatrice Sarpa Groupe', badge:'rb-coord', pages:['dashboard','stocks','fournisseurs','projets','partenaires','accidents','planning','messages','annuaire','livraisons','factures','partenariats','objectifs','conges','formation','rapports','pointage','recherche','fin_beton','fin_logistics','fin_immo'] },
+  manager_beton            : { label:'Manager Sarpa Béton', badge:'rb-beton', pages:['dashboard','production','stocks','quality','accidents','planning','livraisons','factures','messages','annuaire','fournisseurs','objectifs','opening','closing','pointage','fin_beton','recherche','fleet','maintenance','carburant','checklist'] },
+  responsable_centrale     : { label:'Resp. Production Béton', badge:'rb-beton', pages:['dashboard','production','stocks','quality','accidents','planning','livraisons','factures','messages','annuaire','fournisseurs','opening','closing','pointage','recherche'] },
+  resp_production          : { label:'Resp. Production', badge:'rb-beton', pages:['dashboard','production','stocks','quality','accidents','messages','annuaire','opening','closing','pointage','recherche'] },
+  resp_qualite             : { label:'Responsable Qualité', badge:'rb-qual', pages:['dashboard','quality','production','stocks','rapports','accidents','messages','annuaire','evaluations','recherche'] },
+  manager_logistics        : { label:'Manager Sarpa Logistics', badge:'rb-flotte', pages:['dashboard','fleet','maintenance','livraisons','planning','stocks','carburant','checklist','accidents','factures','messages','annuaire','fournisseurs','objectifs','opening','closing','pointage','fin_logistics','recherche'] },
+  responsable_flotte       : { label:'Resp. Flotte', badge:'rb-flotte', pages:['dashboard','fleet','maintenance','livraisons','planning','stocks','carburant','checklist','accidents','factures','messages','annuaire','opening','closing','pointage','recherche'] },
+  manager_immo             : { label:'Manager Sarpa Immobilier', badge:'rb-immo', pages:['dashboard','biens','visites','contrats_immo','etats_lieux','loyers','projets','partenaires','partenariats','livraisons','factures','messages','annuaire','fournisseurs','objectifs','fin_immo','recherche'] },
+  immobilier               : { label:'Agence Immobilière', badge:'rb-immo', pages:['dashboard','biens','visites','contrats_immo','etats_lieux','loyers','projets','partenaires','partenariats','livraisons','factures','messages','annuaire','recherche'] },
+  resp_info                : { label:'Resp. Informatique', badge:'rb-info', pages:['dashboard','parametres','users','journal','graphiques','rapports','messages','annuaire','evaluations','recherche'] },
+  comptabilite             : { label:'Comptabilité', badge:'rb-compta', pages:['dashboard','finances','factures','fournisseurs','rapports','messages','annuaire','objectifs','livraisons','stocks','banques','releves','rapprochement','cheques','etats_fin','fin_beton','fin_logistics','fin_immo','recherche'] },
+  comptable_beton          : { label:'Comptable Béton', badge:'rb-compta', pages:['dashboard','fin_beton','factures','fournisseurs','messages','annuaire','stocks','banques','releves','rapprochement','cheques','etats_fin','recherche'] },
+  comptable_immo           : { label:'Comptable Immobilier', badge:'rb-compta', pages:['dashboard','fin_immo','factures','projets','messages','annuaire','biens','loyers','contrats_immo','banques','releves','rapprochement','cheques','etats_fin','recherche'] },
+  comptable_logistics      : { label:'Comptable Logistics', badge:'rb-compta', pages:['dashboard','fin_logistics','factures','livraisons','carburant','messages','annuaire','banques','releves','rapprochement','cheques','etats_fin','recherche'] },
+  rh                       : { label:'Ressources Humaines', badge:'rb-rh', pages:['dashboard','rh','formation','accidents','conges','messages','annuaire','factures','livraisons','pointage','opening','closing','evaluations','recherche'] },
+  commercial               : { label:'Commercial', badge:'rb-comm', pages:['dashboard','projets','fournisseurs','partenaires','partenariats','messages','annuaire','livraisons','factures','planning','recherche'] },
   guest                    : { label:'Invité', badge:'rb-guest', pages:['dashboard','planning','projets','partenariats'] },
 };
 
@@ -1560,6 +1666,14 @@ const NAV = [
   { id:'annuaire',     ic:'📒', lb:'Clients & Fournisseurs' },
   { id:'partenariats', ic:'🤝', lb:'Partenariats' },
   { s:'Finance & Comptabilité' },
+  { id:'fin_beton',    ic:'🏗', lb:'Finance Béton' },
+  { id:'fin_logistics',ic:'🚛', lb:'Finance Logistics' },
+  { id:'fin_immo',     ic:'🏠', lb:'Finance Immobilier' },
+  { id:'banques',      ic:'🏦', lb:'Comptes bancaires' },
+  { id:'releves',      ic:'📋', lb:'Relevés théoriques' },
+  { id:'rapprochement',ic:'🔄', lb:'Rapprochement' },
+  { id:'cheques',      ic:'📝', lb:'Chèques' },
+  { id:'etats_fin',    ic:'📊', lb:'États financiers' },
   { id:'finances',     ic:'💰', lb:'Finances & Budget',    dir:true },
   { id:'objectifs',    ic:'📊', lb:'Objectifs mensuels' },
   { s:'RH & Équipe' },
@@ -1570,6 +1684,7 @@ const NAV = [
   { id:'pointage',     ic:'⏰', lb:'Pointage',             bg:'nb-pt' },
   { id:'opening',      ic:'🌅', lb:'Opening — Ouverture' },
   { id:'closing',      ic:'🌙', lb:'Closing — Fermeture' },
+  { id:'recherche',    ic:'🔍', lb:'Recherche globale' },
   { s:'🔒 Direction & Analyse' },
   { id:'graphiques',   ic:'📈', lb:'Graphiques & Analyses', dir:true },
   { id:'evaluations',  ic:'📊', lb:'Évaluations',           dir:true },
@@ -1710,6 +1825,28 @@ function openM(id) {
   if (id==='m-doc-flotte') loadTrucks(document.getElementById('doc-truck'), false);
   if (id==='m-facture') { document.getElementById('fac-date').value=new Date().toISOString().slice(0,10); updateFactureTotal(); }
   if (id==='m-liv') { loadTrucks(document.getElementById('liv-truck'), false); document.getElementById('liv-date').value=new Date().toISOString().slice(0,10); }
+  if (id==='m-bien') { document.getElementById('bien-date-acq').value=new Date().toISOString().slice(0,10); }
+  if (id==='m-visite-immo') { document.getElementById('vi-date').value=new Date().toISOString().slice(0,10); }
+  if (id==='m-etat-lieux') { document.getElementById('el-date').value=new Date().toISOString().slice(0,10); }
+  if (id==='m-loyer') { document.getElementById('loy-mois').value=new Date().toISOString().slice(0,7); }
+  if (id==='m-contrat-immo') { document.getElementById('ci-date-debut').value=new Date().toISOString().slice(0,10); }
+  if (id==='m-releve') {
+    document.getElementById('relev-date').value=new Date().toISOString().slice(0,10);
+    db('banques').then(banques => {
+      const sel = document.getElementById('relev-banque');
+      if(sel) sel.innerHTML = '<option value="">— Sélectionner —</option>' +
+        (banques||[]).map(b=>'<option value="'+b.id+'">'+b.nom_banque+' — '+(b.nom_compte||b.filiere)+'</option>').join('');
+    });
+  }
+  if (id==='m-cheque') {
+    document.getElementById('chq-date').value=new Date().toISOString().slice(0,10);
+    db('banques').then(banques => {
+      const sel = document.getElementById('chq-banque');
+      if(sel) sel.innerHTML = '<option value="">— Sélectionner —</option>' +
+        (banques||[]).map(b=>'<option value="'+b.id+'">'+b.nom_banque+' — '+(b.nom_compte||b.filiere)+'</option>').join('');
+    });
+  }
+  if (id==='m-banque') { document.getElementById('bq-solde').value='0'; }
 }
 
 function showActionBtn(module) {
@@ -2073,7 +2210,11 @@ async function render(p) {
     graphiques:renderGraphiques, journal:renderJournal, livraisons:renderLivraisons, factures:renderFactures,
     pointage:renderPointage, opening:renderOpening, closing:renderClosing,
     biens:renderBiens, visites:renderVisites, contrats_immo:renderContratsImmo,
-    etats_lieux:renderEtatsLieux, loyers:renderLoyers
+    etats_lieux:renderEtatsLieux, loyers:renderLoyers,
+    banques:renderBanques, releves:renderReleves, rapprochement:renderRapprochement,
+    cheques:renderCheques, etats_fin:renderEtatsFin,
+    fin_beton:renderFinBeton, fin_logistics:renderFinLogistics, fin_immo:renderFinImmo,
+    recherche:renderRecherche
   };
   if (map[p]) await map[p]();
 }
@@ -2379,6 +2520,7 @@ async function renderTours() {
 }
 
 async function renderMaint() {
+  const canE = canEdit('maintenance');
   const ms = await db('maintenances');
   document.getElementById('mal').innerHTML = (ms||[]).filter(m=>m.type_intervention==='Urgent'&&m.statut==='En cours')
     .map(m=>`<div class="al al-r">🔴 URGENT : <strong>${m.equipement}</strong> — ${m.description}</div>`).join('');
@@ -2693,7 +2835,7 @@ async function renderParams() {
 
   mkSec('livraisons', `<div class="card sp">
     <div class="ch"><div class="ct">🚚 Livraisons</div></div>
-    <div class="fg"><label>Types de missions</label><textarea id="cfg-mission-types" rows="5">${(cfg.missionTypes||['Livraison béton','Livraison briques','Livraison fer','Transport A→B','Collecte fournisseur','Autre']).join('\n')}</textarea></div>
+    <div class="fg"><label>Types de missions</label><textarea id="cfg-mission-types" rows="5">${(cfg.missionTypes||['Livraison béton (toupie)','Livraison briques','Livraison fer','Transport A→B','Collecte fournisseur','Autre']).join('\n')}</textarea></div>
     <div class="fg"><label>Coût par km (FCFA)</label><input type="number" id="cfg-cout-km" value="${cfg.coutKm||150}"></div>
     <button class="btn bm" onclick="saveConfig('livraisons')">💾 Enregistrer</button>
   </div>`);
@@ -2910,12 +3052,12 @@ async function renderParams() {
     ['Directeur Général','DG4X9K2M','Direction','bg-m'],
     ['Dir. Opérations & Logistique','OP7R3N8W','Direction','bg-m'],
     ['Coordinatrice Sarpa Groupe','CR5T1P6Q','Direction','bg-p'],
-    ['Manager Sarpa Béton','0ASD7GU9','Béton','bg-p'],
+    ['Manager Sarpa Béton','0ASD7GU9','Béton (toupie)','bg-p'],
     ['Manager Sarpa Logistics','FL9M3D7J','Logistics','bg-p'],
     ['Manager Sarpa Immobilier','IM8S5G1Y','Immobilier','bg-p'],
-    ['Resp. Production Béton','CB2H8L4V','Béton','bg-p'],
-    ['Resp. Production Béton N2','29UK0GBI','Béton','bg-p'],
-    ['Responsable Qualité','ZRBPQ2LK','Béton','bg-p'],
+    ['Resp. Production Béton','CB2H8L4V','Béton (toupie)','bg-p'],
+    ['Resp. Production Béton N2','29UK0GBI','Béton (toupie)','bg-p'],
+    ['Responsable Qualité','ZRBPQ2LK','Béton (toupie)','bg-p'],
     ['Responsable Informatique','L191ZO9N','IT','bg-p'],
     ['Comptable Sarpa Béton','FCFU5KL3','Finance','bg-p'],
     ['Comptable Sarpa Immobilier','GGEKSN6P','Finance','bg-p'],
@@ -4210,7 +4352,20 @@ async function editRow(table, id, page) {
     planning: 'm-plan', annuaire: 'm-contact', messages: 'm-msg',
     carburant: 'm-carb', conges: 'm-conge', checklist: 'm-check',
     partenariats: 'm-partenariat', objectifs: 'm-obj',
-    commandes: 'mc'
+    commandes: 'mc',
+    maintenances: 'mm',
+    assurances: 'm-assurance',
+    visites_techniques: 'm-visite',
+    entretiens: 'm-entretien',
+    documents_flotte: 'm-doc-flotte',
+    biens: 'm-bien',
+    visites_immo: 'm-visite-immo',
+    contrats_immo: 'm-contrat-immo',
+    etats_lieux: 'm-etat-lieux',
+    loyers: 'm-loyer',
+    banques: 'm-banque',
+    releves: 'm-releve',
+    cheques: 'm-cheque'
   };
   const modal = modalMap[table];
   if (!modal) { toast('Modification non disponible'); return; }
@@ -4313,6 +4468,50 @@ function prefillModal(table, row) {
     set('prt-contact', row.contact); set('prt-tel', row.telephone); set('prt-email', row.email);
     set('prt-valeur', row.valeur_contrat); set('prt-deb', row.date_debut);
     set('prt-fin', row.date_fin); set('prt-desc', row.description); set('prt-status', row.statut);
+  } else if (table === 'maintenances') {
+    set('mm-truck', row.camion); set('mm-type', row.type);
+    set('mm-date', row.date); set('mm-desc', row.description);
+    set('mm-cout', row.cout); set('mm-statut', row.statut);
+    set('mm-notes', row.notes);
+  } else if (table === 'biens') {
+    set('bien-nom', row.nom); set('bien-type', row.type_bien);
+    set('bien-adresse', row.adresse); set('bien-surf', row.superficie);
+    set('bien-statut', row.statut); set('bien-locataire', row.locataire);
+    set('bien-loyer', row.loyer_mensuel); set('bien-valeur', row.valeur);
+    set('bien-date-acq', row.date_acquisition); set('bien-notes', row.notes);
+  } else if (table === 'contrats_immo') {
+    set('ci-numero', row.numero_contrat); set('ci-type', row.type_contrat);
+    set('ci-bien', row.bien); set('ci-client', row.nom_client);
+    set('ci-tel', row.telephone); set('ci-email', row.email);
+    set('ci-date-debut', row.date_debut); set('ci-date-fin', row.date_fin);
+    set('ci-montant', row.montant); set('ci-conditions', row.conditions);
+    set('ci-statut', row.statut); set('ci-notes', row.notes);
+  } else if (table === 'etats_lieux') {
+    set('el-date', row.date); set('el-type', row.type_etat);
+    set('el-bien', row.bien); set('el-locataire', row.locataire);
+    set('el-etat', row.etat_general); set('el-obs', row.observations);
+    set('el-pieces', row.pieces); set('el-equip', row.equipements);
+    set('el-agent', row.agent);
+  } else if (table === 'loyers') {
+    set('loy-bien', row.bien); set('loy-locataire', row.locataire);
+    set('loy-mois', row.mois); set('loy-montant', row.montant);
+    set('loy-echeance', row.date_echeance); set('loy-paiement', row.date_paiement);
+    set('loy-mode', row.mode_paiement); set('loy-statut', row.statut);
+    set('loy-notes', row.notes);
+  } else if (table === 'banques') {
+    set('bq-nom', row.nom_banque); set('bq-compte', row.nom_compte);
+    set('bq-filiere', row.filiere); set('bq-numero', row.numero_compte);
+    set('bq-rib', row.rib); set('bq-agence', row.agence);
+    set('bq-solde', row.solde_initial); set('bq-notes', row.notes);
+  } else if (table === 'releves') {
+    set('relev-date', row.date); set('relev-type', row.type_mouvement);
+    set('relev-libelle', row.libelle); set('relev-ref', row.reference);
+    set('relev-montant', row.montant); set('relev-notes', row.notes);
+  } else if (table === 'cheques') {
+    set('chq-numero', row.numero_cheque); set('chq-type', row.type_cheque);
+    set('chq-beneficiaire', row.beneficiaire); set('chq-date', row.date_emission);
+    set('chq-echeance', row.date_echeance); set('chq-montant', row.montant);
+    set('chq-statut', row.statut); set('chq-notes', row.notes);
   } else if (table === 'factures') {
     set('fac-numero', row.numero_facture); set('fac-type', row.type_facture);
     set('fac-sens', row.sens); set('fac-dept', row.departement);
@@ -6730,6 +6929,946 @@ async function exportJournalPDF() {
   '</tbody></table></body></html>');w.document.close();
 }
 
+
+// ══════════════════════════════════════════════════════
+// FINANCE PAR FILIÈRE
+// ══════════════════════════════════════════════════════
+
+function renderFinFiliere(filiere, label, icon) {
+  return async function() {
+    const [factures, finances] = await Promise.all([db('factures'), db('finances')]);
+    const canE = canEdit('fin_' + filiere);
+    const m = new Date().toISOString().slice(0,7);
+    const today = new Date().toISOString().slice(0,10);
+
+    // Filter by filiere
+    const deptMap = {
+      beton: ['Sarpa Béton','Centrale à Béton','Béton','beton'],
+      logistics: ['Sarpa Logistics','Flotte Camions','Logistics','logistics'],
+      immo: ['Sarpa Immobilier','Agence Immobilière','Immobilier','immo'],
+    };
+    const depts = deptMap[filiere] || [];
+
+    const mFacs = (factures||[]).filter(f => f.date_facture?.startsWith(m) &&
+      depts.some(d => (f.departement||'').toLowerCase().includes(d.toLowerCase())));
+    const allFacs = (factures||[]).filter(f =>
+      depts.some(d => (f.departement||'').toLowerCase().includes(d.toLowerCase())));
+
+    const recettes = mFacs.filter(f=>f.sens==='recette').reduce((a,b)=>a+(+b.montant_total||0),0);
+    const depenses = mFacs.filter(f=>f.sens!=='recette').reduce((a,b)=>a+(+b.montant_total||0),0);
+    const facsEnRetard = allFacs.filter(f=>f.statut!=='Payée'&&f.date_echeance&&f.date_echeance<today).length;
+
+    // By category
+    const cats = {};
+    mFacs.forEach(f => {
+      const cat = f.type_facture || 'Autre';
+      if (!cats[cat]) cats[cat] = {recette:0, depense:0};
+      if (f.sens==='recette') cats[cat].recette += +f.montant_total||0;
+      else cats[cat].depense += +f.montant_total||0;
+    });
+
+    const pg = document.getElementById('fin_' + filiere + '-content');
+    if (!pg) return;
+    pg.innerHTML = '';
+
+    // Header
+    const hdr = document.createElement('div');
+    hdr.className = 'sh';
+    hdr.innerHTML = '<div><div class="stl">' + icon + ' Finance ' + label + '</div><div class="sst">Vue financière — ' + m + '</div></div>';
+    if (canE) {
+      const btn = document.createElement('button');
+      btn.className = 'btn bm'; btn.style.fontSize = '11px';
+      btn.innerHTML = '📄 PDF'; btn.onclick = () => exportFinFilierePDF(filiere, label, icon);
+      hdr.appendChild(btn);
+    }
+    pg.appendChild(hdr);
+
+    // KPIs
+    const kg = document.createElement('div');
+    kg.className = 'kg';
+    kg.style.cssText = 'grid-template-columns:repeat(4,1fr);margin-bottom:14px';
+    kg.innerHTML = `
+      <div class="kc kc-g"><div class="kl">Recettes ce mois</div><div class="kv">${fmt(Math.round(recettes/1000))}k</div><div class="ks">FCFA</div></div>
+      <div class="kc kc-r"><div class="kl">Dépenses ce mois</div><div class="kv">${fmt(Math.round(depenses/1000))}k</div><div class="ks">FCFA</div></div>
+      <div class="kc ${recettes-depenses>=0?'kc-g':'kc-r'}"><div class="kl">Solde net</div><div class="kv">${fmt(Math.round((recettes-depenses)/1000))}k</div><div class="ks">FCFA</div></div>
+      <div class="kc ${facsEnRetard>0?'kc-r':'kc-b'}"><div class="kl">Factures en retard</div><div class="kv">${facsEnRetard}</div><div class="ks">à régulariser</div></div>`;
+    pg.appendChild(kg);
+
+    if (facsEnRetard > 0) {
+      const al = document.createElement('div');
+      al.className = 'al al-r';
+      al.style.marginBottom = '14px';
+      al.textContent = '🔴 ' + facsEnRetard + ' facture(s) en retard — action requise';
+      pg.appendChild(al);
+    }
+
+    // Charts grid
+    const g2 = document.createElement('div');
+    g2.className = 'g2';
+    g2.style.marginBottom = '14px';
+
+    // Category breakdown
+    const catCard = document.createElement('div');
+    catCard.className = 'card';
+    let catHTML = '<div class="ch"><div class="ct">📊 Par catégorie — ' + m + '</div></div>';
+    const catEntries = Object.entries(cats).sort((a,b) => (b[1].recette+b[1].depense)-(a[1].recette+a[1].depense));
+    if (catEntries.length === 0) {
+      catHTML += '<div style="color:var(--tx3);text-align:center;padding:20px">Aucune donnée ce mois</div>';
+    } else {
+      catEntries.forEach(([cat, v]) => {
+        const maxV = Math.max(...catEntries.map(e=>e[1].recette+e[1].depense), 1);
+        const pct = Math.round((v.recette+v.depense)/maxV*100);
+        catHTML += `<div style="margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+            <span style="font-size:11px">${cat}</span>
+            <span style="font-size:11px;color:var(--must2);font-weight:700">${fmt(Math.round(v.recette+v.depense))} FCFA</span>
+          </div>
+          <div class="pb"><div class="pf" style="width:${pct}%;background:var(--must)"></div></div>
+          <div style="font-size:9px;color:var(--tx3)">
+            <span style="color:var(--gn2)">+${fmt(Math.round(v.recette))}</span> /
+            <span style="color:var(--rd2)">-${fmt(Math.round(v.depense))}</span>
+          </div>
+        </div>`;
+      });
+    }
+    catCard.innerHTML = catHTML;
+    g2.appendChild(catCard);
+
+    // Monthly evolution (last 6 months)
+    const evoCard = document.createElement('div');
+    evoCard.className = 'card';
+    let evoHTML = '<div class="ch"><div class="ct">📈 Évolution 6 mois</div></div>';
+    const months = [];
+    for (let i=5; i>=0; i--) {
+      const d = new Date(); d.setMonth(d.getMonth()-i);
+      months.push(d.toISOString().slice(0,7));
+    }
+    evoHTML += '<div style="display:flex;align-items:flex-end;gap:6px;height:80px;margin:10px 0">';
+    const maxVal = Math.max(...months.map(mo => {
+      const moFacs = allFacs.filter(f=>f.date_facture?.startsWith(mo));
+      return moFacs.reduce((a,b)=>a+(+b.montant_total||0),0);
+    }), 1);
+    months.forEach(mo => {
+      const moFacs = allFacs.filter(f=>f.date_facture?.startsWith(mo));
+      const rec = moFacs.filter(f=>f.sens==='recette').reduce((a,b)=>a+(+b.montant_total||0),0);
+      const dep = moFacs.filter(f=>f.sens!=='recette').reduce((a,b)=>a+(+b.montant_total||0),0);
+      const hRec = Math.round(rec/maxVal*70);
+      const hDep = Math.round(dep/maxVal*70);
+      evoHTML += `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px">
+        <div style="display:flex;gap:2px;align-items:flex-end;height:70px">
+          <div style="width:8px;height:${hRec}px;background:var(--gn2);border-radius:2px 2px 0 0" title="+${fmt(Math.round(rec))} FCFA"></div>
+          <div style="width:8px;height:${hDep}px;background:var(--rd2);border-radius:2px 2px 0 0" title="-${fmt(Math.round(dep))} FCFA"></div>
+        </div>
+        <div style="font-size:8px;color:var(--tx3)">${mo.slice(5)}</div>
+      </div>`;
+    });
+    evoHTML += '</div><div style="font-size:9px;color:var(--tx3);display:flex;gap:12px"><span style="color:var(--gn2)">■ Recettes</span><span style="color:var(--rd2)">■ Dépenses</span></div>';
+    evoCard.innerHTML = evoHTML;
+    g2.appendChild(evoCard);
+    pg.appendChild(g2);
+
+    // Factures table
+    const tCard = document.createElement('div');
+    tCard.className = 'card';
+    let tHTML = '<div class="ch"><div class="ct">🧾 Factures ' + label + ' — ' + m + '</div><button class="btn bg2" onclick="goToFactures()" style="font-size:10px">Voir tout</button></div>';
+    tHTML += '<div class="tw"><table><thead><tr><th>N° Facture</th><th>Type</th><th>Sens</th><th>Nom</th><th>Date</th><th>Montant</th><th>Statut</th></tr></thead><tbody>';
+    if (mFacs.length === 0) {
+      tHTML += '<tr><td colspan="7" style="text-align:center;color:var(--tx3)">Aucune facture ce mois</td></tr>';
+    } else {
+      mFacs.forEach(f => {
+        tHTML += `<tr>
+          <td class="mono"><strong style="color:var(--must2)">${f.numero_facture||'—'}</strong></td>
+          <td style="font-size:10px">${f.type_facture||'—'}</td>
+          <td><span class="b ${f.sens==='recette'?'bg-g':'bg-r'}" style="font-size:9px">${f.sens==='recette'?'💰':'💸'}</span></td>
+          <td>${f.nom||'—'}</td>
+          <td class="mono">${f.date_facture||'—'}</td>
+          <td><strong>${fmt(f.montant_total||0)} FCFA</strong></td>
+          <td><span class="b ${f.statut==='Payée'?'bg-g':f.statut==='En retard'?'bg-r':'bg-o'}">${f.statut||'—'}</span></td>
+        </tr>`;
+      });
+    }
+    tHTML += '</tbody></table></div>';
+    tCard.innerHTML = tHTML;
+    pg.appendChild(tCard);
+  };
+}
+
+async function renderFinBeton() { await renderFinFiliere('beton', 'Sarpa Béton', '🏗')(); }
+async function renderFinLogistics() { await renderFinFiliere('logistics', 'Sarpa Logistics', '🚛')(); }
+async function renderFinImmo() { await renderFinFiliere('immo', 'Sarpa Immobilier', '🏠')(); }
+
+async function exportFinFilierePDF(filiere, label, icon) {
+  const [factures] = await Promise.all([db('factures')]);
+  const cfg = getConfig();
+  const m = new Date().toISOString().slice(0,7);
+  const deptMap = {
+    beton: ['Sarpa Béton','Centrale à Béton','Béton','beton'],
+    logistics: ['Sarpa Logistics','Flotte Camions','Logistics','logistics'],
+    immo: ['Sarpa Immobilier','Agence Immobilière','Immobilier','immo'],
+  };
+  const depts = deptMap[filiere] || [];
+  const facs = (factures||[]).filter(f => depts.some(d => (f.departement||'').toLowerCase().includes(d.toLowerCase())));
+  const mFacs = facs.filter(f=>f.date_facture?.startsWith(m));
+  const rec = mFacs.filter(f=>f.sens==='recette').reduce((a,b)=>a+(+b.montant_total||0),0);
+  const dep = mFacs.filter(f=>f.sens!=='recette').reduce((a,b)=>a+(+b.montant_total||0),0);
+  const win = window.open('','_blank'); if(!win){toast('Autorisez les popups');return;}
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Finance ${label}</title>
+  <style>body{font-family:Arial;margin:40px;font-size:11px;color:#1a1a2e}h1{color:#1E1035;border-bottom:3px solid #D4A017;padding-bottom:8px}h2{color:#3D1A6E;margin-top:16px}
+  table{width:100%;border-collapse:collapse}th{background:#1E1035;color:#fff;padding:6px;font-size:10px;text-align:left}td{padding:5px;border-bottom:1px solid #eee}
+  .kpi{display:inline-block;background:#f3eef9;padding:10px 16px;border-radius:8px;margin:4px;text-align:center}
+  .kv{font-size:18px;font-weight:800;color:#1E1035}.kl{font-size:9px;color:#666}
+  .g{color:#2e7d32;font-weight:700}.r{color:#c62828;font-weight:700}@media print{button{display:none}}</style></head>
+  <body>
+  <div style="display:flex;justify-content:space-between;margin-bottom:16px">
+    <div><strong style="font-size:20px;color:#1E1035">${cfg.companyName||'Sarpa Groupe'}</strong><br><small>${icon} Finance ${label}</small></div>
+    <div style="text-align:right"><strong>${m}</strong><br><small>${new Date().toLocaleDateString('fr-FR')} — ${userName}</small></div>
+  </div>
+  <button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button>
+  <button onclick="window.print()" style="background:#1E1035;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-bottom:16px">🖨️ Imprimer</button>
+  <h1>${icon} État Financier — ${label} — ${m}</h1>
+  <div>
+    <div class="kpi"><div class="kv g">+${fmt(rec)} FCFA</div><div class="kl">Recettes</div></div>
+    <div class="kpi"><div class="kv r">-${fmt(dep)} FCFA</div><div class="kl">Dépenses</div></div>
+    <div class="kpi"><div class="kv ${rec-dep>=0?'g':'r'}">${fmt(rec-dep)} FCFA</div><div class="kl">Solde net</div></div>
+    <div class="kpi"><div class="kv">${mFacs.length}</div><div class="kl">Factures</div></div>
+  </div>
+  <h2>🧾 Détail des factures — ${m}</h2>
+  <table><thead><tr><th>N° Facture</th><th>Type</th><th>Sens</th><th>Nom</th><th>Date</th><th>Montant</th><th>Mode</th><th>Statut</th></tr></thead>
+  <tbody>${mFacs.map(f=>`<tr>
+    <td><strong>${f.numero_facture||'—'}</strong></td><td>${f.type_facture||'—'}</td>
+    <td class="${f.sens==='recette'?'g':'r'}">${f.sens==='recette'?'Recette':'Dépense'}</td>
+    <td>${f.nom||'—'}</td><td>${f.date_facture||'—'}</td>
+    <td class="${f.sens==='recette'?'g':'r'}">${f.sens==='recette'?'+':'-'}${fmt(f.montant_total||0)} FCFA</td>
+    <td>${f.mode_paiement||'—'}</td><td>${f.statut||'—'}</td>
+  </tr>`).join('')}</tbody></table>
+  </body></html>`);
+  win.document.close();
+}
+
+// ══════════════════════════════════════════════════════
+// COMPTES BANCAIRES
+// ══════════════════════════════════════════════════════
+async function renderBanques() {
+  const banques = await db('banques');
+  const canE = canEdit('banques');
+  document.getElementById('banques-content').innerHTML = `
+    <div class="sh">
+      <div><div class="stl">Comptes Bancaires</div><div class="sst">Gérer vos comptes par filière</div></div>
+      ${canE?'<button class="btn bm" onclick="openBanqueModal()" style="font-size:11px">+ Compte</button>':''}
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">
+      ${(banques||[]).length===0
+        ? '<div class="al al-m">Aucun compte bancaire. Créez votre premier compte.</div>'
+        : (banques||[]).map(b=>`
+          <div class="fcard">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start">
+              <div>
+                <div class="fcard-title">🏦 ${b.nom_banque}</div>
+                <div class="fcard-sub">${b.nom_compte||'—'}</div>
+              </div>
+              <span class="b bg-p" style="font-size:10px">${b.filiere||'—'}</span>
+            </div>
+            <div style="margin:8px 0;font-size:11px;color:var(--tx3)">
+              N° compte: <strong class="mono">${b.numero_compte||'—'}</strong>
+            </div>
+            <div style="font-size:11px;color:var(--tx3)">RIB: ${b.rib||'—'}</div>
+            <div style="font-size:11px;color:var(--tx3)">Agence: ${b.agence||'—'}</div>
+            ${b.solde_initial?`<div style="margin-top:8px;font-size:12px;color:var(--must2);font-weight:700">Solde initial: ${fmt(b.solde_initial)} FCFA</div>`:''}
+            ${canE?`<div style="margin-top:10px;display:flex;gap:6px">
+              <button onclick="editRow('banques','${b.id}','banques')" style="background:none;border:1px solid var(--bd2);border-radius:4px;padding:3px 8px;cursor:pointer;font-size:10px">✏️</button>
+              <button onclick="goReleves()" style="background:var(--sf2);border:1px solid var(--bd2);border-radius:4px;padding:3px 8px;cursor:pointer;font-size:10px">📋 Relevés</button>
+            </div>`:''}
+          </div>`).join('')}
+    </div>`;
+}
+
+async function savBanque() {
+  const data = {
+    nom_banque: document.getElementById('bq-nom').value,
+    nom_compte: document.getElementById('bq-compte').value,
+    filiere: document.getElementById('bq-filiere').value,
+    numero_compte: document.getElementById('bq-numero').value,
+    rib: document.getElementById('bq-rib').value,
+    agence: document.getElementById('bq-agence').value,
+    solde_initial: +document.getElementById('bq-solde').value||0,
+    devise: document.getElementById('bq-devise').value||'FCFA',
+    notes: document.getElementById('bq-notes').value,
+  };
+  if(!data.nom_banque){toast('Nom banque requis');return;}
+  await dbSave('banques', data, 'm-banque', 'banques', 'Compte bancaire créé ✓');
+}
+
+// ══════════════════════════════════════════════════════
+// RELEVÉS THÉORIQUES
+// ══════════════════════════════════════════════════════
+async function renderReleves() {
+  const [releves, banques] = await Promise.all([db('releves'), db('banques')]);
+  const canE = canEdit('releves');
+  const m = new Date().toISOString().slice(0,7);
+  const mR = (releves||[]).filter(r=>r.date?.startsWith(m));
+  const totalEntrees = mR.filter(r=>r.type_mouvement==='Entrée').reduce((a,b)=>a+(+b.montant||0),0);
+  const totalSorties = mR.filter(r=>r.type_mouvement==='Sortie').reduce((a,b)=>a+(+b.montant||0),0);
+
+  document.getElementById('releves-content').innerHTML = `
+    <div class="sh">
+      <div><div class="stl">Relevés Théoriques</div><div class="sst">Enregistrement des mouvements bancaires</div></div>
+      <div style="display:flex;gap:6px">
+        <button class="btn bg2" onclick="exportReleves()" style="font-size:11px">📄 PDF</button>
+        ${canE?'<button class="btn bm" onclick="openRelevModal()" style="font-size:11px">+ Mouvement</button>':''}
+      </div>
+    </div>
+    <div class="kg" style="grid-template-columns:repeat(4,1fr);margin-bottom:14px">
+      <div class="kc kc-g"><div class="kl">Entrées ce mois</div><div class="kv">${fmt(Math.round(totalEntrees/1000))}k</div><div class="ks">FCFA</div></div>
+      <div class="kc kc-r"><div class="kl">Sorties ce mois</div><div class="kv">${fmt(Math.round(totalSorties/1000))}k</div><div class="ks">FCFA</div></div>
+      <div class="kc ${totalEntrees-totalSorties>=0?'kc-g':'kc-r'}"><div class="kl">Solde net</div><div class="kv">${fmt(Math.round((totalEntrees-totalSorties)/1000))}k</div><div class="ks">FCFA</div></div>
+      <div class="kc kc-b"><div class="kl">Mouvements</div><div class="kv">${mR.length}</div><div class="ks">ce mois</div></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;flex-wrap:wrap">
+      <input type="month" value="${m}" id="relev-filter-m" onchange="filterReleves()" style="background:var(--sf2);border:1px solid var(--bd2);border-radius:6px;padding:4px 8px;color:var(--tx);font-size:11px">
+      <select id="relev-filter-bq" onchange="filterReleves()" style="background:var(--sf2);border:1px solid var(--bd2);border-radius:6px;padding:4px 8px;color:var(--tx);font-size:11px">
+        <option value="">Toutes les banques</option>
+        ${(banques||[]).map(b=>`<option value="${b.id}">${b.nom_banque} — ${b.nom_compte}</option>`).join('')}
+      </select>
+      <select id="relev-filter-type" onchange="filterReleves()" style="background:var(--sf2);border:1px solid var(--bd2);border-radius:6px;padding:4px 8px;color:var(--tx);font-size:11px">
+        <option value="">Tous types</option>
+        <option value="Entrée">💰 Entrées</option>
+        <option value="Sortie">💸 Sorties</option>
+      </select>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ct">📋 Mouvements bancaires</div></div>
+      <div class="tw"><table><thead><tr>
+        <th>Date</th><th>Banque</th><th>Type</th><th>Libellé</th><th>Référence</th>
+        <th>Montant</th><th>Rapproché</th><th>Notes</th>
+        ${canE?'<th></th>':''}
+      </tr></thead>
+      <tbody id="t-releves">${renderRelevesRows(releves||[], m, null, null)}</tbody>
+      </table></div>
+    </div>`;
+}
+
+function renderRelevesRows(releves, filterM, filterBq, filterType) {
+  let rows = releves;
+  if(filterM) rows = rows.filter(r=>r.date?.startsWith(filterM));
+  if(filterBq) rows = rows.filter(r=>r.banque_id===filterBq);
+  if(filterType) rows = rows.filter(r=>r.type_mouvement===filterType);
+  if(rows.length===0) return '<tr><td colspan="9" style="text-align:center;color:var(--tx3)">Aucun mouvement</td></tr>';
+  return rows.map(r=>`<tr>
+    <td class="mono">${r.date||'—'}</td>
+    <td style="font-size:10px">${r.nom_banque||'—'}</td>
+    <td><span class="b ${r.type_mouvement==='Entrée'?'bg-g':'bg-r'}" style="font-size:10px">${r.type_mouvement==='Entrée'?'💰 Entrée':'💸 Sortie'}</span></td>
+    <td><strong>${r.libelle||'—'}</strong></td>
+    <td class="mono" style="font-size:10px">${r.reference||'—'}</td>
+    <td><strong style="color:${r.type_mouvement==='Entrée'?'var(--gn2)':'var(--rd2)'}">${r.type_mouvement==='Entrée'?'+':'-'}${fmt(r.montant||0)} FCFA</strong></td>
+    <td><span class="b ${r.rapproche?'bg-g':'bg-o'}" style="font-size:10px">${r.rapproche?'✅ Oui':'⏳ Non'}</span></td>
+    <td style="font-size:10px;color:var(--tx3)">${r.notes||'—'}</td>
+    <td><button onclick="editRow('releves','${r.id}','releves')" style="background:none;border:none;cursor:pointer;font-size:12px">✏️</button></td>
+  </tr>`).join('');
+}
+
+async function filterReleves() {
+  const releves = await db('releves');
+  const m = document.getElementById('relev-filter-m')?.value;
+  const bq = document.getElementById('relev-filter-bq')?.value;
+  const type = document.getElementById('relev-filter-type')?.value;
+  const tbody = document.getElementById('t-releves');
+  if(tbody) tbody.innerHTML = renderRelevesRows(releves||[], m, bq, type);
+}
+
+function openRelevModal() {
+  document.getElementById('relev-date').value = new Date().toISOString().slice(0,10);
+  openM('m-releve');
+}
+
+async function savReleve() {
+  const banqueEl = document.getElementById('relev-banque');
+  const banqueOpt = banqueEl?.options[banqueEl.selectedIndex];
+  const data = {
+    date: document.getElementById('relev-date').value,
+    banque_id: banqueEl?.value||'',
+    nom_banque: banqueOpt?.text||'',
+    type_mouvement: document.getElementById('relev-type').value,
+    libelle: document.getElementById('relev-libelle').value,
+    reference: document.getElementById('relev-ref').value,
+    montant: +document.getElementById('relev-montant').value||0,
+    rapproche: 0,
+    notes: document.getElementById('relev-notes').value,
+  };
+  if(!data.libelle||!data.montant){toast('Libellé et montant requis');return;}
+  await dbSave('releves', data, 'm-releve', 'releves', 'Mouvement enregistré ✓');
+}
+
+async function exportReleves() {
+  const [releves, banques] = await Promise.all([db('releves'), db('banques')]);
+  const cfg = getConfig();
+  const m = new Date().toISOString().slice(0,7);
+  const mR = (releves||[]).filter(r=>r.date?.startsWith(m));
+  const ent = mR.filter(r=>r.type_mouvement==='Entrée').reduce((a,b)=>a+(+b.montant||0),0);
+  const sor = mR.filter(r=>r.type_mouvement==='Sortie').reduce((a,b)=>a+(+b.montant||0),0);
+  const win=window.open('','_blank');if(!win)return;
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Relevé ${m}</title>
+  <style>body{font-family:Arial;margin:40px;font-size:11px;color:#1a1a2e}h1{color:#1E1035;border-bottom:3px solid #D4A017;padding-bottom:8px}
+  table{width:100%;border-collapse:collapse}th{background:#1E1035;color:#fff;padding:6px;font-size:10px;text-align:left}
+  td{padding:5px;border-bottom:1px solid #eee}tr:nth-child(even){background:#f9f9f9}
+  .g{color:#2e7d32;font-weight:700}.r{color:#c62828;font-weight:700}.kpi{display:inline-block;background:#f3eef9;padding:8px 14px;border-radius:6px;margin:4px;text-align:center}
+  .kv{font-size:16px;font-weight:800;color:#1E1035}.kl{font-size:9px;color:#666}@media print{button{display:none}}</style></head>
+  <body>
+  <div style="display:flex;justify-content:space-between;margin-bottom:16px">
+    <strong style="font-size:18px;color:#1E1035">${cfg.companyName||'Sarpa Groupe'} — Relevé Théorique</strong>
+    <span>${m} — Par : ${userName}</span>
+  </div>
+  <button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button>
+  <button onclick="window.print()" style="background:#1E1035;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-bottom:16px">🖨️ Imprimer</button>
+  <h1>📋 Relevé Théorique — ${m}</h1>
+  <div>
+    <div class="kpi"><div class="kv g">+${fmt(ent)} FCFA</div><div class="kl">Entrées</div></div>
+    <div class="kpi"><div class="kv r">-${fmt(sor)} FCFA</div><div class="kl">Sorties</div></div>
+    <div class="kpi"><div class="kv ${ent-sor>=0?'g':'r'}">${fmt(ent-sor)} FCFA</div><div class="kl">Solde net</div></div>
+  </div>
+  <table><thead><tr><th>Date</th><th>Banque</th><th>Type</th><th>Libellé</th><th>Référence</th><th>Montant</th><th>Rapproché</th></tr></thead>
+  <tbody>${mR.map(r=>`<tr>
+    <td>${r.date}</td><td>${r.nom_banque||'—'}</td>
+    <td class="${r.type_mouvement==='Entrée'?'g':'r'}">${r.type_mouvement}</td>
+    <td><strong>${r.libelle}</strong></td><td>${r.reference||'—'}</td>
+    <td class="${r.type_mouvement==='Entrée'?'g':'r'}">${r.type_mouvement==='Entrée'?'+':'-'}${fmt(r.montant)} FCFA</td>
+    <td>${r.rapproche?'✅ Oui':'⏳ Non'}</td>
+  </tr>`).join('')}</tbody></table>
+  </body></html>`);
+  win.document.close();
+}
+
+// ══════════════════════════════════════════════════════
+// RAPPROCHEMENT BANCAIRE
+// ══════════════════════════════════════════════════════
+async function renderRapprochement() {
+  const [releves, banques] = await Promise.all([db('releves'), db('banques')]);
+  const canE = canEdit('rapprochement');
+  const m = new Date().toISOString().slice(0,7);
+  const mR = (releves||[]).filter(r=>r.date?.startsWith(m));
+  const nonRapr = mR.filter(r=>!r.rapproche||r.rapproche==='0'||r.rapproche===0);
+  const rapr = mR.filter(r=>r.rapproche&&r.rapproche!=='0');
+  const ent_rapr = rapr.filter(r=>r.type_mouvement==='Entrée').reduce((a,b)=>a+(+b.montant||0),0);
+  const sor_rapr = rapr.filter(r=>r.type_mouvement==='Sortie').reduce((a,b)=>a+(+b.montant||0),0);
+
+  document.getElementById('rapprochement-content').innerHTML = `
+    <div class="sh">
+      <div><div class="stl">Rapprochement Bancaire</div><div class="sst">Comparer relevé app vs banque réelle</div></div>
+      <button class="btn bg2" onclick="exportRapprochement()" style="font-size:11px">📄 PDF</button>
+    </div>
+    <div class="kg" style="grid-template-columns:repeat(4,1fr);margin-bottom:14px">
+      <div class="kc kc-g"><div class="kl">Rapprochés</div><div class="kv">${rapr.length}</div><div class="ks">mouvements</div></div>
+      <div class="kc ${nonRapr.length>0?'kc-r':'kc-b'}"><div class="kl">Non rapprochés</div><div class="kv">${nonRapr.length}</div><div class="ks">à vérifier</div></div>
+      <div class="kc kc-g"><div class="kl">Entrées confirmées</div><div class="kv">${fmt(Math.round(ent_rapr/1000))}k</div><div class="ks">FCFA</div></div>
+      <div class="kc kc-r"><div class="kl">Sorties confirmées</div><div class="kv">${fmt(Math.round(sor_rapr/1000))}k</div><div class="ks">FCFA</div></div>
+    </div>
+    ${nonRapr.length>0?`<div class="al al-m">⚠️ ${nonRapr.length} mouvement(s) à rapprocher — vérifiez avec votre relevé bancaire réel</div>`:'<div class="al al-g">✅ Tous les mouvements sont rapprochés !</div>'}
+    <div class="card">
+      <div class="ch"><div class="ct">🔄 Mouvements à rapprocher — ${m}</div></div>
+      <div class="tw"><table><thead><tr>
+        <th>Date</th><th>Banque</th><th>Libellé</th><th>Référence</th><th>Montant</th><th>Statut</th>
+        ${canE?'<th>Action</th>':''}
+      </tr></thead>
+      <tbody id="t-rapprochement">${renderRapprochementRows(mR, canE)}</tbody></table></div>
+    </div>`;
+}
+
+async function toggleRapprochement(id) {
+  const releves = await db('releves');
+  const r = (releves||[]).find(x=>String(x.id)===String(id));
+  if(!r) return;
+  const newVal = (!r.rapproche||r.rapproche==='0'||r.rapproche===0) ? 1 : 0;
+  await db('releves','PATCH',{rapproche:newVal, rapproche_par: userName, rapproche_at: new Date().toISOString()},{id});
+  logAction('update','releves',{id, rapproche:newVal, par:userName});
+  toast(newVal ? '✅ Rapproché' : '↩ Annulé');
+  render('rapprochement');
+}
+
+async function exportRapprochement() {
+  const releves = await db('releves');
+  const cfg = getConfig();
+  const m = new Date().toISOString().slice(0,7);
+  const mR = (releves||[]).filter(r=>r.date?.startsWith(m));
+  const rapr = mR.filter(r=>r.rapproche&&r.rapproche!=='0');
+  const nonRapr = mR.filter(r=>!r.rapproche||r.rapproche==='0');
+  const win=window.open('','_blank');if(!win)return;
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Rapprochement ${m}</title>
+  <style>body{font-family:Arial;margin:40px;font-size:11px;color:#1a1a2e}h1{color:#1E1035;border-bottom:3px solid #D4A017;padding-bottom:8px}h2{color:#3D1A6E;margin-top:16px}
+  table{width:100%;border-collapse:collapse}th{background:#1E1035;color:#fff;padding:6px;font-size:10px;text-align:left}
+  td{padding:5px;border-bottom:1px solid #eee}tr:nth-child(even){background:#f9f9f9}
+  .g{color:#2e7d32;font-weight:700}.r{color:#c62828;font-weight:700}.kpi{display:inline-block;background:#f3eef9;padding:8px 14px;border-radius:6px;margin:4px;text-align:center}
+  .kv{font-size:16px;font-weight:800}.kl{font-size:9px;color:#666}@media print{button{display:none}}</style></head>
+  <body>
+  <div style="display:flex;justify-content:space-between;margin-bottom:16px">
+    <strong style="font-size:18px;color:#1E1035">${cfg.companyName||'Sarpa Groupe'}</strong>
+    <span>Rapprochement ${m} — ${userName}</span>
+  </div>
+  <button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button>
+  <button onclick="window.print()" style="background:#1E1035;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-bottom:16px">🖨️ Imprimer</button>
+  <h1>🔄 Rapprochement Bancaire — ${m}</h1>
+  <div>
+    <div class="kpi"><div class="kv g">${rapr.length}</div><div class="kl">Rapprochés</div></div>
+    <div class="kpi"><div class="kv r">${nonRapr.length}</div><div class="kl">Non rapprochés</div></div>
+  </div>
+  <h2>✅ Mouvements rapprochés</h2>
+  <table><thead><tr><th>Date</th><th>Banque</th><th>Libellé</th><th>Référence</th><th>Montant</th><th>Rapproché par</th></tr></thead>
+  <tbody>${rapr.map(r=>`<tr><td>${r.date}</td><td>${r.nom_banque||'—'}</td><td>${r.libelle}</td><td>${r.reference||'—'}</td>
+    <td class="${r.type_mouvement==='Entrée'?'g':'r'}">${r.type_mouvement==='Entrée'?'+':'-'}${fmt(r.montant)} FCFA</td>
+    <td>${r.rapproche_par||'—'}</td></tr>`).join('')}</tbody></table>
+  ${nonRapr.length>0?`<h2>⏳ Mouvements non rapprochés</h2>
+  <table><thead><tr><th>Date</th><th>Banque</th><th>Libellé</th><th>Référence</th><th>Montant</th></tr></thead>
+  <tbody>${nonRapr.map(r=>`<tr><td>${r.date}</td><td>${r.nom_banque||'—'}</td><td>${r.libelle}</td><td>${r.reference||'—'}</td>
+    <td class="${r.type_mouvement==='Entrée'?'g':'r'}">${r.type_mouvement==='Entrée'?'+':'-'}${fmt(r.montant)} FCFA</td></tr>`).join('')}</tbody></table>`:''}
+  </body></html>`);
+  win.document.close();
+}
+
+// ══════════════════════════════════════════════════════
+// CHÈQUES
+// ══════════════════════════════════════════════════════
+async function renderCheques() {
+  const [cheques, banques] = await Promise.all([db('cheques'), db('banques')]);
+  const canE = canEdit('cheques');
+  const today = new Date().toISOString().slice(0,10);
+  const emis = (cheques||[]).filter(c=>c.type_cheque==='Émis');
+  const recus = (cheques||[]).filter(c=>c.type_cheque==='Reçu');
+  const enAttente = (cheques||[]).filter(c=>c.statut==='En attente');
+  const totalEmis = emis.reduce((a,b)=>a+(+b.montant||0),0);
+  const totalRecus = recus.reduce((a,b)=>a+(+b.montant||0),0);
+
+  document.getElementById('cheques-content').innerHTML = `
+    <div class="sh">
+      <div><div class="stl">Chèques</div><div class="sst">Émis & Reçus — suivi complet</div></div>
+      <div style="display:flex;gap:6px">
+        <button class="btn bg2" onclick="exportCheques()" style="font-size:11px">📄 PDF</button>
+        ${canE?`<button class="btn bm" onclick="openChequeEmis()" style="font-size:11px">+ Chèque émis</button>
+                <button class="btn bm" onclick="openChequeRecu()" style="font-size:11px">+ Chèque reçu</button>`:''}
+      </div>
+    </div>
+    <div class="kg" style="grid-template-columns:repeat(4,1fr);margin-bottom:14px">
+      <div class="kc kc-r"><div class="kl">Émis (sortie)</div><div class="kv">${fmt(Math.round(totalEmis/1000))}k</div><div class="ks">FCFA — ${emis.length} chèques</div></div>
+      <div class="kc kc-g"><div class="kl">Reçus (entrée)</div><div class="kv">${fmt(Math.round(totalRecus/1000))}k</div><div class="ks">FCFA — ${recus.length} chèques</div></div>
+      <div class="kc kc-m"><div class="kl">En attente</div><div class="kv">${enAttente.length}</div><div class="ks">à encaisser/payer</div></div>
+      <div class="kc ${recus.length>0&&totalRecus>totalEmis?'kc-g':'kc-b'}"><div class="kl">Solde net</div><div class="kv">${fmt(Math.round((totalRecus-totalEmis)/1000))}k</div><div class="ks">FCFA</div></div>
+    </div>
+
+    <!-- TABS -->
+    <div style="display:flex;gap:6px;margin-bottom:14px">
+      <button onclick="showChequeTab('tous')" id="chtab-tous" class="btn bm" style="font-size:11px">📝 Tous (${(cheques||[]).length})</button>
+      <button onclick="showChequeTab('emis')" id="chtab-emis" class="btn bg2" style="font-size:11px">💸 Émis (${emis.length})</button>
+      <button onclick="showChequeTab('recus')" id="chtab-recus" class="btn bg2" style="font-size:11px">💰 Reçus (${recus.length})</button>
+      <button onclick="showChequeTab('attente')" id="chtab-attente" class="btn bg2" style="font-size:11px">⏳ En attente (${enAttente.length})</button>
+    </div>
+
+    <div class="card" id="ch-table-card">
+      <div class="ch"><div class="ct" id="ch-table-title">📝 Tous les chèques</div></div>
+      <div class="tw"><table><thead><tr>
+        <th>N° Chèque</th><th>Type</th><th>Banque</th><th>Bénéficiaire/Émetteur</th>
+        <th>Date émission</th><th>Date échéance</th><th>Montant</th><th>Statut</th>
+        ${canE?'<th></th>':''}
+      </tr></thead>
+      <tbody id="t-cheques">${renderChequesRows(cheques||[], null, canE)}</tbody>
+      </table></div>
+    </div>`;
+}
+
+function renderChequesRows(cheques, filter, canE) {
+  let rows = cheques;
+  if(filter==='emis') rows = rows.filter(c=>c.type_cheque==='Émis');
+  else if(filter==='recus') rows = rows.filter(c=>c.type_cheque==='Reçu');
+  else if(filter==='attente') rows = rows.filter(c=>c.statut==='En attente');
+  if(rows.length===0) return '<tr><td colspan="9" style="text-align:center;color:var(--tx3)">Aucun chèque</td></tr>';
+  const today = new Date().toISOString().slice(0,10);
+  const stC = {'En attente':'bg-o','Encaissé':'bg-g','Payé':'bg-g','Rejeté':'bg-r','Annulé':'bg-x'};
+  return rows.map(c => {
+    const isEmis = c.type_cheque === 'Émis';
+    const overdue = c.date_echeance && c.date_echeance < today && c.statut === 'En attente';
+    let actionCell = '';
+    if(canE) {
+      const editBtn = '<button data-id="'+c.id+'" data-table="cheques" class="edit-row-btn" style="background:none;border:none;cursor:pointer;font-size:12px">✏️</button>';
+      let statusBtn = '';
+      if(c.statut === 'En attente') {
+        const newSt = isEmis ? 'Payé' : 'Encaissé';
+        statusBtn = '<button data-id="'+c.id+'" data-st="'+newSt+'" class="update-cheq-btn" class="btn bm" style="font-size:9px;padding:2px 6px;cursor:pointer;border:none;background:var(--must);color:var(--bg);border-radius:4px">'+(isEmis?'✓ Payé':'✓ Encaissé')+'</button>';
+      }
+      actionCell = '<td style="display:flex;gap:4px">'+editBtn+statusBtn+'</td>';
+    }
+    return '<tr>'
+      +'<td class="mono"><strong style="color:var(--must2)">'+(c.numero_cheque||'—')+'</strong></td>'
+      +'<td><span class="b '+(isEmis?'bg-r':'bg-g')+'" style="font-size:10px">'+(isEmis?'💸 Émis':'💰 Reçu')+'</span></td>'
+      +'<td style="font-size:10px">'+(c.nom_banque||'—')+'</td>'
+      +'<td><strong>'+(c.beneficiaire||'—')+'</strong></td>'
+      +'<td class="mono">'+(c.date_emission||'—')+'</td>'
+      +'<td class="mono" style="color:'+(overdue?'var(--rd2)':'inherit')+'">'+(c.date_echeance||'—')+'</td>'
+      +'<td><strong style="color:'+(isEmis?'var(--rd2)':'var(--gn2)')+'">'+(isEmis?'-':'+')+fmt(c.montant||0)+' FCFA</strong></td>'
+      +'<td><span class="b '+(stC[c.statut]||'bg-x')+'">'+(c.statut||'—')+'</span></td>'
+      +actionCell
+      +'</tr>';
+  }).join('');
+}
+
+let _chequeTab = 'tous';
+function showChequeTab(tab) {
+  _chequeTab = tab;
+  ['tous','emis','recus','attente'].forEach(t=>{
+    const b = document.getElementById('chtab-'+t);
+    if(b) b.className = t===tab?'btn bm':'btn bg2', b.style.fontSize='11px';
+  });
+  db('cheques').then(ch=>{
+    const canE = canEdit('cheques');
+    const tbody = document.getElementById('t-cheques');
+    const title = document.getElementById('ch-table-title');
+    const labels = {tous:'📝 Tous les chèques',emis:'💸 Chèques émis',recus:'💰 Chèques reçus',attente:'⏳ Chèques en attente'};
+    if(tbody) {
+      tbody.innerHTML = renderChequesRows(ch||[], tab==='tous'?null:tab, canE);
+      // Bind buttons
+      setTimeout(()=>{
+        tbody.querySelectorAll('.update-cheq-btn').forEach(b=>b.onclick=()=>updateChequeStatut(b.dataset.id,b.dataset.st));
+        tbody.querySelectorAll('.edit-row-btn').forEach(b=>b.onclick=()=>editRow(b.dataset.table,b.dataset.id,b.dataset.table));
+      },20);
+    }
+    if(title) title.textContent = labels[tab]||'Chèques';
+  });
+}
+
+async function updateChequeStatut(id, statut) {
+  await db('cheques','PATCH',{statut, updated_at: new Date().toISOString()},{id});
+  logAction('update','cheques',{id,statut,par:userName});
+  toast('Statut mis à jour: '+statut);
+  render('cheques');
+}
+
+function openChequeModal(type) {
+  document.getElementById('chq-type').value = type;
+  document.getElementById('chq-date').value = new Date().toISOString().slice(0,10);
+  document.getElementById('chq-type-label').textContent = type==='Émis' ? '💸 Chèque Émis (vous payez)' : '💰 Chèque Reçu (vous encaissez)';
+  openM('m-cheque');
+}
+
+async function savCheque() {
+  const banqueEl = document.getElementById('chq-banque');
+  const banqueOpt = banqueEl?.options[banqueEl.selectedIndex];
+  const data = {
+    numero_cheque: document.getElementById('chq-numero').value,
+    type_cheque: document.getElementById('chq-type').value,
+    banque_id: banqueEl?.value||'',
+    nom_banque: banqueOpt?.text||'',
+    beneficiaire: document.getElementById('chq-beneficiaire').value,
+    date_emission: document.getElementById('chq-date').value,
+    date_echeance: document.getElementById('chq-echeance').value,
+    montant: +document.getElementById('chq-montant').value||0,
+    statut: document.getElementById('chq-statut').value,
+    notes: document.getElementById('chq-notes').value,
+  };
+  if(!data.beneficiaire||!data.montant){toast('Bénéficiaire et montant requis');return;}
+  await dbSave('cheques', data, 'm-cheque', 'cheques', 'Chèque enregistré ✓');
+}
+
+async function exportCheques() {
+  const cheques = await db('cheques');
+  const cfg = getConfig();
+  const emis = (cheques||[]).filter(c=>c.type_cheque==='Émis');
+  const recus = (cheques||[]).filter(c=>c.type_cheque==='Reçu');
+  const totE = emis.reduce((a,b)=>a+(+b.montant||0),0);
+  const totR = recus.reduce((a,b)=>a+(+b.montant||0),0);
+  const win=window.open('','_blank');if(!win)return;
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Chèques</title>
+  <style>body{font-family:Arial;margin:40px;font-size:11px;color:#1a1a2e}h1{color:#1E1035;border-bottom:3px solid #D4A017;padding-bottom:8px}h2{color:#3D1A6E;margin-top:16px}
+  table{width:100%;border-collapse:collapse}th{background:#1E1035;color:#fff;padding:6px;font-size:10px;text-align:left}
+  td{padding:5px;border-bottom:1px solid #eee}.g{color:#2e7d32;font-weight:700}.r{color:#c62828;font-weight:700}
+  .kpi{display:inline-block;background:#f3eef9;padding:8px 14px;border-radius:6px;margin:4px;text-align:center}
+  .kv{font-size:16px;font-weight:800}.kl{font-size:9px;color:#666}@media print{button{display:none}}</style></head>
+  <body>
+  <button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button>
+  <button onclick="window.print()" style="background:#1E1035;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-bottom:16px">🖨️ Imprimer</button>
+  <h1>📝 Rapport Chèques — ${cfg.companyName||'Sarpa Groupe'}</h1>
+  <div>
+    <div class="kpi"><div class="kv r">-${fmt(totE)} FCFA</div><div class="kl">Émis (${emis.length})</div></div>
+    <div class="kpi"><div class="kv g">+${fmt(totR)} FCFA</div><div class="kl">Reçus (${recus.length})</div></div>
+    <div class="kpi"><div class="kv ${totR-totE>=0?'g':'r'}">${fmt(totR-totE)} FCFA</div><div class="kl">Solde net</div></div>
+  </div>
+  <h2>💸 Chèques Émis</h2>
+  <table><thead><tr><th>N°</th><th>Banque</th><th>Bénéficiaire</th><th>Émission</th><th>Échéance</th><th>Montant</th><th>Statut</th></tr></thead>
+  <tbody>${emis.map(c=>`<tr><td class="r"><strong>${c.numero_cheque||'—'}</strong></td><td>${c.nom_banque||'—'}</td><td>${c.beneficiaire||'—'}</td><td>${c.date_emission||'—'}</td><td>${c.date_echeance||'—'}</td><td class="r">-${fmt(c.montant)} FCFA</td><td>${c.statut||'—'}</td></tr>`).join('')}</tbody></table>
+  <h2>💰 Chèques Reçus</h2>
+  <table><thead><tr><th>N°</th><th>Banque</th><th>Émetteur</th><th>Émission</th><th>Échéance</th><th>Montant</th><th>Statut</th></tr></thead>
+  <tbody>${recus.map(c=>`<tr><td class="g"><strong>${c.numero_cheque||'—'}</strong></td><td>${c.nom_banque||'—'}</td><td>${c.beneficiaire||'—'}</td><td>${c.date_emission||'—'}</td><td>${c.date_echeance||'—'}</td><td class="g">+${fmt(c.montant)} FCFA</td><td>${c.statut||'—'}</td></tr>`).join('')}</tbody></table>
+  </body></html>`);
+  win.document.close();
+}
+
+// ══════════════════════════════════════════════════════
+// ÉTATS FINANCIERS
+// ══════════════════════════════════════════════════════
+async function renderEtatsFin() {
+  const [releves, factures, cheques, banques] = await Promise.all([
+    db('releves'), db('factures'), db('cheques'), db('banques')
+  ]);
+  const canE = canEdit('etats_fin');
+  const m = new Date().toISOString().slice(0,7);
+
+  // Per bank summary
+  const bankSummaries = (banques||[]).map(b => {
+    const bReleves = (releves||[]).filter(r=>r.banque_id===String(b.id)&&r.rapproche&&r.rapproche!=='0');
+    const entrees = bReleves.filter(r=>r.type_mouvement==='Entrée').reduce((a,x)=>a+(+x.montant||0),0);
+    const sorties = bReleves.filter(r=>r.type_mouvement==='Sortie').reduce((a,x)=>a+(+x.montant||0),0);
+    const cheqEmis = (cheques||[]).filter(c=>c.banque_id===String(b.id)&&c.type_cheque==='Émis'&&c.statut!=='Annulé').reduce((a,x)=>a+(+x.montant||0),0);
+    const cheqRecus = (cheques||[]).filter(c=>c.banque_id===String(b.id)&&c.type_cheque==='Reçu'&&c.statut!=='Annulé').reduce((a,x)=>a+(+x.montant||0),0);
+    const solde = (+b.solde_initial||0) + entrees - sorties + cheqRecus - cheqEmis;
+    return { ...b, entrees, sorties, cheqEmis, cheqRecus, solde };
+  });
+
+  const totalSolde = bankSummaries.reduce((a,b)=>a+b.solde,0);
+
+  document.getElementById('etats_fin-content').innerHTML = `
+    <div class="sh">
+      <div><div class="stl">États Financiers</div><div class="sst">Soldes consolidés par banque</div></div>
+      <button class="btn bg2" onclick="exportEtatsFin()" style="font-size:11px">📄 PDF</button>
+    </div>
+    <div class="kc ${totalSolde>=0?'kc-g':'kc-r'}" style="margin-bottom:14px;padding:16px">
+      <div class="kl" style="font-size:12px">💰 Trésorerie totale consolidée</div>
+      <div class="kv" style="font-size:28px">${fmt(Math.round(totalSolde))} FCFA</div>
+      <div class="ks">${(banques||[]).length} compte(s) bancaire(s)</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:14px">
+      ${bankSummaries.map(b=>`
+        <div class="fcard">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start">
+            <div>
+              <div class="fcard-title">🏦 ${b.nom_banque}</div>
+              <div class="fcard-sub">${b.nom_compte||'—'} — ${b.filiere||'—'}</div>
+            </div>
+          </div>
+          <div style="margin:10px 0;padding:10px;background:var(--sf2);border-radius:6px">
+            <div style="font-size:11px;display:flex;justify-content:space-between;margin-bottom:4px">
+              <span style="color:var(--tx3)">Solde initial</span><span class="mono">${fmt(b.solde_initial||0)} FCFA</span>
+            </div>
+            <div style="font-size:11px;display:flex;justify-content:space-between;margin-bottom:4px">
+              <span style="color:var(--gn2)">+ Entrées rapprochées</span><span style="color:var(--gn2)">+${fmt(b.entrees)} FCFA</span>
+            </div>
+            <div style="font-size:11px;display:flex;justify-content:space-between;margin-bottom:4px">
+              <span style="color:var(--gn2)">+ Chèques reçus</span><span style="color:var(--gn2)">+${fmt(b.cheqRecus)} FCFA</span>
+            </div>
+            <div style="font-size:11px;display:flex;justify-content:space-between;margin-bottom:4px">
+              <span style="color:var(--rd2)">- Sorties rapprochées</span><span style="color:var(--rd2)">-${fmt(b.sorties)} FCFA</span>
+            </div>
+            <div style="font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--bd2);padding-top:6px;margin-top:4px">
+              <span style="color:var(--rd2)">- Chèques émis</span><span style="color:var(--rd2)">-${fmt(b.cheqEmis)} FCFA</span>
+            </div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:14px;font-weight:800;color:${b.solde>=0?'var(--gn2)':'var(--rd2)'}">
+              ${b.solde>=0?'+':''}${fmt(Math.round(b.solde))} FCFA
+            </div>
+            <div style="font-size:10px;color:var(--tx3)">Solde théorique</div>
+          </div>
+        </div>`).join('')}
+      ${(banques||[]).length===0?'<div class="al al-m">Aucun compte bancaire. Créez-en dans "Comptes bancaires".</div>':''}
+    </div>`;
+}
+
+async function exportEtatsFin() {
+  const [releves, cheques, banques] = await Promise.all([db('releves'), db('cheques'), db('banques')]);
+  const cfg = getConfig();
+  const bankSummaries = (banques||[]).map(b => {
+    const bR = (releves||[]).filter(r=>r.banque_id===String(b.id)&&r.rapproche&&r.rapproche!=='0');
+    const ent = bR.filter(r=>r.type_mouvement==='Entrée').reduce((a,x)=>a+(+x.montant||0),0);
+    const sor = bR.filter(r=>r.type_mouvement==='Sortie').reduce((a,x)=>a+(+x.montant||0),0);
+    const cE = (cheques||[]).filter(c=>c.banque_id===String(b.id)&&c.type_cheque==='Émis'&&c.statut!=='Annulé').reduce((a,x)=>a+(+x.montant||0),0);
+    const cR = (cheques||[]).filter(c=>c.banque_id===String(b.id)&&c.type_cheque==='Reçu'&&c.statut!=='Annulé').reduce((a,x)=>a+(+x.montant||0),0);
+    return {...b, ent, sor, cE, cR, solde: (+b.solde_initial||0)+ent-sor+cR-cE};
+  });
+  const totalSolde = bankSummaries.reduce((a,b)=>a+b.solde, 0);
+  const win=window.open('','_blank');if(!win)return;
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>États Financiers</title>
+  <style>body{font-family:Arial;margin:40px;font-size:12px;color:#1a1a2e}h1{color:#1E1035;border-bottom:3px solid #D4A017;padding-bottom:8px}h2{color:#3D1A6E;margin-top:16px}
+  table{width:100%;border-collapse:collapse}th{background:#1E1035;color:#fff;padding:7px;font-size:10px;text-align:left}
+  td{padding:6px;border-bottom:1px solid #eee}.g{color:#2e7d32;font-weight:700}.r{color:#c62828;font-weight:700}
+  .total{background:#1E1035;color:#fff;font-weight:800;font-size:14px;padding:12px}@media print{button{display:none}}</style></head>
+  <body>
+  <div style="display:flex;justify-content:space-between;margin-bottom:20px">
+    <div><strong style="font-size:22px;color:#1E1035">${cfg.companyName||'Sarpa Groupe'}</strong><br>États Financiers Consolidés</div>
+    <div style="text-align:right">${new Date().toLocaleDateString('fr-FR')}<br>${userName}</div>
+  </div>
+  <button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button>
+  <button onclick="window.print()" style="background:#1E1035;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-bottom:20px">🖨️ Imprimer</button>
+  <h1>📊 États Financiers — ${new Date().toLocaleDateString('fr-FR')}</h1>
+  <table>
+    <thead><tr><th>Banque</th><th>Compte</th><th>Filière</th><th>Solde initial</th><th>+ Entrées</th><th>- Sorties</th><th>+ Chèques reçus</th><th>- Chèques émis</th><th>Solde théorique</th></tr></thead>
+    <tbody>
+      ${bankSummaries.map(b=>`<tr>
+        <td><strong>${b.nom_banque}</strong></td><td>${b.nom_compte||'—'}</td><td>${b.filiere||'—'}</td>
+        <td>${fmt(b.solde_initial||0)}</td>
+        <td class="g">+${fmt(b.ent)}</td><td class="r">-${fmt(b.sor)}</td>
+        <td class="g">+${fmt(b.cR)}</td><td class="r">-${fmt(b.cE)}</td>
+        <td class="${b.solde>=0?'g':'r'}" style="font-size:14px"><strong>${b.solde>=0?'+':''}${fmt(Math.round(b.solde))} FCFA</strong></td>
+      </tr>`).join('')}
+      <tr class="total"><td colspan="8">TRÉSORERIE TOTALE CONSOLIDÉE</td><td class="${totalSolde>=0?'':'r'}">${fmt(Math.round(totalSolde))} FCFA</td></tr>
+    </tbody>
+  </table>
+  </body></html>`);
+  win.document.close();
+}
+
+// ══════════════════════════════════════════════════════
+// RECHERCHE GLOBALE
+// ══════════════════════════════════════════════════════
+async function renderRecherche() {
+  const pg = document.getElementById('recherche-content');
+  pg.innerHTML = `
+    <div class="sh"><div><div class="stl">🔍 Recherche Globale</div><div class="sst">Chercher dans tous les modules</div></div></div>
+    <div style="display:flex;gap:10px;margin-bottom:20px;align-items:center">
+      <input type="text" id="search-input" placeholder="Rechercher un camion, employé, facture, projet, client..." 
+        style="flex:1;background:var(--sf2);border:2px solid var(--must2);border-radius:10px;padding:12px 16px;color:var(--tx);font-size:14px"
+        oninput="debounceSearch(this.value)">
+      <select id="search-module" onchange="debounceSearch(document.getElementById('search-input').value)"
+        style="background:var(--sf2);border:1px solid var(--bd2);border-radius:8px;padding:10px;color:var(--tx);font-size:13px">
+        <option value="">Tous les modules</option>
+        <option value="employes">Employés</option>
+        <option value="trucks">Camions</option>
+        <option value="factures">Factures</option>
+        <option value="livraisons">Livraisons</option>
+        <option value="projets">Projets</option>
+        <option value="fournisseurs">Fournisseurs</option>
+        <option value="annuaire">Annuaire</option>
+        <option value="biens">Biens immo</option>
+        <option value="accidents">Accidents</option>
+      </select>
+    </div>
+    <div id="search-results" style="color:var(--tx3);text-align:center;padding:40px">
+      <div style="font-size:48px;margin-bottom:12px">🔍</div>
+      <div>Tapez au moins 3 caractères pour rechercher...</div>
+    </div>`;
+}
+
+let _searchTimer = null;
+function debounceSearch(q) {
+  clearTimeout(_searchTimer);
+  if(q.length < 3) {
+    document.getElementById('search-results').innerHTML = '<div style="color:var(--tx3);text-align:center;padding:40px"><div style="font-size:48px;margin-bottom:12px">🔍</div><div>Tapez au moins 3 caractères...</div></div>';
+    return;
+  }
+  _searchTimer = setTimeout(() => doSearch(q), 300);
+}
+
+async function doSearch(q) {
+  const module = document.getElementById('search-module')?.value;
+  const resultsDiv = document.getElementById('search-results');
+  if(!resultsDiv) return;
+  resultsDiv.innerHTML = '<div style="text-align:center;padding:20px;color:var(--tx3)">⏳ Recherche en cours...</div>';
+
+  const qL = q.toLowerCase();
+  const tables = module ? [module] : ['employes','trucks','factures','livraisons','projets','fournisseurs','annuaire','biens','accidents','partenaires','formations','cheques'];
+  const results = [];
+
+  await Promise.all(tables.map(async table => {
+    try {
+      const data = await db(table);
+      (data||[]).forEach(item => {
+        const vals = Object.values(item).join(' ').toLowerCase();
+        if(vals.includes(qL)) {
+          results.push({ table, item });
+        }
+      });
+    } catch(e) {}
+  }));
+
+  if(results.length === 0) {
+    resultsDiv.innerHTML = '<div style="text-align:center;padding:40px;color:var(--tx3)"><div style="font-size:48px;margin-bottom:12px">😕</div><div>Aucun résultat pour "' + q + '"</div></div>';
+    return;
+  }
+
+  const tableLabels = {
+    employes:'👤 Employés', trucks:'🚛 Camions', factures:'🧾 Factures',
+    livraisons:'🚚 Livraisons', projets:'📋 Projets', fournisseurs:'🏭 Fournisseurs',
+    annuaire:'📒 Annuaire', biens:'🏠 Biens', accidents:'🚨 Accidents',
+    partenaires:'🤝 Partenaires', formations:'🎓 Formations', cheques:'📝 Chèques'
+  };
+
+  // Group by table
+  const grouped = {};
+  results.forEach(r => {
+    if(!grouped[r.table]) grouped[r.table] = [];
+    grouped[r.table].push(r.item);
+  });
+
+  let html = `<div style="margin-bottom:12px;font-size:12px;color:var(--tx3)">${results.length} résultat(s) pour "<strong style="color:var(--must2)">${q}</strong>"</div>`;
+
+  for(const [table, items] of Object.entries(grouped)) {
+    html += `<div class="card" style="margin-bottom:12px">
+      <div class="ch"><div class="ct">${tableLabels[table]||table} — ${items.length} résultat(s)</div>
+      <button onclick="go('${table==='trucks'?'fleet':table==='employes'?'rh':table}')" class="btn bg2" style="font-size:10px">Voir module</button>
+      </div>`;
+
+    items.slice(0,10).forEach(item => {
+      const mainFields = getMainFields(table, item);
+      const highlighted = mainFields.text.replace(new RegExp(escapeRegex(q),'gi'), '<mark style="background:var(--must)40;border-radius:2px;padding:0 2px">$&</mark>');
+      html += `<div style="padding:10px;border-bottom:1px solid var(--sf3);display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-weight:700;font-size:12px">${highlighted}</div>
+          <div style="font-size:10px;color:var(--tx3)">${mainFields.sub}</div>
+        </div>
+        <div style="font-size:11px;color:var(--must2)">${mainFields.badge||''}</div>
+      </div>`;
+    });
+    if(items.length > 10) html += `<div style="text-align:center;padding:8px;font-size:11px;color:var(--tx3)">...et ${items.length-10} de plus</div>`;
+    html += '</div>';
+  }
+
+  resultsDiv.innerHTML = html;
+}
+
+function getMainFields(table, item) {
+  const maps = {
+    employes: { text: (item.nom||'')+(item.prenom?' '+item.prenom:''), sub: (item.poste||'')+(item.departement?' — '+item.departement:''), badge: item.statut },
+    trucks: { text: item.id||'', sub: (item.type||'')+(item.chauffeur?' — '+item.chauffeur:''), badge: item.status },
+    factures: { text: (item.numero_facture||'')+(item.nom?' — '+item.nom:''), sub: item.type_facture||'', badge: item.montant_total?fmt(item.montant_total)+' FCFA':'' },
+    livraisons: { text: (item.client||item.chauffeur||''), sub: (item.type_mission||'')+(item.destination?' → '+item.destination:''), badge: item.statut },
+    projets: { text: item.nom||'', sub: (item.client||'')+(item.localisation?' — '+item.localisation:''), badge: item.statut },
+    fournisseurs: { text: item.fournisseur||'', sub: item.produit||'', badge: item.statut_cmd },
+    annuaire: { text: item.nom||'', sub: (item.poste||'')+(item.departement?' — '+item.departement:''), badge: item.telephone },
+    biens: { text: item.nom||item.adresse||'', sub: (item.type_bien||'')+(item.adresse?' — '+item.adresse:''), badge: item.statut },
+    accidents: { text: item.description||'', sub: item.type_accident||'', badge: item.statut },
+    partenaires: { text: item.nom||'', sub: item.type||'', badge: item.statut },
+    formations: { text: item.titre||'', sub: item.employe||'', badge: item.statut },
+    cheques: { text: (item.numero_cheque||'')+(item.beneficiaire?' — '+item.beneficiaire:''), sub: item.type_cheque||'', badge: item.montant?fmt(item.montant)+' FCFA':'' },
+  };
+  return maps[table] || { text: JSON.stringify(item).slice(0,50), sub: '', badge: '' };
+}
+
+
+function goToFactures() { go('factures'); }
+
+function openBanqueModal() { openM('m-banque'); }
+function openChequeEmis() { openChequeModal('Émis'); }
+function openChequeRecu() { openChequeModal('Reçu'); }
+function goReleves() { go('releves'); }
+function goFactures() { go('factures'); }
+
+function renderRapprochementRows(mR, canE) {
+  if(!mR||mR.length===0) return '<tr><td colspan="7" style="text-align:center;color:var(--tx3)">Aucun mouvement</td></tr>';
+  return mR.map(r => {
+    const isRapr = r.rapproche && r.rapproche !== '0' && r.rapproche !== 0;
+    let actionCell = '';
+    if(canE) {
+      if(!isRapr) {
+        actionCell = '<td><button data-rapr-id="'+r.id+'" class="btn bm rapr-btn" style="font-size:10px;padding:3px 8px">✓ Rapprocher</button></td>';
+      } else {
+        actionCell = '<td><button data-rapr-id="'+r.id+'" class="rapr-btn" style="background:none;border:1px solid var(--bd2);border-radius:4px;padding:3px 8px;cursor:pointer;font-size:10px">↩ Annuler</button></td>';
+      }
+    }
+    return '<tr style="opacity:'+(isRapr?'0.5':'1')+'">'
+      +'<td class="mono">'+(r.date||'—')+'</td>'
+      +'<td style="font-size:10px">'+(r.nom_banque||'—')+'</td>'
+      +'<td><strong>'+(r.libelle||'—')+'</strong></td>'
+      +'<td class="mono" style="font-size:10px">'+(r.reference||'—')+'</td>'
+      +'<td style="color:'+(r.type_mouvement==='Entrée'?'var(--gn2)':'var(--rd2)')+'"><strong>'+(r.type_mouvement==='Entrée'?'+':'-')+fmt(r.montant||0)+' FCFA</strong></td>'
+      +'<td><span class="b '+(isRapr?'bg-g':'bg-o')+'">'+(isRapr?'✅ Rapproché':'⏳ En attente')+'</span></td>'
+      +actionCell
+      +'</tr>';
+  }).join('');
+}
+
+function escapeRegex(s) { return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'); }
 document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('login-btn').addEventListener('click', doLogin);
   document.getElementById('l-code').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
@@ -6772,7 +7911,31 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
