@@ -383,7 +383,7 @@ body{-webkit-overflow-scrolling:touch;overscroll-behavior:none}
 
   <!-- STOCKS -->
   <div class="pg" id="pg-stocks">
-    <div class="sh"><div><div class="stl">Stocks & Approvisionnements</div></div>
+    <div class="sh"><div><div class="stl">Stocks et Approvisionnements</div></div>
       <div style="display:flex;gap:8px" id="stock-actions"></div>
     </div>
     <div id="sal" style="margin-bottom:12px"></div>
@@ -482,7 +482,7 @@ body{-webkit-overflow-scrolling:touch;overscroll-behavior:none}
 
   <!-- PROJETS -->
   <div class="pg" id="pg-projets">
-    <div class="sh"><div><div class="stl">Projets & Chantiers</div></div>
+    <div class="sh"><div><div class="stl">Projets et Chantiers</div></div>
       <button class="btn bm" onclick="openM('m-proj')">+ Projet</button>
     </div>
     <div class="g2" id="proj-list"></div>
@@ -596,7 +596,7 @@ body{-webkit-overflow-scrolling:touch;overscroll-behavior:none}
 
 <!-- ═══ CONGES ═══ -->
 <div class="pg" id="pg-conges">
-  <div class="sh"><div><div class="stl">Congés & Absences</div><div class="sst">Planning RH</div></div><button class="btn bm" onclick="openM('m-conge')">+ Demande</button></div>
+  <div class="sh"><div><div class="stl">Congés et Absences</div><div class="sst">Planning RH</div></div><button class="btn bm" onclick="openM('m-conge')">+ Demande</button></div>
   <div class="kg" style="grid-template-columns:repeat(4,1fr);margin-bottom:14px">
     <div class="kc kc-g"><div class="kl">En poste</div><div class="kv" id="cng-ok">—</div><div class="ks">aujourd&#39;hui</div></div>
     <div class="kc kc-m"><div class="kl">En congé</div><div class="kv" id="cng-off">—</div><div class="ks">aujourd&#39;hui</div></div>
@@ -629,7 +629,7 @@ body{-webkit-overflow-scrolling:touch;overscroll-behavior:none}
 
 <!-- ═══ GRAPHIQUES ═══ -->
 <div class="pg" id="pg-graphiques">
-  <div class="sh"><div><div class="stl">Graphiques &amp; Analyses</div><div class="sst">Statistiques opérationnelles</div></div><button class="btn bm" onclick="exportPDF()">📄 Export PDF</button></div>
+  <div class="sh"><div><div class="stl">Graphiques et Analyses</div><div class="sst">Statistiques opérationnelles</div></div><button class="btn bm" onclick="exportPDF()">📄 Export PDF</button></div>
   <div id="graph-content"></div>
 </div>
 
@@ -716,6 +716,8 @@ body{-webkit-overflow-scrolling:touch;overscroll-behavior:none}
 
 
 <div class="pg" id="pg-communiques"><div id="communiques-content"></div></div>
+
+<div class="pg" id="pg-acces_mgr"><div id="acces_mgr-content"></div></div>
 </div><!-- /mn -->
 </div><!-- /app -->
 
@@ -740,7 +742,52 @@ body{-webkit-overflow-scrolling:touch;overscroll-behavior:none}
   <div class="fg"><label>Camion</label><select id="if-t"></select></div>
   <div class="fr"><div class="fg"><label>Statut</label><select id="if-s"><option value="operational">✅ Opérationnel</option><option value="breakdown">🔴 En panne</option><option value="maintenance">🟡 Maintenance</option></select></div><div class="fg"><label>Km actuels</label><input type="number" id="if-k"></div></div>
   <div class="fg"><label>Description</label><textarea id="if-d"></textarea></div>
-  <div class="mf"><button class="btn bg2" onclick="closeM('mf')">Annuler</button><button class="btn bm" onclick="savFleet()">Enregistrer</button></div>
+  
+  <div style="margin-top:16px;padding-top:14px;border-top:2px solid var(--sf3)">
+    <div style="font-size:13px;font-weight:700;color:var(--must2);margin-bottom:10px">🛡 Assurance</div>
+    <div class="fr">
+      <div class="fg"><label>Compagnie</label><input type="text" id="ntr-ass-comp" placeholder="NSIA, Allianz..."></div>
+      <div class="fg"><label>N° Police</label><input type="text" id="ntr-ass-police"></div>
+      <div class="fg"><label>Type</label><select id="ntr-ass-type"><option>Tous risques</option><option>RC seulement</option></select></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label>Date début</label><input type="date" id="ntr-ass-date"></div>
+      <div class="fg"><label>Expiration</label><input type="date" id="ntr-ass-exp"></div>
+      <div class="fg"><label>Prime FCFA</label><input type="number" id="ntr-ass-prime" placeholder="0"></div>
+    </div>
+  </div>
+  <div style="margin-top:14px;padding-top:14px;border-top:2px solid var(--sf3)">
+    <div style="font-size:13px;font-weight:700;color:var(--must2);margin-bottom:10px">🔧 Visite technique</div>
+    <div class="fr">
+      <div class="fg"><label>Date visite</label><input type="date" id="ntr-vt-date"></div>
+      <div class="fg"><label>Expiration</label><input type="date" id="ntr-vt-exp"></div>
+      <div class="fg"><label>Résultat</label><select id="ntr-vt-resultat"><option>Conforme</option><option>Non conforme</option></select></div>
+      <div class="fg"><label>Centre</label><input type="text" id="ntr-vt-centre" placeholder="SOTES..."></div>
+    </div>
+  </div>
+  <div style="margin-top:14px;padding-top:14px;border-top:2px solid var(--sf3)">
+    <div style="font-size:13px;font-weight:700;color:var(--must2);margin-bottom:10px">⚙️ Entretien initial</div>
+    <div class="fr">
+      <div class="fg"><label>Date</label><input type="date" id="ntr-ent-date"></div>
+      <div class="fg"><label>Type</label><select id="ntr-ent-type"><option>Entretien initial</option><option>Vidange</option></select></div>
+      <div class="fg"><label>Km actuel</label><input type="number" id="ntr-ent-km" placeholder="0"></div>
+      <div class="fg"><label>Prochain km</label><input type="number" id="ntr-ent-prochain" placeholder="0"></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label>Description</label><input type="text" id="ntr-ent-desc" placeholder="Mise en service"></div>
+      <div class="fg"><label>Coût FCFA</label><input type="number" id="ntr-ent-cout" placeholder="0"></div>
+    </div>
+  </div>
+  <div style="margin-top:14px;padding-top:14px;border-top:2px solid var(--sf3)">
+    <div style="font-size:13px;font-weight:700;color:var(--must2);margin-bottom:10px">📄 Document</div>
+    <div class="fr">
+      <div class="fg"><label>Nom du document</label><input type="text" id="ntr-doc-nom" placeholder="Carte grise..."></div>
+      <div class="fg"><label>Type</label><select id="ntr-doc-type"><option>Carte grise</option><option>Certificat</option><option>Autre</option></select></div>
+      <div class="fg"><label>Émission</label><input type="date" id="ntr-doc-date"></div>
+      <div class="fg"><label>Expiration</label><input type="date" id="ntr-doc-exp"></div>
+    </div>
+  </div>
+<div class="mf"><button class="btn bg2" onclick="closeM('mf')">Annuler</button><button class="btn bm" onclick="savFleet()">Enregistrer</button></div>
 </div></div>
 
 <div class="mo" id="mt"><div class="mdl">
@@ -893,7 +940,7 @@ body{-webkit-overflow-scrolling:touch;overscroll-behavior:none}
 <!-- MODALS NOUVEAUX -->
 <div class="mo" id="m-plan"><div class="md">
   <div class="mh"><div class="mt">Planifier une opération</div><button class="mc" onclick="closeM('m-plan')">✕</button></div>
-  <div class="fg"><label>Date &amp; Heure</label><input type="datetime-local" id="plan-dt"></div>
+  <div class="fg"><label>Date et Heure</label><input type="datetime-local" id="plan-dt"></div>
   <div class="fg"><label>Type</label><select id="plan-type"><option>Livraison</option><option>Ramasse</option><option>Production</option><option>Transfert</option><option>Maintenance</option><option>Autre</option></select></div>
   <div class="fg"><label>Lieu / Adresse</label><input type="text" id="plan-lieu" placeholder="Adresse ou nom du chantier"></div>
   <div class="fg"><label>Client / Chantier</label><input type="text" id="plan-client"></div>
@@ -1173,7 +1220,7 @@ body{-webkit-overflow-scrolling:touch;overscroll-behavior:none}
     <div class="fg"><label>Type</label><select id="fac-type">
       <option>Achat matières premières</option>
       <option>Vente / Livraison client</option>
-      <option>Maintenance & Réparation</option>
+      <option>Maintenance et Réparation</option>
       <option>Salaires & RH</option>
       <option>Carburant</option>
       <option>Loyer & Charges fixes</option>
@@ -1488,7 +1535,25 @@ body{-webkit-overflow-scrolling:touch;overscroll-behavior:none}
   <div class="fg"><label>📄 Joindre un PDF (max 500KB)</label><input type="file" id="comm-pdf" accept=".pdf" style="background:var(--sf2);border:1px solid var(--bd2);border-radius:6px;padding:8px;width:100%;color:var(--tx)"></div>
   <div class="mf"><button class="btn bg2" onclick="closeM('m-communique')">Annuler</button><button class="btn bm" onclick="savCommunique()">📢 Publier</button></div>
 </div></div>
-<script>
+
+<div class="mo" id="m-signature"><div class="md" style="max-width:480px">
+  <div class="mh"><div class="mt">✍️ Signature de réception</div><button class="mc" onclick="closeM('m-signature')">✕</button></div>
+  <input type="hidden" id="sig-livraison-id">
+  <div class="fg"><label>Nom du réceptionnaire</label><input type="text" id="sig-nom" placeholder="Nom et prénom"></div>
+  <div class="fg"><label>Signature (dessinez dans le cadre)</label>
+    <canvas id="sig-canvas" width="400" height="180" style="border:2px solid var(--bd2);border-radius:8px;width:100%;background:#fff;cursor:crosshair;touch-action:none"></canvas>
+  </div>
+  <div class="mf">
+    <button class="btn bg2" onclick="clearSignature()">🗑 Effacer</button>
+    <button class="btn bg2" onclick="closeM('m-signature')">Annuler</button>
+    <button class="btn bm" onclick="saveSignature()">✅ Confirmer</button>
+  </div>
+</div></div><script>
+
+
+
+
+
 
 
 
@@ -1536,7 +1601,7 @@ body{-webkit-overflow-scrolling:touch;overscroll-behavior:none}
 
 const ROLE_CODES = {
   'DG4X9K2M': { role:'dg',                    name:'Directeur Général'              },
-  'OP7R3N8W': { role:'directeur',              name:'Dir. Opérations & Logistique'  },
+  'OP7R3N8W': { role:'directeur',              name:'Dir. Opérations et Logistique'  },
   'CR5T1P6Q': { role:'coordinatrice',          name:'Coordinatrice Sarpa Groupe'     },
   'CB2H8L4V': { role:'responsable_centrale',   name:'Resp. Production Béton'        },
   'FL9M3D7J': { role:'responsable_flotte',     name:'Manager Sarpa Logistics'       },
@@ -1633,38 +1698,38 @@ async function initGoogleSheets() {
 }
 
 // ═══ ROLES ═══
-const ALL = ['dashboard','communiques','production','stocks','quality','fleet','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','rh','formation','planning','carburant','checklist','messages','annuaire','conges','partenariats','objectifs','graphiques','journal','livraisons','factures','pointage','opening','closing','biens','visites','contrats_immo','etats_lieux','loyers','banques','releves','rapprochement','cheques','etats_fin','fin_beton','fin_logistics','fin_immo','recherche'];
+const ALL = ['dashboard','communiques','production','stocks','quality','fleet','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','acces_mgr','rh','formation','planning','carburant','checklist','messages','annuaire','conges','partenariats','objectifs','graphiques','journal','livraisons','factures','pointage','opening','closing','biens','visites','contrats_immo','etats_lieux','loyers','banques','releves','rapprochement','cheques','etats_fin','fin_beton','fin_logistics','fin_immo'];
 const ROLES = {
-  dg                       : { label:'Directeur Général', badge:'rb-director', pages:['dashboard','communiques','production','stocks','quality','fleet','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','rh','formation','planning','carburant','checklist','messages','annuaire','conges','partenariats','objectifs','graphiques','journal','livraisons','factures','pointage','opening','closing','biens','visites','contrats_immo','etats_lieux','loyers','banques','releves','rapprochement','cheques','etats_fin','fin_beton','fin_logistics','fin_immo','recherche'] },
-  directeur                : { label:'Dir. Opérations & Logistique', badge:'rb-director', pages:['dashboard','communiques','production','stocks','quality','fleet','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','rh','formation','planning','carburant','checklist','messages','annuaire','conges','partenariats','objectifs','graphiques','journal','livraisons','factures','pointage','opening','closing','biens','visites','contrats_immo','etats_lieux','loyers','banques','releves','rapprochement','cheques','etats_fin','fin_beton','fin_logistics','fin_immo','recherche'] },
-  coordinatrice            : { label:'Coordinatrice Sarpa Groupe', badge:'rb-coord', pages:['dashboard','communiques','stocks','fournisseurs','projets','partenaires','accidents','planning','messages','annuaire','livraisons','factures','partenariats','objectifs','conges','formation','rapports','pointage','recherche','fin_beton','fin_logistics','fin_immo'] },
-  manager_beton            : { label:'Manager Sarpa Béton', badge:'rb-beton', pages:['dashboard','communiques','production','stocks','quality','accidents','planning','livraisons','factures','messages','annuaire','fournisseurs','objectifs','opening','closing','pointage','fin_beton','recherche','fleet','maintenance','carburant','checklist'] },
-  responsable_centrale     : { label:'Resp. Production Béton', badge:'rb-beton', pages:['dashboard','communiques','production','stocks','quality','accidents','planning','livraisons','factures','messages','annuaire','fournisseurs','opening','closing','pointage','recherche'] },
-  resp_production          : { label:'Resp. Production', badge:'rb-beton', pages:['dashboard','communiques','production','stocks','quality','accidents','messages','annuaire','opening','closing','pointage','recherche'] },
-  resp_qualite             : { label:'Responsable Qualité', badge:'rb-qual', pages:['dashboard','communiques','quality','production','stocks','rapports','accidents','messages','annuaire','evaluations','recherche'] },
-  manager_logistics        : { label:'Manager Sarpa Logistics', badge:'rb-flotte', pages:['dashboard','communiques','fleet','maintenance','livraisons','planning','stocks','carburant','checklist','accidents','factures','messages','annuaire','fournisseurs','objectifs','opening','closing','pointage','fin_logistics','recherche'] },
-  responsable_flotte       : { label:'Resp. Flotte', badge:'rb-flotte', pages:['dashboard','communiques','fleet','maintenance','livraisons','planning','stocks','carburant','checklist','accidents','factures','messages','annuaire','opening','closing','pointage','recherche'] },
-  manager_immo             : { label:'Manager Sarpa Immobilier', badge:'rb-immo', pages:['dashboard','communiques','biens','visites','contrats_immo','etats_lieux','loyers','projets','partenaires','partenariats','livraisons','factures','messages','annuaire','fournisseurs','objectifs','fin_immo','recherche'] },
-  immobilier               : { label:'Agence Immobilière', badge:'rb-immo', pages:['dashboard','communiques','biens','visites','contrats_immo','etats_lieux','loyers','projets','partenaires','partenariats','livraisons','factures','messages','annuaire','recherche'] },
-  resp_info                : { label:'Resp. Informatique', badge:'rb-info', pages:['dashboard','communiques','parametres','users','journal','graphiques','rapports','messages','annuaire','evaluations','recherche'] },
-  comptabilite             : { label:'Comptabilité', badge:'rb-compta', pages:['dashboard','communiques','finances','factures','fournisseurs','rapports','messages','annuaire','objectifs','livraisons','stocks','banques','releves','rapprochement','cheques','etats_fin','fin_beton','fin_logistics','fin_immo','recherche'] },
-  comptable_beton          : { label:'Comptable Béton', badge:'rb-compta', pages:['dashboard','communiques','fin_beton','factures','fournisseurs','messages','annuaire','stocks','banques','releves','rapprochement','cheques','etats_fin','recherche'] },
-  comptable_immo           : { label:'Comptable Immobilier', badge:'rb-compta', pages:['dashboard','communiques','fin_immo','factures','projets','messages','annuaire','biens','loyers','contrats_immo','banques','releves','rapprochement','cheques','etats_fin','recherche'] },
-  comptable_logistics      : { label:'Comptable Logistics', badge:'rb-compta', pages:['dashboard','communiques','fin_logistics','factures','livraisons','carburant','messages','annuaire','banques','releves','rapprochement','cheques','etats_fin','recherche'] },
-  rh                       : { label:'Ressources Humaines', badge:'rb-rh', pages:['dashboard','communiques','rh','formation','accidents','conges','messages','annuaire','factures','livraisons','pointage','opening','closing','evaluations','recherche'] },
-  commercial               : { label:'Commercial', badge:'rb-comm', pages:['dashboard','communiques','projets','fournisseurs','partenaires','partenariats','messages','annuaire','livraisons','factures','planning','recherche'] },
-  guest                    : { label:'Invité', badge:'rb-guest', pages:['dashboard','communiques','planning','projets','partenariats'] },
+  dg                       : { label:'Directeur Général', badge:'rb-director', pages:['dashboard','communiques','communiques','production','stocks','quality','fleet','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','rh','formation','planning','carburant','checklist','messages','annuaire','conges','partenariats','objectifs','graphiques','journal','livraisons','factures','pointage','opening','closing','biens','visites','contrats_immo','etats_lieux','loyers','banques','releves','rapprochement','cheques','etats_fin','fin_beton','fin_logistics','fin_immo','recherche','acces_mgr'] },
+  directeur                : { label:'Dir. Opérations et Logistique', badge:'rb-director', pages:['dashboard','communiques','communiques','production','stocks','quality','fleet','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','rh','formation','planning','carburant','checklist','messages','annuaire','conges','partenariats','objectifs','graphiques','journal','livraisons','factures','pointage','opening','closing','biens','visites','contrats_immo','etats_lieux','loyers','banques','releves','rapprochement','cheques','etats_fin','fin_beton','fin_logistics','fin_immo','recherche','acces_mgr'] },
+  coordinatrice            : { label:'Coordinatrice Sarpa Groupe', badge:'rb-coord', pages:['dashboard','communiques','communiques','stocks','fournisseurs','projets','partenaires','accidents','planning','messages','annuaire','livraisons','factures','partenariats','objectifs','conges','formation','rapports','pointage','recherche','fin_beton','fin_logistics','fin_immo'] },
+  manager_beton            : { label:'Manager Sarpa Béton', badge:'rb-beton', pages:['dashboard','communiques','communiques','production','stocks','quality','accidents','planning','livraisons','factures','messages','annuaire','fournisseurs','objectifs','opening','closing','pointage','fin_beton','recherche','fleet','maintenance','carburant','checklist'] },
+  responsable_centrale     : { label:'Resp. Production Béton', badge:'rb-beton', pages:['dashboard','communiques','communiques','production','stocks','quality','accidents','planning','livraisons','factures','messages','annuaire','fournisseurs','opening','closing','pointage','recherche'] },
+  resp_production          : { label:'Resp. Production', badge:'rb-beton', pages:['dashboard','communiques','communiques','production','stocks','quality','accidents','messages','annuaire','opening','closing','pointage','recherche'] },
+  resp_qualite             : { label:'Responsable Qualité', badge:'rb-qual', pages:['dashboard','communiques','communiques','quality','production','stocks','rapports','accidents','messages','annuaire','evaluations','recherche'] },
+  manager_logistics        : { label:'Manager Sarpa Logistics', badge:'rb-flotte', pages:['dashboard','communiques','communiques','fleet','maintenance','livraisons','planning','stocks','carburant','checklist','accidents','factures','messages','annuaire','fournisseurs','objectifs','opening','closing','pointage','fin_logistics','recherche'] },
+  responsable_flotte       : { label:'Resp. Flotte', badge:'rb-flotte', pages:['dashboard','communiques','communiques','fleet','maintenance','livraisons','planning','stocks','carburant','checklist','accidents','factures','messages','annuaire','opening','closing','pointage','recherche'] },
+  manager_immo             : { label:'Manager Sarpa Immobilier', badge:'rb-immo', pages:['dashboard','communiques','communiques','biens','visites','contrats_immo','etats_lieux','loyers','projets','partenaires','partenariats','livraisons','factures','messages','annuaire','fournisseurs','objectifs','fin_immo','recherche'] },
+  immobilier               : { label:'Agence Immobilière', badge:'rb-immo', pages:['dashboard','communiques','communiques','biens','visites','contrats_immo','etats_lieux','loyers','projets','partenaires','partenariats','livraisons','factures','messages','annuaire','recherche'] },
+  resp_info                : { label:'Resp. Informatique', badge:'rb-info', pages:['dashboard','communiques','communiques','parametres','users','journal','graphiques','rapports','messages','annuaire','evaluations','recherche','acces_mgr'] },
+  comptabilite             : { label:'Comptabilité', badge:'rb-compta', pages:['dashboard','communiques','communiques','finances','factures','fournisseurs','rapports','messages','annuaire','objectifs','livraisons','stocks','banques','releves','rapprochement','cheques','etats_fin','fin_beton','fin_logistics','fin_immo','recherche'] },
+  comptable_beton          : { label:'Comptable Béton', badge:'rb-compta', pages:['dashboard','communiques','communiques','fin_beton','factures','fournisseurs','messages','annuaire','stocks','banques','releves','rapprochement','cheques','etats_fin','recherche'] },
+  comptable_immo           : { label:'Comptable Immobilier', badge:'rb-compta', pages:['dashboard','communiques','communiques','fin_immo','factures','projets','messages','annuaire','biens','loyers','contrats_immo','banques','releves','rapprochement','cheques','etats_fin','recherche'] },
+  comptable_logistics      : { label:'Comptable Logistics', badge:'rb-compta', pages:['dashboard','communiques','communiques','fin_logistics','factures','livraisons','carburant','messages','annuaire','banques','releves','rapprochement','cheques','etats_fin','recherche'] },
+  rh                       : { label:'Ressources Humaines', badge:'rb-rh', pages:['dashboard','communiques','communiques','rh','formation','accidents','conges','messages','annuaire','factures','livraisons','pointage','opening','closing','evaluations','recherche'] },
+  commercial               : { label:'Commercial', badge:'rb-comm', pages:['dashboard','communiques','communiques','projets','fournisseurs','partenaires','partenariats','messages','annuaire','livraisons','factures','planning','recherche'] },
+  guest                    : { label:'Invité', badge:'rb-guest', pages:['dashboard','communiques','communiques','planning','projets','partenariats'] },
 };
 
 const TITLES = {
-  dashboard:'Tableau de bord', production:'Production Béton', stocks:'Stocks & Approvisionnement',
+  dashboard:'Tableau de bord', production:'Production Béton', stocks:'Stocks et Approvisionnement',
   quality:'Contrôle Qualité', fleet:'Flotte de Camions', maintenance:'Maintenance',
-  accidents:'Accidents & Sécurité', fournisseurs:'Fournisseurs', projets:'Projets & Chantiers',
-  partenaires:'Partenaires', finances:'Finances & Budget', evaluations:'Évaluations',
+  accidents:'Accidents et Sécurité', fournisseurs:'Fournisseurs', projets:'Projets et Chantiers',
+  partenaires:'Partenaires', finances:'Finances et Budget', evaluations:'Évaluations',
   rapports:'Rapports consolidés', parametres:'Paramètres', users:'Utilisateurs',
   rh:'Employés & RH', formation:'Formations', planning:'Planning Opérationnel',
   carburant:'Suivi Carburant', checklist:'Checklist Préventive', messages:'Messages & Notes',
-  annuaire:'Clients & Fournisseurs', conges:'Congés & Absences', partenariats:'Partenariats',
+  annuaire:'Clients & Fournisseurs', conges:'Congés et Absences', partenariats:'Partenariats',
   objectifs:'Objectifs Mensuels', graphiques:'Graphiques & Analyses',
   journal:'Journal des modifications', livraisons:'Livraisons', factures:'Factures',
   pointage:'Pointage Équipes', opening:'Opening — Ouverture', closing:'Closing — Fermeture',
@@ -1676,7 +1741,7 @@ const NAV = [
   { id:'communiques',  ic:'📢', lb:'Communiqués',    bg:'nb-comm' },
   { s:'Sarpa Béton' },
   { id:'production',   ic:'🏗', lb:'Production' },
-  { id:'stocks',       ic:'📦', lb:'Stocks & Appro',       bg:'nb-s' },
+  { id:'stocks',       ic:'📦', lb:'Stocks et Appro',       bg:'nb-s' },
   { id:'quality',      ic:'✦',  lb:'Qualité' },
   { s:'Sarpa Logistics' },
   { id:'fleet',        ic:'🚛', lb:'Flotte',               bg:'nb-f' },
@@ -1693,9 +1758,9 @@ const NAV = [
   { id:'carburant',    ic:'⛽', lb:'Suivi carburant' },
   { id:'checklist',    ic:'🔧', lb:'Checklist préventive' },
   { s:'Opérations' },
-  { id:'accidents',    ic:'🚨', lb:'Accidents & Sécurité', bg:'nb-acc' },
+  { id:'accidents',    ic:'🚨', lb:'Accidents et Sécurité', bg:'nb-acc' },
   { id:'fournisseurs', ic:'🏭', lb:'Fournisseurs' },
-  { id:'projets',      ic:'📋', lb:'Projets & Chantiers' },
+  { id:'projets',      ic:'📋', lb:'Projets et Chantiers' },
   { id:'partenaires',  ic:'🤝', lb:'Partenaires' },
   { id:'factures',     ic:'🧾', lb:'Factures' },
   { s:'Commercial' },
@@ -1710,17 +1775,16 @@ const NAV = [
   { id:'rapprochement',ic:'🔄', lb:'Rapprochement' },
   { id:'cheques',      ic:'📝', lb:'Chèques' },
   { id:'etats_fin',    ic:'📊', lb:'États financiers' },
-  { id:'finances',     ic:'💰', lb:'Finances & Budget',    dir:true },
+  { id:'finances',     ic:'💰', lb:'Finances et Budget',    dir:true },
   { id:'objectifs',    ic:'📊', lb:'Objectifs mensuels' },
   { s:'RH & Équipe' },
   { id:'rh',           ic:'👤', lb:'Employés' },
   { id:'formation',    ic:'🎓', lb:'Formations' },
-  { id:'conges',       ic:'🗓', lb:'Congés & Absences' },
+  { id:'conges',       ic:'🗓', lb:'Congés et Absences' },
   { id:'messages',     ic:'💬', lb:'Messages',             bg:'nb-msg' },
   { id:'pointage',     ic:'⏰', lb:'Pointage',             bg:'nb-pt' },
   { id:'opening',      ic:'🌅', lb:'Opening — Ouverture' },
   { id:'closing',      ic:'🌙', lb:'Closing — Fermeture' },
-  { id:'recherche',    ic:'🔍', lb:'Recherche globale' },
   { s:'🔒 Direction & Analyse' },
   { id:'graphiques',   ic:'📈', lb:'Graphiques & Analyses', dir:true },
   { id:'evaluations',  ic:'📊', lb:'Évaluations',           dir:true },
@@ -1728,6 +1792,7 @@ const NAV = [
   { id:'journal',      ic:'🔍', lb:'Journal modifications',  dir:true },
   { id:'parametres',   ic:'⚙',  lb:'Paramètres app.',        dir:true },
   { id:'users',        ic:'👥', lb:'Utilisateurs',           dir:true },
+  { id:'acces_mgr',    ic:'🔐', lb:'Gestion des accès',        dir:true },
 ];
 
 // ═══ AUTH ═══
@@ -1991,6 +2056,13 @@ async function savMaint() {
   closeM('mm'); logAction('insert','maintenances',{equipement:document.getElementById('im-e').value}); toast('Intervention enregistrée ✓'); render('maintenance');
 }
 
+function quickEditMax(id,curMax,unit){
+  const v=prompt('Nouveau maximum ('+unit+'):',curMax);
+  if(v===null)return;
+  const n=parseFloat(v);
+  if(isNaN(n)||n<=0){toast('Valeur invalide');return;}
+  db('stocks','PATCH',{max_qty:n},{id}).then(()=>{window._src=null;toast('Max: '+n+' '+unit);render('stocks');});
+}
 async function savStock() {
   const k = document.getElementById('is-i').value;
   const q = +document.getElementById('is-q').value;
@@ -2117,15 +2189,55 @@ async function savPartenaire() {
 }
 
 async function savNewTruck() {
-  if (userRole!=='directeur'&&userRole!=='dg') { toast('Réservé Direction'); return; }
+  const tid=document.getElementById('ntr-id')?.value?.trim();
+  if(!tid){toast('ID Camion requis');return;}
   await db('trucks','POST',{
-    id: document.getElementById('trk-id').value,
-    type: document.getElementById('trk-type').value,
-    km: +document.getElementById('trk-km').value||0,
-    status: document.getElementById('trk-status').value,
-    description: document.getElementById('trk-note').value
+    id:tid, marque:document.getElementById('ntr-marque')?.value||'',
+    modele:document.getElementById('ntr-modele')?.value||'',
+    type:document.getElementById('ntr-type')?.value||'',
+    annee:document.getElementById('ntr-annee')?.value||'',
+    immatriculation:document.getElementById('ntr-immat')?.value||'',
+    chauffeur:document.getElementById('ntr-chauffeur')?.value||'',
+    capacite:document.getElementById('ntr-capacite')?.value||'',
+    status:'operational', notes:document.getElementById('ntr-notes')?.value||'',
   });
-  closeM('m-add-truck'); toast('Camion ajouté ✓'); render('fleet');
+  const aD=document.getElementById('ntr-ass-date')?.value;
+  const aE=document.getElementById('ntr-ass-exp')?.value;
+  if(aD||aE) await db('assurances','POST',{
+    camion:tid, compagnie:document.getElementById('ntr-ass-comp')?.value||'',
+    numero_police:document.getElementById('ntr-ass-police')?.value||'',
+    date_debut:aD||'', date_fin:aE||'',
+    type_assurance:document.getElementById('ntr-ass-type')?.value||'Tous risques',
+    montant_prime:document.getElementById('ntr-ass-prime')?.value||0, created_by:userName,
+  });
+  const vD=document.getElementById('ntr-vt-date')?.value;
+  const vE=document.getElementById('ntr-vt-exp')?.value;
+  if(vD||vE) await db('visites_techniques','POST',{
+    camion:tid, date_visite:vD||'', date_expiration:vE||'',
+    resultat:document.getElementById('ntr-vt-resultat')?.value||'Conforme',
+    centre_controle:document.getElementById('ntr-vt-centre')?.value||'', created_by:userName,
+  });
+  const eD=document.getElementById('ntr-ent-date')?.value;
+  if(eD) await db('entretiens','POST',{
+    camion:tid, date:eD,
+    type:document.getElementById('ntr-ent-type')?.value||'Entretien initial',
+    description:document.getElementById('ntr-ent-desc')?.value||'Mise en service',
+    km:document.getElementById('ntr-ent-km')?.value||0,
+    cout:document.getElementById('ntr-ent-cout')?.value||0,
+    prochain_entretien_km:document.getElementById('ntr-ent-prochain')?.value||0,
+    created_by:userName,
+  });
+  const docN=document.getElementById('ntr-doc-nom')?.value;
+  if(docN) await db('documents_flotte','POST',{
+    camion:tid, nom_document:docN,
+    type_document:document.getElementById('ntr-doc-type')?.value||'',
+    date_emission:document.getElementById('ntr-doc-date')?.value||'',
+    date_expiration:document.getElementById('ntr-doc-exp')?.value||'',
+    notes:document.getElementById('ntr-doc-notes')?.value||'', created_by:userName,
+  });
+  logAction('create','trucks',{id:tid,par:userName});
+  closeM('mf'); window._src=null;
+  toast('Camion '+tid+' enregistré avec tous ses documents ✓'); render('fleet');
 }
 
 async function savEval() {
@@ -2239,7 +2351,7 @@ async function render(p) {
     fleet:renderFleet, maintenance:renderMaint, accidents:renderAccidents,
     fournisseurs:renderFournisseurs, projets:renderProjets, partenaires:renderPartenaires,
     finances:renderFinances, evaluations:renderEvals, rapports:renderRapports,
-    parametres:renderParams, users:renderUsers, rh:renderRH, formation:renderFormation,
+    parametres:renderParams, users:renderUsers, acces_mgr:renderAccesMgr, rh:renderRH, formation:renderFormation,
     planning:renderPlanning, annuaire:renderAnnuaire, messages:renderMessages,
     carburant:renderCarburant, objectifs:renderObjectifs, conges:renderConges,
     checklist:renderChecklist, partenariats:renderPartenariats,
@@ -2686,7 +2798,7 @@ async function renderFinances() {
   const sol = rec-chg;
   document.getElementById('fin-content').innerHTML = `
     <div class="sh">
-      <div><div class="stl">Finances & Budget</div><div class="sst">Données confidentielles</div></div>
+      <div><div class="stl">Finances et Budget</div><div class="sst">Données confidentielles</div></div>
       <button class="btn bm" onclick="openM('m-budget')">+ Saisir</button>
     </div>
     <div class="kg" style="grid-template-columns:repeat(3,1fr)">
@@ -2922,7 +3034,7 @@ async function renderParams() {
   </div>`);
 
   mkSec('accidents', `<div class="card sp">
-    <div class="ch"><div class="ct">🚨 Accidents & Sécurité</div></div>
+    <div class="ch"><div class="ct">🚨 Accidents et Sécurité</div></div>
     <div class="fg"><label>Types d'accident</label><textarea id="cfg-acc-types" rows="4">${(cfg.accTypes||['Accident travail','Accident circulation','Incident matériel','Incident sécurité','Autre']).join('\n')}</textarea></div>
     <div class="fg"><label>Niveaux de gravité</label><textarea id="cfg-acc-grav" rows="3">${(cfg.accGrav||['Léger','Moyen','Grave','Critique']).join('\n')}</textarea></div>
     <button class="btn bm" onclick="saveConfig('accidents')">💾 Enregistrer</button>
@@ -2964,7 +3076,7 @@ async function renderParams() {
   </div>`);
 
   mkSec('projets', `<div class="card sp">
-    <div class="ch"><div class="ct">📋 Projets & Chantiers</div></div>
+    <div class="ch"><div class="ct">📋 Projets et Chantiers</div></div>
     <div class="fg"><label>Statuts</label><textarea id="cfg-proj-status" rows="4">${(cfg.projStatus||['En cours','Terminé','Suspendu','En attente','Annulé']).join('\n')}</textarea></div>
     <div class="fg"><label>Types de chantiers</label><textarea id="cfg-chantier-types" rows="4">${(cfg.chantierTypes||['Résidentiel','Commercial','Industriel','Infrastructure','Voirie','Autre']).join('\n')}</textarea></div>
     <div class="fg"><label>Zones géographiques</label><textarea id="cfg-zones" rows="4">${(cfg.zones||['Dakar','Thiès','Saint-Louis','Ziguinchor','Kaolack','Autre']).join('\n')}</textarea></div>
@@ -2999,7 +3111,7 @@ async function renderParams() {
   </div>`);
 
   mkSec('finances', `<div class="card sp">
-    <div class="ch"><div class="ct">💰 Finances & Budget</div></div>
+    <div class="ch"><div class="ct">💰 Finances et Budget</div></div>
     <div class="fg"><label>Catégories recettes</label><textarea id="cfg-recettes" rows="4">${(cfg.recettes||['Vente béton','Livraison','Location','Autre recette']).join('\n')}</textarea></div>
     <div class="fg"><label>Catégories charges</label><textarea id="cfg-charges" rows="5">${(cfg.charges||['Carburant','Maintenance','Salaires','Matières premières','Loyer','Charges diverses']).join('\n')}</textarea></div>
     <div class="fg"><label>Budget mensuel (FCFA)</label><input type="number" id="cfg-budget" value="${cfg.budgetMensuel||0}"></div>
@@ -3029,7 +3141,7 @@ async function renderParams() {
   </div>`);
 
   mkSec('conges', `<div class="card sp">
-    <div class="ch"><div class="ct">🗓 Congés & Absences</div></div>
+    <div class="ch"><div class="ct">🗓 Congés et Absences</div></div>
     <div class="fg"><label>Types de congés</label><textarea id="cfg-conge-types" rows="4">${(cfg.congeTypes||['Congé annuel','Congé maladie','Absence justifiée','Absence injustifiée','Congé exceptionnel']).join('\n')}</textarea></div>
     <div class="fg"><label>Jours ouvrés / semaine</label><input type="number" id="cfg-jours-ouvres" value="${cfg.joursOuvres||5}" min="1" max="7"></div>
     <button class="btn bm" onclick="saveConfig('conges')">💾 Enregistrer</button>
@@ -3101,7 +3213,7 @@ async function renderParams() {
   // ACCES - codes table
   const codesRows = [
     ['Directeur Général','DG4X9K2M','Direction','bg-m'],
-    ['Dir. Opérations & Logistique','OP7R3N8W','Direction','bg-m'],
+    ['Dir. Opérations et Logistique','OP7R3N8W','Direction','bg-m'],
     ['Coordinatrice Sarpa Groupe','CR5T1P6Q','Direction','bg-p'],
     ['Manager Sarpa Béton','0ASD7GU9','Béton (toupie)','bg-p'],
     ['Manager Sarpa Logistics','FL9M3D7J','Logistics','bg-p'],
@@ -3845,23 +3957,214 @@ async function savContact() {
 
 // ═══ MESSAGES ═══
 async function renderMessages() {
-  const msgs = await db('messages');
-  const prioColors = {urgent:'var(--rd2)',important:'var(--must2)',normal:'var(--tx2)'};
-  const prioIcons = {urgent:'🚨',important:'⚠️',normal:'💬'};
-  document.getElementById('msg-list').innerHTML = (msgs||[]).length===0
-    ? '<div class="al al-g">✅ Aucun message</div>'
-    : (msgs||[]).map(m=>`
-      <div class="card" style="border-left:3px solid ${prioColors[m.priorite]||'var(--tx3)'}">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
-          <div style="display:flex;align-items:center;gap:8px">
-            <span>${prioIcons[m.priorite]||'💬'}</span>
-            <strong style="color:var(--tx)">${m.de||'—'}</strong>
-            <span style="font-size:11px;color:var(--tx3)">→ ${m.destinataire}</span>
-          </div>
-          <span style="font-size:10px;color:var(--tx3)">${m.created_at?.slice(0,16)||'—'}</span>
-        </div>
-        <div style="color:var(--tx2);font-size:13px;line-height:1.5">${m.message}</div>
-      </div>`).join('');
+  if(!window._chatGrps) initChatGroups();
+  const pg=document.getElementById('messages-content');
+  if(!pg) return;
+  if(!window._activeChat) window._activeChat=window._chatGrps[0]?.id;
+  const activeId=window._activeChat;
+  const canCreate=['dg','directeur','coordinatrice'].includes(userRole);
+  pg.innerHTML='';
+
+  const wrap=document.createElement('div');
+  wrap.style.cssText='display:flex;height:calc(100vh - 120px);background:var(--sf);border-radius:12px;overflow:hidden;border:1px solid var(--sf3)';
+
+  // LEFT PANEL
+  const left=document.createElement('div');
+  left.style.cssText='width:260px;flex-shrink:0;border-right:1px solid var(--sf3);display:flex;flex-direction:column;background:var(--bg)';
+  const lh=document.createElement('div');
+  lh.style.cssText='padding:14px;border-bottom:1px solid var(--sf3);display:flex;justify-content:space-between;align-items:center';
+  const lhTitle=document.createElement('strong');
+  lhTitle.style.fontSize='13px'; lhTitle.textContent='💬 Chats';
+  lh.appendChild(lhTitle);
+  if(canCreate){
+    const nb=document.createElement('button');
+    nb.style.cssText='background:var(--must);border:none;color:var(--bg);border-radius:6px;padding:4px 8px;cursor:pointer;font-size:11px;font-weight:700';
+    nb.textContent='+ Groupe'; nb.onclick=openCreateChat; lh.appendChild(nb);
+  }
+  left.appendChild(lh);
+  const gl=document.createElement('div');
+  gl.style.cssText='flex:1;overflow-y:auto';
+  window._chatGrps.forEach(g=>{
+    const msgs=chatGetMsgs(g.id);
+    const last=msgs[msgs.length-1];
+    const unread=msgs.filter(m=>!m.read&&m.sender!==userName).length;
+    const item=document.createElement('div');
+    const isActive=g.id===activeId;
+    item.style.cssText='padding:12px 14px;cursor:pointer;border-bottom:1px solid var(--sf3)'+(isActive?';background:var(--must)15':'');
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;justify-content:space-between;align-items:flex-start';
+    const gName=document.createElement('div');
+    gName.style.cssText='font-size:13px;font-weight:'+(isActive?'700':'600')+';color:var(--tx)';
+    gName.textContent=g.name; row.appendChild(gName);
+    if(unread){const u=document.createElement('span');u.style.cssText='background:var(--must);color:var(--bg);border-radius:10px;padding:1px 7px;font-size:10px;font-weight:700';u.textContent=unread;row.appendChild(u);}
+    item.appendChild(row);
+    const sub=document.createElement('div');
+    sub.style.cssText='font-size:11px;color:var(--tx3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis';
+    sub.textContent=last?(last.type==='pdf'?'📄 '+last.fileName:last.sender+': '+last.text.slice(0,30)):'Aucun message';
+    item.appendChild(sub);
+    item.onclick=()=>{window._activeChat=g.id;renderMessages();};
+    item.onmouseover=()=>{if(!isActive)item.style.background='var(--sf2)';};
+    item.onmouseout=()=>{if(!isActive)item.style.background='';};
+    gl.appendChild(item);
+  });
+  left.appendChild(gl);
+
+  // RIGHT PANEL
+  const right=document.createElement('div');
+  right.style.cssText='flex:1;display:flex;flex-direction:column;background:var(--bg)';
+  const grp=window._chatGrps.find(g=>g.id===activeId);
+  if(!grp){
+    const empty=document.createElement('div');
+    empty.style.cssText='padding:40px;text-align:center;color:var(--tx3)';
+    empty.textContent='Sélectionnez un groupe';
+    right.appendChild(empty);
+  } else {
+    // Header
+    const rh=document.createElement('div');
+    rh.style.cssText='padding:14px 16px;border-bottom:1px solid var(--sf3)';
+    const rhName=document.createElement('div');
+    rhName.style.cssText='font-size:14px;font-weight:700'; rhName.textContent=grp.name;
+    const rhSub=document.createElement('div');
+    rhSub.style.cssText='font-size:11px;color:var(--tx3)'; rhSub.textContent=grp.members.join(', ');
+    rh.appendChild(rhName); rh.appendChild(rhSub); right.appendChild(rh);
+
+    // Messages
+    const ma=document.createElement('div');
+    ma.id='chat-messages';
+    ma.style.cssText='flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:8px';
+    const msgs=chatGetMsgs(grp.id);
+    msgs.forEach(m=>{if(m.sender!==userName)m.read=true;});
+    chatSaveMsgs(grp.id,msgs);
+    if(!msgs.length){
+      const em=document.createElement('div');
+      em.style.cssText='text-align:center;color:var(--tx3);padding:40px;font-size:13px';
+      em.textContent='Aucun message — commencez la conversation !';
+      ma.appendChild(em);
+    } else {
+      msgs.forEach(m=>{
+        const isMe=m.sender===userName;
+        const bubble=document.createElement('div');
+        bubble.style.cssText='display:flex;flex-direction:column;'+(isMe?'align-items:flex-end;align-self:flex-end':'align-items:flex-start;align-self:flex-start')+';max-width:75%';
+        if(!isMe){
+          const sl=document.createElement('div');
+          sl.style.cssText='font-size:10px;color:var(--must2);font-weight:600;margin-bottom:2px';
+          sl.textContent=m.sender; bubble.appendChild(sl);
+        }
+        const box=document.createElement('div');
+        const bg=isMe?'var(--must)':'var(--sf2)';
+        const col=isMe?'var(--bg)':'var(--tx)';
+        const rad=isMe?'16px 16px 4px 16px':'16px 16px 16px 4px';
+        box.style.cssText='background:'+bg+';color:'+col+';border-radius:'+rad+';font-size:13px;line-height:1.4;padding:8px 12px';
+        if(m.type==='pdf'){
+          box.style.cursor='pointer'; box.style.display='flex'; box.style.alignItems='center'; box.style.gap='8px';
+          const pIco=document.createElement('span'); pIco.style.fontSize='20px'; pIco.textContent='📄'; box.appendChild(pIco);
+          const pInfo=document.createElement('div');
+          const pName=document.createElement('div'); pName.style.cssText='font-size:12px;font-weight:600'; pName.textContent=m.fileName;
+          const pHint=document.createElement('div'); pHint.style.cssText='font-size:10px;opacity:.7'; pHint.textContent='Voir le PDF';
+          pInfo.appendChild(pName); pInfo.appendChild(pHint); box.appendChild(pInfo);
+          const mid=m.id; box.onclick=()=>chatViewPDF(grp.id,mid);
+        } else {
+          box.innerHTML=m.text.replace(/\n/g,'<br>');
+        }
+        bubble.appendChild(box);
+        const te=document.createElement('div');
+        te.style.cssText='font-size:10px;color:var(--tx3);margin-top:2px';
+        te.textContent=new Date(m.ts).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+        bubble.appendChild(te);
+        ma.appendChild(bubble);
+      });
+    }
+    right.appendChild(ma);
+    setTimeout(()=>{ma.scrollTop=ma.scrollHeight;},50);
+
+    // Input
+    const inp=document.createElement('div');
+    inp.style.cssText='padding:12px 14px;border-top:1px solid var(--sf3);display:flex;gap:8px;align-items:flex-end;background:var(--sf)';
+    const pdfLbl=document.createElement('label');
+    pdfLbl.style.cssText='cursor:pointer;padding:8px;border-radius:8px;background:var(--sf2);border:1px solid var(--bd2)';
+    pdfLbl.title='Joindre un PDF'; pdfLbl.textContent='📎';
+    const pdfInp=document.createElement('input');
+    pdfInp.type='file'; pdfInp.id='chat-pdf-in'; pdfInp.accept='.pdf';
+    pdfInp.style.display='none';
+    const gid=grp.id;
+    pdfInp.onchange=()=>chatSendPDF(gid);
+    pdfLbl.appendChild(pdfInp); inp.appendChild(pdfLbl);
+    const ta=document.createElement('textarea');
+    ta.id='chat-text-in'; ta.placeholder='Message...'; ta.rows=1;
+    ta.style.cssText='flex:1;background:var(--sf2);border:1px solid var(--bd2);border-radius:10px;padding:8px 12px;color:var(--tx);font-size:13px;resize:none;max-height:100px;font-family:inherit';
+    ta.onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();chatSend(gid);}};
+    ta.oninput=function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,100)+'px';};
+    inp.appendChild(ta);
+    const sendBtn=document.createElement('button');
+    sendBtn.style.cssText='background:var(--must);border:none;color:var(--bg);border-radius:10px;padding:8px 14px;cursor:pointer;font-weight:700;font-size:14px';
+    sendBtn.textContent='➤'; sendBtn.onclick=()=>chatSend(gid); inp.appendChild(sendBtn);
+    right.appendChild(inp);
+    setTimeout(()=>document.getElementById('chat-text-in')?.focus(),100);
+  }
+  wrap.appendChild(left); wrap.appendChild(right); pg.appendChild(wrap);
+}
+
+function initChatGroups(){
+  const s=localStorage.getItem('sarpa_cgr');
+  if(s){try{window._chatGrps=JSON.parse(s);return;}catch(e){}}
+  window._chatGrps=[
+    {id:'gc_beton',    name:'🏗 Sarpa Béton',      members:['Direction','Manager Béton','Resp. Production','Resp. Qualité'],fixed:true},
+    {id:'gc_log',      name:'🚛 Sarpa Logistics',  members:['Direction','Manager Logistics','Resp. Flotte'],fixed:true},
+    {id:'gc_immo',     name:'🏠 Sarpa Immobilier', members:['Direction','Manager Immo','Agence'],fixed:true},
+    {id:'gc_dir',      name:'👑 Direction',         members:['DG','Dir. Opérations','Coordinatrice'],fixed:true},
+    {id:'gc_comm',     name:'💼 DG et Commercial',  members:['DG','Commercial 1','Commercial 2'],fixed:true},
+  ];
+  saveChatGrps();
+}
+function saveChatGrps(){localStorage.setItem('sarpa_cgr',JSON.stringify(window._chatGrps));}
+function chatGetMsgs(gid){
+  try{
+    const raw=localStorage.getItem('sarpa_cm_'+gid);
+    if(!raw) return [];
+    const msgs=JSON.parse(raw);
+    const cut=Date.now()-5*24*60*60*1000;
+    return msgs.filter(m=>m.type==='pdf'||m.ts>cut);
+  }catch(e){return [];}
+}
+function chatSaveMsgs(gid,msgs){localStorage.setItem('sarpa_cm_'+gid,JSON.stringify(msgs));}
+function chatSend(gid){
+  const ta=document.getElementById('chat-text-in');
+  const txt=ta?.value?.trim();
+  if(!txt) return;
+  const msgs=chatGetMsgs(gid);
+  msgs.push({id:Date.now()+'_'+Math.random().toString(36).slice(2),sender:userName,text:txt,type:'text',ts:Date.now(),read:false});
+  chatSaveMsgs(gid,msgs); ta.value=''; ta.style.height='auto'; renderMessages();
+}
+function chatSendPDF(gid){
+  const inp=document.getElementById('chat-pdf-in');
+  if(!inp?.files?.[0]) return;
+  const file=inp.files[0];
+  if(file.size>2000000){toast('PDF trop lourd — max 2MB');return;}
+  const rd=new FileReader();
+  rd.onload=()=>{
+    const msgs=chatGetMsgs(gid);
+    msgs.push({id:Date.now()+'_'+Math.random().toString(36).slice(2),sender:userName,type:'pdf',fileName:file.name,data:rd.result.split(',')[1],ts:Date.now(),read:false});
+    chatSaveMsgs(gid,msgs); renderMessages();
+  };
+  rd.readAsDataURL(file);
+}
+function chatViewPDF(gid,mid){
+  const m=chatGetMsgs(gid).find(x=>x.id===mid);
+  if(!m?.data){toast('PDF non disponible');return;}
+  const win=window.open('');
+  if(!win){toast('Autorisez les popups');return;}
+  win.document.write('<html><body style="margin:0"><button onclick="window.close()" style="position:fixed;top:10px;left:10px;z-index:99;background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer">← Retour</button><iframe src="data:application/pdf;base64,'+m.data+'" width="100%" height="100%" style="border:none;padding-top:44px"></iframe></body></html>');
+  win.document.close();
+}
+function openCreateChat(){
+  const name=prompt('Nom du groupe:');
+  if(!name?.trim()) return;
+  const ms=prompt('Membres (séparés par virgule):','Direction, Manager Béton');
+  if(!ms) return;
+  if(!window._chatGrps) initChatGroups();
+  const id='gc_c'+Date.now();
+  window._chatGrps.push({id,name:'💬 '+name.trim(),members:ms.split(',').map(m=>m.trim()).filter(Boolean),fixed:false});
+  saveChatGrps(); window._activeChat=id; renderMessages();
 }
 
 async function savMessage() {
@@ -4645,6 +4948,7 @@ function resetEditMode(modal) {
 
 // ═══ EDIT MODE INTERCEPTOR ═══
 async function dbSave(table, data, modal, page, successMsg) {
+  window._src=null;
   if (_editMode && _editId) {
     await db(table, 'PATCH', data, {id: _editId});
     logAction('update', table, {id: _editId});
@@ -6921,14 +7225,14 @@ async function exportAccidentsPDF() {
   const d=await db('accidents'),cfg=getConfig();
   const ouv=(d||[]).filter(a=>a.statut==='Ouvert').length;
   const w=window.open('','_blank');if(!w)return;
-  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial;margin:40px;font-size:11px}h1{color:#1E1035;border-bottom:3px solid #D4A017;padding-bottom:8px}table{width:100%;border-collapse:collapse}th{background:#1E1035;color:#fff;padding:6px;font-size:10px;text-align:left}td{padding:5px;border-bottom:1px solid #eee}.r{color:#c62828;font-weight:700}@media print{button{display:none}}</style></head><body><button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button><button onclick="window.print()" style="background:#1E1035;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-bottom:16px">🖨️ Imprimer</button><h1>🚨 Accidents & Sécurité — '+ouv+' ouverts / '+(d||[]).length+' total</h1><table><thead><tr><th>Date</th><th>Type</th><th>Gravité</th><th>Description</th><th>Employé</th><th>Camion</th><th>Statut</th></tr></thead><tbody>'+
+  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial;margin:40px;font-size:11px}h1{color:#1E1035;border-bottom:3px solid #D4A017;padding-bottom:8px}table{width:100%;border-collapse:collapse}th{background:#1E1035;color:#fff;padding:6px;font-size:10px;text-align:left}td{padding:5px;border-bottom:1px solid #eee}.r{color:#c62828;font-weight:700}@media print{button{display:none}}</style></head><body><button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button><button onclick="window.print()" style="background:#1E1035;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-bottom:16px">🖨️ Imprimer</button><h1>🚨 Accidents et Sécurité — '+ouv+' ouverts / '+(d||[]).length+' total</h1><table><thead><tr><th>Date</th><th>Type</th><th>Gravité</th><th>Description</th><th>Employé</th><th>Camion</th><th>Statut</th></tr></thead><tbody>'+
     (d||[]).map(a=>'<tr><td>'+(a.date||'—')+'</td><td>'+(a.type_accident||'—')+'</td><td class="'+(a.gravite==='Grave'||a.gravite==='Critique'?'r':'')+'">'+(a.gravite||'—')+'</td><td>'+(a.description||'—')+'</td><td>'+(a.employe||'—')+'</td><td>'+(a.camion||'—')+'</td><td class="'+(a.statut==='Ouvert'?'r':'')+'">'+(a.statut||'—')+'</td></tr>').join('')+
   '</tbody></table></body></html>');w.document.close();
 }
 async function exportProjetsPDF() {
   const d=await db('projets');
   const w=window.open('','_blank');if(!w)return;
-  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial;margin:40px;font-size:11px}h1{color:#1E1035;border-bottom:3px solid #D4A017;padding-bottom:8px}table{width:100%;border-collapse:collapse}th{background:#1E1035;color:#fff;padding:6px;font-size:10px;text-align:left}td{padding:5px;border-bottom:1px solid #eee}@media print{button{display:none}}</style></head><body><button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button><button onclick="window.print()" style="background:#1E1035;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-bottom:16px">🖨️ Imprimer</button><h1>📋 Projets & Chantiers — '+(d||[]).filter(p=>p.statut==="En cours").length+' en cours</h1><table><thead><tr><th>Nom</th><th>Client</th><th>Localisation</th><th>Budget</th><th>Début</th><th>Fin</th><th>Statut</th></tr></thead><tbody>'+
+  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial;margin:40px;font-size:11px}h1{color:#1E1035;border-bottom:3px solid #D4A017;padding-bottom:8px}table{width:100%;border-collapse:collapse}th{background:#1E1035;color:#fff;padding:6px;font-size:10px;text-align:left}td{padding:5px;border-bottom:1px solid #eee}@media print{button{display:none}}</style></head><body><button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button><button onclick="window.print()" style="background:#1E1035;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-bottom:16px">🖨️ Imprimer</button><h1>📋 Projets et Chantiers — '+(d||[]).filter(p=>p.statut==="En cours").length+' en cours</h1><table><thead><tr><th>Nom</th><th>Client</th><th>Localisation</th><th>Budget</th><th>Début</th><th>Fin</th><th>Statut</th></tr></thead><tbody>'+
     (d||[]).map(p=>'<tr><td><strong>'+(p.nom||'—')+'</strong></td><td>'+(p.client||'—')+'</td><td>'+(p.localisation||'—')+'</td><td>'+fmt(p.budget||0)+' FCFA</td><td>'+(p.date_debut||'—')+'</td><td>'+(p.date_fin||'—')+'</td><td>'+(p.statut||'—')+'</td></tr>').join('')+
   '</tbody></table></body></html>');w.document.close();
 }
@@ -6962,7 +7266,7 @@ async function exportCongesPDF() {
   const d=await db('conges'),m=new Date().toISOString().slice(0,7);
   const mc=(d||[]).filter(c=>c.date_debut?.startsWith(m));
   const w=window.open('','_blank');if(!w)return;
-  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial;margin:40px;font-size:11px}h1{color:#1E1035;border-bottom:3px solid #D4A017;padding-bottom:8px}table{width:100%;border-collapse:collapse}th{background:#1E1035;color:#fff;padding:6px;font-size:10px;text-align:left}td{padding:5px;border-bottom:1px solid #eee}@media print{button{display:none}}</style></head><body><button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button><button onclick="window.print()" style="background:#1E1035;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-bottom:16px">🖨️ Imprimer</button><h1>🗓 Congés & Absences — '+m+'</h1><table><thead><tr><th>Employé</th><th>Type</th><th>Début</th><th>Fin</th><th>Jours</th><th>Motif</th><th>Statut</th></tr></thead><tbody>'+
+  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial;margin:40px;font-size:11px}h1{color:#1E1035;border-bottom:3px solid #D4A017;padding-bottom:8px}table{width:100%;border-collapse:collapse}th{background:#1E1035;color:#fff;padding:6px;font-size:10px;text-align:left}td{padding:5px;border-bottom:1px solid #eee}@media print{button{display:none}}</style></head><body><button onclick="window.close()" style="background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">← Retour</button><button onclick="window.print()" style="background:#1E1035;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-bottom:16px">🖨️ Imprimer</button><h1>🗓 Congés et Absences — '+m+'</h1><table><thead><tr><th>Employé</th><th>Type</th><th>Début</th><th>Fin</th><th>Jours</th><th>Motif</th><th>Statut</th></tr></thead><tbody>'+
     (d||[]).map(c=>'<tr><td><strong>'+(c.employe||'—')+'</strong></td><td>'+(c.type_conge||'—')+'</td><td>'+(c.date_debut||'—')+'</td><td>'+(c.date_fin||'—')+'</td><td>'+(c.nb_jours||'—')+'</td><td>'+(c.motif||'—')+'</td><td>'+(c.statut||'—')+'</td></tr>').join('')+
   '</tbody></table></body></html>');w.document.close();
 }
@@ -7603,9 +7907,21 @@ async function updateChequeStatut(id, statut) {
 }
 
 function openChequeModal(type) {
-  document.getElementById('chq-type').value = type;
-  document.getElementById('chq-date').value = new Date().toISOString().slice(0,10);
-  document.getElementById('chq-type-label').textContent = type==='Émis' ? '💸 Chèque Émis (vous payez)' : '💰 Chèque Reçu (vous encaissez)';
+  if(!window._bsnList){window._bsnList=['CBAO Groupe Attijariwafa','Ecobank Sénégal','Banque Atlantique Sénégal','BHS Banque de Habitat','SGBS Société Générale','BICIS BNP Paribas','UBA Sénégal','Bank of Africa Sénégal','Citibank Sénégal','Banque Islamique du Sénégal','Crédit du Sénégal','BSIC Sénégal','Wave Sénégal','Orange Money Sénégal','Autre banque SN'];}
+  document.getElementById('chq-type').value=type;
+  document.getElementById('chq-date').value=new Date().toISOString().slice(0,10);
+  const lbl=document.getElementById('chq-type-label');
+  if(lbl) lbl.textContent=type==='Émis'?'💸 Chèque Émis (vous payez)':'💰 Chèque Reçu (vous encaissez)';
+  const sel=document.getElementById('chq-banque');
+  if(sel){
+    if(type==='Reçu'){
+      sel.innerHTML='<option value="">— Banque émettrice —</option>'+window._bsnList.map(b=>'<option>'+b+'</option>').join('');
+    } else {
+      db('banques').then(bs=>{
+        sel.innerHTML='<option value="">— Compte entreprise —</option>'+(bs||[]).map(b=>'<option value="'+b.id+'">'+b.nom_banque+' — '+(b.nom_compte||b.filiere)+'</option>').join('');
+      });
+    }
+  }
   openM('m-cheque');
 }
 
@@ -7958,187 +8274,422 @@ function doTopbarSearch(q) {
   _tbst = setTimeout(()=>execTopbarSearch(q), 250);
 }
 async function execTopbarSearch(q) {
-  const r = document.getElementById('search-topbar-results');
-  if(!r) return;
-  const qL = q.toLowerCase();
-  const tableNav = {
-    employes:'rh', trucks:'fleet', factures:'factures', livraisons:'livraisons',
-    projets:'projets', fournisseurs:'fournisseurs', annuaire:'annuaire', biens:'biens',
-    accidents:'accidents', partenaires:'partenaires', cheques:'cheques',
-    banques:'banques', contrats_immo:'contrats_immo', loyers:'loyers', formations:'formation'
-  };
-  const icons = {
-    employes:'👤', trucks:'🚛', factures:'🧾', livraisons:'🚚', projets:'📋',
-    fournisseurs:'🏭', annuaire:'📒', biens:'🏠', accidents:'🚨', partenaires:'🤝',
-    cheques:'📝', banques:'🏦', contrats_immo:'📄', loyers:'💰', formations:'🎓'
-  };
-  const results = [];
-  await Promise.all(Object.keys(tableNav).map(async table => {
-    try {
-      const data = await db(table);
-      (data||[]).forEach(item => {
-        if(Object.values(item).join(' ').toLowerCase().includes(qL)) {
-          const main = getMainFields(table, item);
-          results.push({ table, item, main, icon: icons[table]||'📌', nav: tableNav[table]||table });
-        }
-      });
-    } catch(e) {}
-  }));
-  if(!r) return;
-  if(!results.length) { r.innerHTML='<div style="text-align:center;padding:24px;color:var(--tx3)"><div style="font-size:36px;margin-bottom:8px">😕</div><div>Aucun résultat pour "'+q.replace(/[<>&]/g,'') +'"</div></div>'; return; }
-  let html = '<div style="padding:8px 12px;font-size:11px;color:var(--tx3);border-bottom:1px solid var(--sf3)">' + results.length + ' résultat(s) pour "' + q.replace(/[<>&]/g,'') + '"</div>';
-  results.slice(0,20).forEach(r2 => {
-    const txt = (r2.main.text||'').replace(new RegExp(escapeRegex(q),'gi'), '<mark style="background:var(--must)40;border-radius:2px;padding:0 2px">$&</mark>');
-    html += '<div data-nav="'+r2.nav+'" class="search-result-item" style="display:flex;align-items:center;gap:12px;padding:12px 14px;cursor:pointer;border-bottom:1px solid var(--sf3)">'
-      + '<span style="font-size:20px;flex-shrink:0">' + r2.icon + '</span>'
-      + '<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + txt + '</div>'
-      + '<div style="font-size:11px;color:var(--tx3)">' + (r2.main.sub||'') + '</div></div>'
-      + '<span style="font-size:10px;color:var(--tx3);flex-shrink:0">' + (r2.main.badge||'') + '</span>'
-      + '</div>';
+  const resEl=document.getElementById('search-topbar-results');
+  if(!resEl) return;
+  const qL=q.toLowerCase();
+  if(!window._src||(Date.now()-window._srcTime)>30000){
+    window._srcTime=Date.now(); window._src={};
+    const tbl={employes:'rh',trucks:'fleet',factures:'factures',livraisons:'livraisons',
+      projets:'projets',fournisseurs:'fournisseurs',annuaire:'annuaire',biens:'biens',
+      accidents:'accidents',partenaires:'partenaires',cheques:'cheques',banques:'banques',
+      contrats_immo:'contrats_immo',loyers:'loyers',formations:'formation',
+      communiques:'communiques',productions:'production',maintenances:'maintenance'};
+    await Promise.all(Object.entries(tbl).map(async([t,nav])=>{
+      try{window._src[t]={data:await db(t),nav};}catch(e){}
+    }));
+  }
+  const ICO={employes:'👤',trucks:'🚛',factures:'🧾',livraisons:'🚚',projets:'📋',
+    fournisseurs:'🏭',annuaire:'📒',biens:'🏠',accidents:'🚨',partenaires:'🤝',
+    cheques:'📝',banques:'🏦',contrats_immo:'📄',loyers:'💰',formations:'🎓',
+    communiques:'📢',productions:'🏗',maintenances:'🔧'};
+  const results=[];
+  for(const[t,cache]of Object.entries(window._src)){
+    (cache.data||[]).forEach(item=>{
+      if(Object.values(item).join(' ').toLowerCase().includes(qL))
+        results.push({t,item,main:getMainFields(t,item),ico:ICO[t]||'📌',nav:cache.nav||t});
+    });
+  }
+  if(!results.length){resEl.innerHTML='<div style="text-align:center;padding:24px;color:var(--tx3)"><div style="font-size:36px">😕</div><div>Aucun résultat</div></div>';return;}
+  let h='<div style="padding:8px 12px;font-size:11px;color:var(--tx3);border-bottom:1px solid var(--sf3)">'+results.length+' résultat(s)</div>';
+  results.slice(0,25).forEach(r=>{
+    const txt=(r.main.text||'').replace(new RegExp(escapeRegex(q),'gi'),'<mark style="background:var(--must)40;padding:0 2px">$&</mark>');
+    h+='<div data-nav="'+r.nav+'" class="src-item" style="display:flex;align-items:center;gap:12px;padding:11px 14px;cursor:pointer;border-bottom:1px solid var(--sf3)">'
+      +'<span style="font-size:18px;flex-shrink:0">'+r.ico+'</span>'
+      +'<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+txt+'</div>'
+      +'<div style="font-size:11px;color:var(--tx3)">'+(r.main.sub||'')+'</div></div>'
+      +'<span style="font-size:10px;color:var(--tx3);">'+(r.main.badge||'')+'</span></div>';
   });
-  if(results.length > 20) html += '<div style="text-align:center;padding:10px;font-size:11px;color:var(--tx3)">...et '+(results.length-20)+' de plus</div>';
-  r.innerHTML = html;
-  r.querySelectorAll('.search-result-item').forEach(el => {
-    el.addEventListener('click', () => { closeSearchPanel(); go(el.dataset.nav); });
-    el.addEventListener('mouseover', () => el.style.background='var(--sf2)');
-    el.addEventListener('mouseout', () => el.style.background='');
+  if(results.length>25) h+='<div style="text-align:center;padding:8px;font-size:11px;color:var(--tx3)">+'+(results.length-25)+' de plus</div>';
+  resEl.innerHTML=h;
+  resEl.querySelectorAll('.src-item').forEach(el=>{
+    el.onclick=()=>{closeSearchPanel();go(el.dataset.nav);};
+    el.onmouseover=()=>el.style.background='var(--sf2)';
+    el.onmouseout=()=>el.style.background='';
   });
 }
 
-// ══ COMMUNIQUES ══
-async function renderCommuniques() {
-  const comms = await db('communiques');
-  const canP = ['dg','directeur','coordinatrice','manager_beton','manager_logistics','manager_immo'].includes(userRole);
-  const pg = document.getElementById('communiques-content');
+
+
+// ══ GESTION DES ACCÈS ══
+async function renderAccesMgr() {
+  if(!['dg','directeur','resp_info'].includes(userRole)){
+    document.getElementById('acces_mgr-content').innerHTML='<div class="director-lock"><div class="lock-icon">🔒</div><div class="lock-title">Accès DG, Directeur et Resp. Informatique uniquement</div></div>';
+    return;
+  }
+  const pg = document.getElementById('acces_mgr-content');
   if(!pg) return;
+
+  // Load custom access overrides from config
+  const cfgRows = await db('config');
+  const accRow = (cfgRows||[]).find(r=>r.key==='customAccess');
+  let customAccess = {};
+  if(accRow?.value){ try{ customAccess=JSON.parse(accRow.value); }catch(e){} }
+
+  // Get all nav pages
+  const navPages = NAV.filter(n=>n.id).map(n=>({id:n.id, lb:n.lb||n.id, ic:n.ic||''}));
+
+  // Get all users/roles
+  const allUsers = Object.entries(ROLE_CODES).map(([code,info])=>({code,role:info.role,name:info.name}));
+
   pg.innerHTML = '';
   const hdr = document.createElement('div');
-  hdr.className = 'sh';
-  const hdrL = document.createElement('div');
-  hdrL.innerHTML = '<div class="stl">📢 Communiqués</div><div class="sst">Informations officielles Sarpa Groupe</div>';
-  hdr.appendChild(hdrL);
-  if(canP) {
-    const btn = document.createElement('button');
-    btn.className = 'btn bm'; btn.style.fontSize='11px'; btn.textContent = '+ Nouveau communiqué';
-    btn.onclick = () => openM('m-communique');
-    hdr.appendChild(btn);
-  }
+  hdr.className='sh';
+  hdr.innerHTML='<div><div class="stl">🔐 Gestion des accès</div><div class="sst">Activez ou désactivez accès par module et utilisateur</div></div>';
+  const saveBtn = document.createElement('button');
+  saveBtn.className='btn bm'; saveBtn.style.fontSize='11px'; saveBtn.textContent='💾 Enregistrer les changements';
+  saveBtn.onclick = saveAccessChanges;
+  hdr.appendChild(saveBtn);
   pg.appendChild(hdr);
-  if(!(comms||[]).length) {
-    const em = document.createElement('div'); em.className='al al-m'; em.textContent='Aucun communiqué.'; pg.appendChild(em); return;
-  }
-  const prioColors = {'Urgent':'var(--rd2)','Important':'var(--must2)','Normal':'var(--ac2)'};
-  (comms||[]).sort((a,b)=>(b.created_at||'').localeCompare(a.created_at||'')).forEach(c => {
-    const card = document.createElement('div');
-    card.className = 'card'; card.style.marginBottom='14px';
-    const col = prioColors[c.priorite]||'var(--ac2)';
-    card.innerHTML = '<div style="border-left:4px solid '+col+';padding:16px;border-radius:0 8px 8px 0">'
-      + '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">'
-      + '<div><span class="b" style="background:'+col+'20;color:'+col+';font-size:10px;margin-right:8px">'+(c.priorite||'Normal')+'</span>'
-      + '<strong style="font-size:14px;color:var(--tx)">'+(c.titre||'—')+'</strong></div>'
-      + '<div style="font-size:10px;color:var(--tx3);text-align:right"><div>'+(c.auteur||'—')+'</div>'
-      + '<div>'+(c.created_at?new Date(c.created_at).toLocaleDateString('fr-FR'):'—')+'</div></div></div>'
-      + (c.contenu?'<div style="font-size:13px;color:var(--tx2);line-height:1.6;white-space:pre-wrap;margin-bottom:10px">'+c.contenu+'</div>':'')
-      + (c.pdf_nom?'<div style="background:var(--sf2);border-radius:6px;padding:8px 12px;display:flex;align-items:center;gap:8px;cursor:pointer" data-comm-id="'+c.id+'"><span style="font-size:16px">📄</span><span style="font-size:12px;color:var(--must2);font-weight:600">'+c.pdf_nom+'</span><span style="font-size:10px;color:var(--tx3);margin-left:auto">Voir PDF</span></div>':'')
-      + '</div>'
-      + (canP?'<div style="padding:8px 16px;border-top:1px solid var(--sf3);display:flex;justify-content:flex-end"><button data-del-id="'+c.id+'" style="background:none;border:1px solid var(--rd2);color:var(--rd2);border-radius:4px;padding:3px 10px;cursor:pointer;font-size:11px">🗑 Supprimer</button></div>':'');
-    pg.appendChild(card);
-    // Bind PDF view
-    card.querySelectorAll('[data-comm-id]').forEach(el => el.onclick=()=>viewCommPDF(el.dataset.commId));
-    card.querySelectorAll('[data-del-id]').forEach(el => el.onclick=()=>deleteComm(el.dataset.delId));
+
+  pg.insertAdjacentHTML('beforeend','<div class="al al-m" style="margin-bottom:12px">🔵 = Accès actif &nbsp;&nbsp; ⚪ = Accès désactivé — Cliquez pour basculer</div>');
+
+  const tableWrap = document.createElement('div');
+  tableWrap.style.cssText='overflow:auto;border-radius:10px;border:1px solid var(--sf3)';
+
+  const table = document.createElement('table');
+  table.style.cssText='border-collapse:collapse;min-width:800px;font-size:11px';
+
+  // Header row
+  const thead = document.createElement('thead');
+  const hr = document.createElement('tr');
+  hr.style.background='var(--sf2)';
+  const thUser = document.createElement('th');
+  thUser.style.cssText='padding:10px 14px;text-align:left;position:sticky;left:0;background:var(--sf2);z-index:1;min-width:160px';
+  thUser.textContent='Utilisateur';
+  hr.appendChild(thUser);
+  navPages.forEach(p=>{
+    const th=document.createElement('th');
+    th.style.cssText='padding:8px 4px;text-align:center;min-width:52px;writing-mode:vertical-lr;transform:rotate(180deg);height:80px;font-weight:500';
+    th.innerHTML='<span title="'+p.id+'">'+p.ic+' '+p.lb.slice(0,12)+'</span>';
+    hr.appendChild(th);
   });
+  thead.appendChild(hr);
+  table.appendChild(thead);
+
+  // User rows
+  const tbody = document.createElement('tbody');
+  allUsers.forEach((u,ui)=>{
+    const rolePages = ROLES[u.role]?.pages || [];
+    const row = document.createElement('tr');
+    row.style.cssText='border-bottom:1px solid var(--sf3)'+(ui%2===0?';background:var(--bg)':';background:var(--sf)');
+    const tdName=document.createElement('td');
+    tdName.style.cssText='padding:8px 14px;font-weight:600;position:sticky;left:0;'+(ui%2===0?'background:var(--bg)':'background:var(--sf)')+';z-index:1';
+    tdName.innerHTML='<div style="font-size:11px">'+u.name+'</div><div style="font-size:9px;color:var(--tx3)">'+u.role+'</div>';
+    row.appendChild(tdName);
+    navPages.forEach(p=>{
+      const td=document.createElement('td');
+      td.style.cssText='text-align:center;padding:4px';
+      // Check custom override first, then default role access
+      const customKey=u.role+'::'+p.id;
+      let hasAccess;
+      if(customAccess[customKey]!==undefined) hasAccess=customAccess[customKey];
+      else hasAccess=rolePages.includes(p.id);
+      const dot=document.createElement('span');
+      dot.style.cssText='display:inline-block;width:18px;height:18px;border-radius:50%;cursor:pointer;transition:background .15s;'+(hasAccess?'background:var(--must)':'background:var(--sf3);border:1px solid var(--bd2)');
+      dot.dataset.role=u.role; dot.dataset.page=p.id; dot.dataset.active=hasAccess?'1':'0';
+      dot.title=(hasAccess?'Actif':'Inactif')+' — '+u.name+' - '+p.lb;
+      dot.onclick=function(){
+        const active=this.dataset.active==='1';
+        this.dataset.active=active?'0':'1';
+        this.style.background=!active?'var(--must)':'var(--sf3)';
+        this.style.border=!active?'':'1px solid var(--bd2)';
+        this.title=(!active?'Actif':'Inactif')+' — '+u.name+' - '+p.lb;
+      };
+      td.appendChild(dot); row.appendChild(td);
+    });
+    tbody.appendChild(row);
+  });
+  table.appendChild(tbody);
+  tableWrap.appendChild(table);
+  pg.appendChild(tableWrap);
 }
-async function savCommunique() {
-  const titre = document.getElementById('comm-titre').value.trim();
-  if(!titre) { toast('Titre requis'); return; }
-  const pdfInput = document.getElementById('comm-pdf');
-  let pdf_data='', pdf_nom='';
-  if(pdfInput && pdfInput.files && pdfInput.files[0]) {
-    const file = pdfInput.files[0];
-    if(file.size > 500000) { toast('PDF trop lourd — max 500KB'); return; }
-    pdf_nom = file.name;
-    pdf_data = await new Promise((res,rej) => { const r=new FileReader(); r.onload=()=>res(r.result.split(',')[1]); r.onerror=rej; r.readAsDataURL(file); });
-  }
-  await dbSave('communiques', {
-    titre, contenu: document.getElementById('comm-contenu').value,
-    priorite: document.getElementById('comm-priorite').value,
-    auteur: userName, pdf_nom, pdf_data
-  }, 'm-communique', 'communiques', 'Communiqué publié ✓');
+
+async function saveAccessChanges() {
+  const dots = document.querySelectorAll('[data-role][data-page]');
+  const customAccess = {};
+  const navPages = NAV.filter(n=>n.id).map(n=>n.id);
+
+  dots.forEach(dot=>{
+    const role=dot.dataset.role, page=dot.dataset.page;
+    const active=dot.dataset.active==='1';
+    const defAccess=(ROLES[role]?.pages||[]).includes(page);
+    // Only store overrides (different from default)
+    if(active!==defAccess) customAccess[role+'::'+page]=active;
+  });
+
+  // Apply immediately to ROLES in memory
+  const navIds = navPages;
+  Object.keys(ROLES).forEach(role=>{
+    const basePgs = ROLES[role].pages || [];
+    const merged = new Set(basePgs);
+    navIds.forEach(page=>{
+      const key=role+'::'+page;
+      if(customAccess[key]===true) merged.add(page);
+      else if(customAccess[key]===false) merged.delete(page);
+    });
+    ROLES[role].pages = [...merged];
+  });
+
+  // Save to GS config
+  try{
+    const cfgRows=await db('config');
+    const accRow=(cfgRows||[]).find(r=>r.key==='customAccess');
+    const val=JSON.stringify(customAccess);
+    if(accRow) await db('config','PATCH',{value:val},{id:accRow.id});
+    else await db('config','POST',{key:'customAccess',value:val,created_by:userName});
+  }catch(e){console.warn('GS save access:',e);}
+
+  logAction('update','config',{action:'access_updated',par:userName});
+  toast('✅ Accès mis à jour — actifs immédiatement !');
+  render('acces_mgr');
 }
-async function viewCommPDF(id) {
-  const comms = await db('communiques');
-  const c = (comms||[]).find(x=>String(x.id)===String(id));
-  if(!c || !c.pdf_data) { toast('PDF non disponible'); return; }
-  const win = window.open('');
-  if(!win) { toast('Autorisez les popups'); return; }
-  win.document.write('<html><body style="margin:0"><button onclick="window.close()" style="position:fixed;top:10px;left:10px;z-index:99;background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer">← Retour</button><iframe src="data:application/pdf;base64,'+c.pdf_data+'" width="100%" height="100%" style="border:none;padding-top:45px"></iframe></body></html>');
+
+
+// ══ DOCUMENTS SARPA BRANDING ══
+function getSarpaBranding() {
+  const cfg=getConfig();
+  return {
+    company: cfg.companyName||'Sarpa Groupe',
+    logo: '🏢',
+    color: '#1E1035',
+    gold: '#D4A017',
+    address: cfg.address||'Dakar, Sénégal',
+    tel: cfg.tel||'',
+    email: cfg.email||'',
+  };
+}
+
+function docHeader(b, title, subtitle) {
+  return `<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;padding-bottom:16px;border-bottom:4px solid ${b.gold}">
+    <div>
+      <div style="font-size:24px;font-weight:800;color:${b.color}">${b.company}</div>
+      <div style="font-size:11px;color:#666;margin-top:2px">${b.address}${b.tel?' · '+b.tel:''}${b.email?' · '+b.email:''}</div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-size:18px;font-weight:700;color:${b.color}">${title}</div>
+      ${subtitle?'<div style="font-size:11px;color:#666">'+subtitle+'</div>':''}
+      <div style="font-size:10px;color:#999;margin-top:4px">Généré le ${new Date().toLocaleDateString('fr-FR')} par ${userName}</div>
+    </div>
+  </div>`;
+}
+
+function openDocWindow(html) {
+  const win=window.open('','_blank');
+  if(!win){toast('Autorisez les popups');return;}
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <style>
+    body{font-family:Arial,sans-serif;margin:40px;font-size:12px;color:#1a1a2e}
+    table{width:100%;border-collapse:collapse}
+    th{background:#1E1035;color:#fff;padding:8px;text-align:left;font-size:11px}
+    td{padding:7px;border-bottom:1px solid #eee}
+    tr:nth-child(even){background:#f9f9f9}
+    .stamp{display:inline-block;padding:6px 14px;border:2px solid;border-radius:4px;font-weight:700;font-size:12px}
+    @media print{.no-print{display:none}}
+  </style></head><body>
+  <div class="no-print" style="margin-bottom:16px">
+    <button onclick="window.print()" style="background:#1E1035;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px">🖨️ Imprimer / PDF</button>
+    <button onclick="window.close()" style="background:#555;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer">← Fermer</button>
+  </div>
+  ${html}
+  </body></html>`);
   win.document.close();
 }
-async function deleteComm(id) {
-  if(!confirm('Supprimer ce communiqué ?')) return;
-  await db('communiques','DELETE',null,{id});
-  logAction('delete','communiques',{id,par:userName});
-  toast('Supprimé'); render('communiques');
+
+async function genFacturePDF(factureId) {
+  const factures=await db('factures');
+  const f=factureId?(factures||[]).find(x=>String(x.id)===String(factureId)):null;
+  if(factureId&&!f){toast('Facture non trouvée');return;}
+  const b=getSarpaBranding();
+  const num=f?.numero_facture||('FAC-'+Date.now());
+  const lignes=f?.lignes_json?JSON.parse(f.lignes_json):[];
+  const total=f?.montant_total||0;
+  const html=docHeader(b,'FACTURE N° '+num,'Date: '+(f?.date_facture||new Date().toLocaleDateString('fr-FR')))
+    +`<div style="display:flex;justify-content:space-between;margin-bottom:20px">
+      <div><strong>Émetteur:</strong><br>${b.company}<br>${b.address}</div>
+      <div style="text-align:right"><strong>Client:</strong><br>${f?.nom||'—'}<br>${f?.departement||''}</div>
+    </div>
+    <table><thead><tr><th>Description</th><th>Qté</th><th>Prix unit.</th><th>Total</th></tr></thead>
+    <tbody>${lignes.map(l=>'<tr><td>'+l.description+'</td><td>'+l.qte+'</td><td>'+fmt(l.prix_unit)+' FCFA</td><td><strong>'+fmt(l.total)+' FCFA</strong></td></tr>').join('')}
+    ${!lignes.length?'<tr><td colspan="4" style="text-align:center;color:#999">Aucune ligne de facture</td></tr>':''}
+    </tbody></table>
+    <div style="text-align:right;margin-top:16px;padding:12px;background:#f3eef9;border-radius:8px">
+      <div style="font-size:18px;font-weight:800;color:#1E1035">TOTAL: ${fmt(total)} FCFA</div>
+      <div style="font-size:11px;color:#666">Mode: ${f?.mode_paiement||'—'} · Statut: ${f?.statut||'—'}</div>
+    </div>
+    <div style="margin-top:40px;display:flex;justify-content:space-between">
+      <div><div style="font-weight:700;margin-bottom:30px">Signature émetteur:</div><div style="border-top:1px solid #ccc;width:180px;padding-top:4px;font-size:10px;color:#999">Nom et cachet</div></div>
+      <div><div style="font-weight:700;margin-bottom:30px">Signature client:</div><div style="border-top:1px solid #ccc;width:180px;padding-top:4px;font-size:10px;color:#999">Nom et cachet</div></div>
+    </div>`;
+  openDocWindow(html);
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('login-btn').addEventListener('click', doLogin);
-  document.getElementById('l-code').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
+async function genBonLivraison(livraisonId) {
+  const livs=await db('livraisons');
+  const l=livraisonId?(livs||[]).find(x=>String(x.id)===String(livraisonId)):null;
+  const b=getSarpaBranding();
+  const num='BL-'+(l?.id||Date.now());
+  const html=docHeader(b,'BON DE LIVRAISON N° '+num,'Date: '+(l?.date_depart||new Date().toLocaleDateString('fr-FR')))
+    +`<div style="display:flex;justify-content:space-between;margin-bottom:20px">
+      <div><strong>Expéditeur:</strong><br>${b.company}</div>
+      <div style="text-align:right"><strong>Destinataire:</strong><br>${l?.client||'—'}<br>${l?.destination||''}</div>
+    </div>
+    <table><thead><tr><th>Désignation</th><th>Camion</th><th>Chauffeur</th><th>Quantité</th><th>Unité</th></tr></thead>
+    <tbody><tr>
+      <td>${l?.type_mission||'Livraison'}</td>
+      <td>${l?.camion||'—'}</td>
+      <td>${l?.chauffeur||'—'}</td>
+      <td>${l?.volume||l?.tonnage||'—'}</td>
+      <td>${l?.type_mission?.includes('béton')?'m³':'u'}</td>
+    </tr></tbody></table>
+    <div style="margin-top:16px;padding:10px;background:#fff9e6;border-left:4px solid #D4A017;border-radius:0 6px 6px 0">
+      <strong>Notes:</strong> ${l?.notes||'—'}
+    </div>
+    <div style="margin-top:32px;display:flex;justify-content:space-between">
+      <div><div style="font-weight:700;margin-bottom:30px">Expédié par:</div><div style="border-top:1px solid #ccc;width:160px;padding-top:4px;font-size:10px;color:#999">Signature + Date</div></div>
+      <div><div style="font-weight:700;margin-bottom:30px">Reçu par:</div>
+        ${l?.signature_data?'<img src="data:image/png;base64,'+l.signature_data+'" style="max-width:200px;max-height:80px;border:1px solid #ccc;border-radius:4px">':'<div style="border:1px dashed #ccc;width:200px;height:60px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#999;border-radius:4px">Signature réceptionnaire</div>'}
+        <div style="border-top:1px solid #ccc;width:200px;padding-top:4px;font-size:10px;color:#999;margin-top:4px">Nom + Date</div>
+      </div>
+    </div>`;
+  openDocWindow(html);
+}
 
-  const s = JSON.parse(localStorage.getItem('sarpa_s')||'null');
-  if (s && s.role && (Date.now()-s.ts < 7*24*60*60*1000)) {
-    startApp(s.role, s.name);
-  } else {
-    document.getElementById('login-screen').style.display = 'flex';
+async function genContratPDF(contratId) {
+  const contrats=await db('contrats_immo');
+  const c=contratId?(contrats||[]).find(x=>String(x.id)===String(contratId)):null;
+  const b=getSarpaBranding();
+  const html=docHeader(b,'CONTRAT N° '+(c?.numero_contrat||'—'),'Type: '+(c?.type_contrat||'—'))
+    +`<div style="margin-bottom:20px">
+      <table><tbody>
+        <tr><td style="font-weight:700;width:180px">Bailleur:</td><td>${b.company}</td></tr>
+        <tr><td style="font-weight:700">Locataire/Client:</td><td>${c?.nom_client||'—'}</td></tr>
+        <tr><td style="font-weight:700">Téléphone:</td><td>${c?.telephone||'—'}</td></tr>
+        <tr><td style="font-weight:700">Email:</td><td>${c?.email||'—'}</td></tr>
+        <tr><td style="font-weight:700">Bien concerné:</td><td>${c?.bien||'—'}</td></tr>
+        <tr><td style="font-weight:700">Durée du contrat:</td><td>${c?.date_debut||'—'} → ${c?.date_fin||'—'}</td></tr>
+        <tr><td style="font-weight:700">Montant mensuel:</td><td><strong>${fmt(c?.montant||0)} FCFA</strong></td></tr>
+        <tr><td style="font-weight:700">Conditions:</td><td>${c?.conditions||'—'}</td></tr>
+        <tr><td style="font-weight:700">Statut:</td><td><span class="stamp" style="color:#1E1035;border-color:#1E1035">${c?.statut||'—'}</span></td></tr>
+      </tbody></table>
+    </div>
+    <div style="margin-top:40px;display:flex;justify-content:space-between">
+      <div><div style="font-weight:700;margin-bottom:30px">Le Bailleur:</div><div style="border-top:1px solid #ccc;width:180px;padding-top:4px;font-size:10px;color:#999">Signature + Cachet</div></div>
+      <div><div style="font-weight:700;margin-bottom:30px">Le Locataire:</div><div style="border-top:1px solid #ccc;width:180px;padding-top:4px;font-size:10px;color:#999">Signature + Date</div></div>
+    </div>`;
+  openDocWindow(html);
+}
+
+async function genRapportPDF() {
+  const [prods,trucks,livs,stocks,accs,fins,biens]=await Promise.all([
+    db('productions'),db('trucks'),db('livraisons'),db('stocks'),
+    db('accidents'),db('finances'),db('biens')
+  ]);
+  const b=getSarpaBranding();
+  const m=new Date().toISOString().slice(0,7);
+  const mP=(prods||[]).filter(p=>p.date?.startsWith(m));
+  const totProd=mP.reduce((a,x)=>a+(+x.volume||0),0);
+  const opT=(trucks||[]).filter(t=>t.status==='operational').length;
+  const mL=(livs||[]).filter(l=>l.date_depart?.startsWith(m));
+  const mF=(fins||[]).filter(f=>f.date?.startsWith(m));
+  const rec=mF.filter(f=>f.type==='Recette').reduce((a,x)=>a+(+x.montant||0),0);
+  const dep=mF.filter(f=>f.type==='Dépense').reduce((a,x)=>a+(+x.montant||0),0);
+  const html=docHeader(b,'RAPPORT CONSOLIDÉ',m)
+    +`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px">
+      <div style="background:#f3eef9;padding:12px;border-radius:8px;text-align:center"><div style="font-size:20px;font-weight:800;color:#1E1035">${fmt(totProd)} m³</div><div style="font-size:10px;color:#666">Production Béton</div></div>
+      <div style="background:#f3eef9;padding:12px;border-radius:8px;text-align:center"><div style="font-size:20px;font-weight:800;color:#1E1035">${opT}/${(trucks||[]).length}</div><div style="font-size:10px;color:#666">Camions opérat.</div></div>
+      <div style="background:#f3eef9;padding:12px;border-radius:8px;text-align:center"><div style="font-size:20px;font-weight:800;color:#1E1035">${mL.length}</div><div style="font-size:10px;color:#666">Livraisons</div></div>
+    </div>
+    <h3 style="color:#1E1035;border-bottom:2px solid #D4A017;padding-bottom:4px">Résultat financier — ${m}</h3>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px">
+      <div style="background:#e8f5e9;padding:12px;border-radius:8px;text-align:center"><div style="font-size:18px;font-weight:800;color:#2e7d32">+${fmt(rec)} FCFA</div><div style="font-size:10px;color:#666">Recettes</div></div>
+      <div style="background:#ffebee;padding:12px;border-radius:8px;text-align:center"><div style="font-size:18px;font-weight:800;color:#c62828">-${fmt(dep)} FCFA</div><div style="font-size:10px;color:#666">Dépenses</div></div>
+      <div style="background:${rec-dep>=0?'#e8f5e9':'#ffebee'};padding:12px;border-radius:8px;text-align:center"><div style="font-size:18px;font-weight:800;color:${rec-dep>=0?'#2e7d32':'#c62828'}">${rec-dep>=0?'+':''}${fmt(rec-dep)} FCFA</div><div style="font-size:10px;color:#666">Solde</div></div>
+    </div>
+    <h3 style="color:#1E1035;border-bottom:2px solid #D4A017;padding-bottom:4px">Stocks critiques</h3>
+    <table><thead><tr><th>Produit</th><th>Stock actuel</th><th>Critique</th><th>Statut</th></tr></thead>
+    <tbody>${(stocks||[]).filter(s=>+s.current_qty<=+s.critical_qty).map(s=>'<tr><td>'+s.product_name+'</td><td>'+s.current_qty+' '+s.unit+'</td><td>'+s.critical_qty+' '+s.unit+'</td><td style="color:#c62828;font-weight:700">🔴 CRITIQUE</td></tr>').join('')||'<tr><td colspan="4" style="color:green;text-align:center">✅ Tous les stocks sont OK</td></tr>'}</tbody></table>`;
+  openDocWindow(html);
+}
+
+
+// ══ SIGNATURE DIGITALE ══
+function openSignatureModal(livraisonId) {
+  document.getElementById('sig-livraison-id').value = livraisonId||'';
+  const canvas = document.getElementById('sig-canvas');
+  if(canvas) {
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
   }
-});
+  openM('m-signature');
+  initSignatureCanvas();
+}
 
+function initSignatureCanvas() {
+  const canvas = document.getElementById('sig-canvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  ctx.strokeStyle = '#1E1035';
+  ctx.lineWidth = 2;
+  ctx.lineCap = 'round';
+  let drawing = false;
+  const getPos = (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const src = e.touches ? e.touches[0] : e;
+    return { x: (src.clientX - rect.left) * (canvas.width/rect.width), y: (src.clientY - rect.top) * (canvas.height/rect.height) };
+  };
+  canvas.onmousedown = canvas.ontouchstart = (e) => { e.preventDefault(); drawing=true; const p=getPos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); };
+  canvas.onmousemove = canvas.ontouchmove = (e) => { e.preventDefault(); if(!drawing) return; const p=getPos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); };
+  canvas.onmouseup = canvas.ontouchend = () => { drawing=false; };
+}
 
+function clearSignature() {
+  const canvas = document.getElementById('sig-canvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+async function saveSignature() {
+  const canvas = document.getElementById('sig-canvas');
+  const livId = document.getElementById('sig-livraison-id').value;
+  if(!canvas || !livId) return;
+  const sigData = canvas.toDataURL('image/png').split(',')[1];
+  const signataire = document.getElementById('sig-nom').value || 'Réceptionnaire';
+  await db('livraisons','PATCH',{
+    signature_data: sigData,
+    signature_nom: signataire,
+    signature_date: new Date().toISOString(),
+    statut: 'Livrée et signée'
+  },{id: livId});
+  logAction('update','livraisons',{id:livId, signature:true, par:userName});
+  closeM('m-signature');
+  toast('✅ Signature enregistrée — livraison confirmée');
+  window._src=null;
+  render('livraisons');
+}
 
 
 
 
 
 </script>
+
+
+
+
+
 
 
 
