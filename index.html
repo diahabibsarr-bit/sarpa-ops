@@ -248,6 +248,12 @@ textarea{resize:vertical;min-height:70px}
 
 @keyframes slideInRight{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
 .fsec{animation:fadeIn .2s ease}
+
+/* Mobile fix */
+.pg{-webkit-transform:translateZ(0);transform:translateZ(0)}
+.pg.active{display:block!important;opacity:1!important}
+*{-webkit-tap-highlight-color:transparent}
+body{-webkit-overflow-scrolling:touch;overscroll-behavior:none}
 </style>
 </head>
 <body>
@@ -303,13 +309,27 @@ textarea{resize:vertical;min-height:70px}
 
 <!-- MAIN -->
 <div id="mn">
-  <header class="topbar">
+  <div id="search-panel" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:9000;background:rgba(0,0,0,0.5)">
+  <div onclick="closeSearchPanel()" style="position:absolute;top:0;left:0;right:0;bottom:0"></div>
+  <div style="position:relative;max-width:600px;margin:56px auto 0;background:var(--sf);border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.4)">
+    <div style="padding:14px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--sf3)">
+      <span style="font-size:18px">🔍</span>
+      <input type="text" id="search-topbar-input" placeholder="Rechercher partout..." style="flex:1;background:transparent;border:none;outline:none;color:var(--tx);font-size:15px" oninput="doTopbarSearch(this.value)" autocomplete="off">
+      <button onclick="closeSearchPanel()" style="background:none;border:none;cursor:pointer;color:var(--tx3);font-size:18px;padding:4px">✕</button>
+    </div>
+    <div id="search-topbar-results" style="max-height:65vh;overflow-y:auto;padding:6px">
+      <div style="text-align:center;padding:24px;color:var(--tx3)"><div style="font-size:36px;margin-bottom:8px">🔍</div><div style="font-size:13px">Tapez pour rechercher...</div></div>
+    </div>
+  </div>
+</div>
+<header class="topbar">
     <div style="display:flex;align-items:center;gap:12px">
       <button class="btn bg2" id="mbtn" onclick="toggleSB()" style="display:none;padding:6px 10px">☰</button>
       <div class="ttl" id="ptitle">Tableau de bord</div>
     </div>
     <div class="tba">
       <div class="rt-indicator"><span class="rt-dot"></span><span style="display:none" id="rt-txt">Temps réel</span></div>
+      <button onclick="openSearchPanel()" style="background:none;border:none;cursor:pointer;font-size:18px;padding:4px 6px;color:var(--tx2)" title="Rechercher">🔍</button>
       <button onclick="openNotifCenter()" style="background:none;border:none;cursor:pointer;position:relative;padding:4px" title="Notifications">
         <span style="font-size:20px">🔔</span>
         <span id="notif-badge" style="display:none;position:absolute;top:0;right:0;background:var(--rd2);color:#fff;border-radius:50%;width:16px;height:16px;font-size:9px;font-weight:800;align-items:center;justify-content:center">0</span>
@@ -694,6 +714,8 @@ textarea{resize:vertical;min-height:70px}
 <!-- ═══ RECHERCHE ═══ -->
 <div class="pg" id="pg-recherche"><div id="recherche-content"></div></div>
 
+
+<div class="pg" id="pg-communiques"><div id="communiques-content"></div></div>
 </div><!-- /mn -->
 </div><!-- /app -->
 
@@ -1098,7 +1120,7 @@ textarea{resize:vertical;min-height:70px}
   <div class="fr">
     <div class="fg"><label>Date</label><input type="date" id="liv-date"></div>
     <div class="fg"><label>Type de mission</label><select id="liv-type">
-      <option>Livraison béton</option><option>Livraison briques</option>
+      <option>Livraison béton (toupie)</option><option>Livraison de ciment (sacs)</option><option>Livraison de ciment vrac (tonne)</option><option>Livraison briques</option>
       <option>Livraison fer</option><option>Livraison engrais</option>
       <option>Livraison matériaux</option><option>Transport A→B</option>
       <option>Collecte fournisseur</option><option>Transfert interne</option>
@@ -1456,7 +1478,20 @@ textarea{resize:vertical;min-height:70px}
   <div class="fg"><label>Notes</label><textarea id="chq-notes" rows="2"></textarea></div>
   <div class="mf"><button class="btn bg2" onclick="closeM('m-cheque')">Annuler</button><button class="btn bm" onclick="savCheque()">Enregistrer</button></div>
 </div></div>
+
+<!-- MODAL COMMUNIQUE -->
+<div class="mo" id="m-communique"><div class="md" style="max-width:600px">
+  <div class="mh"><div class="mt">📢 Nouveau communiqué</div><button class="mc" onclick="closeM('m-communique')">✕</button></div>
+  <div class="fg"><label>Titre</label><input type="text" id="comm-titre" placeholder="Titre du communiqué"></div>
+  <div class="fg"><label>Priorité</label><select id="comm-priorite"><option>Normal</option><option>Important</option><option>Urgent</option></select></div>
+  <div class="fg"><label>Contenu</label><textarea id="comm-contenu" rows="6" placeholder="Rédigez votre communiqué... (optionnel si PDF joint)"></textarea></div>
+  <div class="fg"><label>📄 Joindre un PDF (max 500KB)</label><input type="file" id="comm-pdf" accept=".pdf" style="background:var(--sf2);border:1px solid var(--bd2);border-radius:6px;padding:8px;width:100%;color:var(--tx)"></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-communique')">Annuler</button><button class="btn bm" onclick="savCommunique()">📢 Publier</button></div>
+</div></div>
 <script>
+
+
+
 
 
 
@@ -1598,27 +1633,27 @@ async function initGoogleSheets() {
 }
 
 // ═══ ROLES ═══
-const ALL = ['dashboard','production','stocks','quality','fleet','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','rh','formation','planning','carburant','checklist','messages','annuaire','conges','partenariats','objectifs','graphiques','journal','livraisons','factures','pointage','opening','closing','biens','visites','contrats_immo','etats_lieux','loyers','banques','releves','rapprochement','cheques','etats_fin','fin_beton','fin_logistics','fin_immo','recherche'];
+const ALL = ['dashboard','communiques','production','stocks','quality','fleet','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','rh','formation','planning','carburant','checklist','messages','annuaire','conges','partenariats','objectifs','graphiques','journal','livraisons','factures','pointage','opening','closing','biens','visites','contrats_immo','etats_lieux','loyers','banques','releves','rapprochement','cheques','etats_fin','fin_beton','fin_logistics','fin_immo','recherche'];
 const ROLES = {
-  dg                       : { label:'Directeur Général', badge:'rb-director', pages:['dashboard','production','stocks','quality','fleet','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','rh','formation','planning','carburant','checklist','messages','annuaire','conges','partenariats','objectifs','graphiques','journal','livraisons','factures','pointage','opening','closing','biens','visites','contrats_immo','etats_lieux','loyers','banques','releves','rapprochement','cheques','etats_fin','fin_beton','fin_logistics','fin_immo','recherche'] },
-  directeur                : { label:'Dir. Opérations & Logistique', badge:'rb-director', pages:['dashboard','production','stocks','quality','fleet','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','rh','formation','planning','carburant','checklist','messages','annuaire','conges','partenariats','objectifs','graphiques','journal','livraisons','factures','pointage','opening','closing','biens','visites','contrats_immo','etats_lieux','loyers','banques','releves','rapprochement','cheques','etats_fin','fin_beton','fin_logistics','fin_immo','recherche'] },
-  coordinatrice            : { label:'Coordinatrice Sarpa Groupe', badge:'rb-coord', pages:['dashboard','stocks','fournisseurs','projets','partenaires','accidents','planning','messages','annuaire','livraisons','factures','partenariats','objectifs','conges','formation','rapports','pointage','recherche','fin_beton','fin_logistics','fin_immo'] },
-  manager_beton            : { label:'Manager Sarpa Béton', badge:'rb-beton', pages:['dashboard','production','stocks','quality','accidents','planning','livraisons','factures','messages','annuaire','fournisseurs','objectifs','opening','closing','pointage','fin_beton','recherche','fleet','maintenance','carburant','checklist'] },
-  responsable_centrale     : { label:'Resp. Production Béton', badge:'rb-beton', pages:['dashboard','production','stocks','quality','accidents','planning','livraisons','factures','messages','annuaire','fournisseurs','opening','closing','pointage','recherche'] },
-  resp_production          : { label:'Resp. Production', badge:'rb-beton', pages:['dashboard','production','stocks','quality','accidents','messages','annuaire','opening','closing','pointage','recherche'] },
-  resp_qualite             : { label:'Responsable Qualité', badge:'rb-qual', pages:['dashboard','quality','production','stocks','rapports','accidents','messages','annuaire','evaluations','recherche'] },
-  manager_logistics        : { label:'Manager Sarpa Logistics', badge:'rb-flotte', pages:['dashboard','fleet','maintenance','livraisons','planning','stocks','carburant','checklist','accidents','factures','messages','annuaire','fournisseurs','objectifs','opening','closing','pointage','fin_logistics','recherche'] },
-  responsable_flotte       : { label:'Resp. Flotte', badge:'rb-flotte', pages:['dashboard','fleet','maintenance','livraisons','planning','stocks','carburant','checklist','accidents','factures','messages','annuaire','opening','closing','pointage','recherche'] },
-  manager_immo             : { label:'Manager Sarpa Immobilier', badge:'rb-immo', pages:['dashboard','biens','visites','contrats_immo','etats_lieux','loyers','projets','partenaires','partenariats','livraisons','factures','messages','annuaire','fournisseurs','objectifs','fin_immo','recherche'] },
-  immobilier               : { label:'Agence Immobilière', badge:'rb-immo', pages:['dashboard','biens','visites','contrats_immo','etats_lieux','loyers','projets','partenaires','partenariats','livraisons','factures','messages','annuaire','recherche'] },
-  resp_info                : { label:'Resp. Informatique', badge:'rb-info', pages:['dashboard','parametres','users','journal','graphiques','rapports','messages','annuaire','evaluations','recherche'] },
-  comptabilite             : { label:'Comptabilité', badge:'rb-compta', pages:['dashboard','finances','factures','fournisseurs','rapports','messages','annuaire','objectifs','livraisons','stocks','banques','releves','rapprochement','cheques','etats_fin','fin_beton','fin_logistics','fin_immo','recherche'] },
-  comptable_beton          : { label:'Comptable Béton', badge:'rb-compta', pages:['dashboard','fin_beton','factures','fournisseurs','messages','annuaire','stocks','banques','releves','rapprochement','cheques','etats_fin','recherche'] },
-  comptable_immo           : { label:'Comptable Immobilier', badge:'rb-compta', pages:['dashboard','fin_immo','factures','projets','messages','annuaire','biens','loyers','contrats_immo','banques','releves','rapprochement','cheques','etats_fin','recherche'] },
-  comptable_logistics      : { label:'Comptable Logistics', badge:'rb-compta', pages:['dashboard','fin_logistics','factures','livraisons','carburant','messages','annuaire','banques','releves','rapprochement','cheques','etats_fin','recherche'] },
-  rh                       : { label:'Ressources Humaines', badge:'rb-rh', pages:['dashboard','rh','formation','accidents','conges','messages','annuaire','factures','livraisons','pointage','opening','closing','evaluations','recherche'] },
-  commercial               : { label:'Commercial', badge:'rb-comm', pages:['dashboard','projets','fournisseurs','partenaires','partenariats','messages','annuaire','livraisons','factures','planning','recherche'] },
-  guest                    : { label:'Invité', badge:'rb-guest', pages:['dashboard','planning','projets','partenariats'] },
+  dg                       : { label:'Directeur Général', badge:'rb-director', pages:['dashboard','communiques','production','stocks','quality','fleet','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','rh','formation','planning','carburant','checklist','messages','annuaire','conges','partenariats','objectifs','graphiques','journal','livraisons','factures','pointage','opening','closing','biens','visites','contrats_immo','etats_lieux','loyers','banques','releves','rapprochement','cheques','etats_fin','fin_beton','fin_logistics','fin_immo','recherche'] },
+  directeur                : { label:'Dir. Opérations & Logistique', badge:'rb-director', pages:['dashboard','communiques','production','stocks','quality','fleet','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','rh','formation','planning','carburant','checklist','messages','annuaire','conges','partenariats','objectifs','graphiques','journal','livraisons','factures','pointage','opening','closing','biens','visites','contrats_immo','etats_lieux','loyers','banques','releves','rapprochement','cheques','etats_fin','fin_beton','fin_logistics','fin_immo','recherche'] },
+  coordinatrice            : { label:'Coordinatrice Sarpa Groupe', badge:'rb-coord', pages:['dashboard','communiques','stocks','fournisseurs','projets','partenaires','accidents','planning','messages','annuaire','livraisons','factures','partenariats','objectifs','conges','formation','rapports','pointage','recherche','fin_beton','fin_logistics','fin_immo'] },
+  manager_beton            : { label:'Manager Sarpa Béton', badge:'rb-beton', pages:['dashboard','communiques','production','stocks','quality','accidents','planning','livraisons','factures','messages','annuaire','fournisseurs','objectifs','opening','closing','pointage','fin_beton','recherche','fleet','maintenance','carburant','checklist'] },
+  responsable_centrale     : { label:'Resp. Production Béton', badge:'rb-beton', pages:['dashboard','communiques','production','stocks','quality','accidents','planning','livraisons','factures','messages','annuaire','fournisseurs','opening','closing','pointage','recherche'] },
+  resp_production          : { label:'Resp. Production', badge:'rb-beton', pages:['dashboard','communiques','production','stocks','quality','accidents','messages','annuaire','opening','closing','pointage','recherche'] },
+  resp_qualite             : { label:'Responsable Qualité', badge:'rb-qual', pages:['dashboard','communiques','quality','production','stocks','rapports','accidents','messages','annuaire','evaluations','recherche'] },
+  manager_logistics        : { label:'Manager Sarpa Logistics', badge:'rb-flotte', pages:['dashboard','communiques','fleet','maintenance','livraisons','planning','stocks','carburant','checklist','accidents','factures','messages','annuaire','fournisseurs','objectifs','opening','closing','pointage','fin_logistics','recherche'] },
+  responsable_flotte       : { label:'Resp. Flotte', badge:'rb-flotte', pages:['dashboard','communiques','fleet','maintenance','livraisons','planning','stocks','carburant','checklist','accidents','factures','messages','annuaire','opening','closing','pointage','recherche'] },
+  manager_immo             : { label:'Manager Sarpa Immobilier', badge:'rb-immo', pages:['dashboard','communiques','biens','visites','contrats_immo','etats_lieux','loyers','projets','partenaires','partenariats','livraisons','factures','messages','annuaire','fournisseurs','objectifs','fin_immo','recherche'] },
+  immobilier               : { label:'Agence Immobilière', badge:'rb-immo', pages:['dashboard','communiques','biens','visites','contrats_immo','etats_lieux','loyers','projets','partenaires','partenariats','livraisons','factures','messages','annuaire','recherche'] },
+  resp_info                : { label:'Resp. Informatique', badge:'rb-info', pages:['dashboard','communiques','parametres','users','journal','graphiques','rapports','messages','annuaire','evaluations','recherche'] },
+  comptabilite             : { label:'Comptabilité', badge:'rb-compta', pages:['dashboard','communiques','finances','factures','fournisseurs','rapports','messages','annuaire','objectifs','livraisons','stocks','banques','releves','rapprochement','cheques','etats_fin','fin_beton','fin_logistics','fin_immo','recherche'] },
+  comptable_beton          : { label:'Comptable Béton', badge:'rb-compta', pages:['dashboard','communiques','fin_beton','factures','fournisseurs','messages','annuaire','stocks','banques','releves','rapprochement','cheques','etats_fin','recherche'] },
+  comptable_immo           : { label:'Comptable Immobilier', badge:'rb-compta', pages:['dashboard','communiques','fin_immo','factures','projets','messages','annuaire','biens','loyers','contrats_immo','banques','releves','rapprochement','cheques','etats_fin','recherche'] },
+  comptable_logistics      : { label:'Comptable Logistics', badge:'rb-compta', pages:['dashboard','communiques','fin_logistics','factures','livraisons','carburant','messages','annuaire','banques','releves','rapprochement','cheques','etats_fin','recherche'] },
+  rh                       : { label:'Ressources Humaines', badge:'rb-rh', pages:['dashboard','communiques','rh','formation','accidents','conges','messages','annuaire','factures','livraisons','pointage','opening','closing','evaluations','recherche'] },
+  commercial               : { label:'Commercial', badge:'rb-comm', pages:['dashboard','communiques','projets','fournisseurs','partenaires','partenariats','messages','annuaire','livraisons','factures','planning','recherche'] },
+  guest                    : { label:'Invité', badge:'rb-guest', pages:['dashboard','communiques','planning','projets','partenariats'] },
 };
 
 const TITLES = {
@@ -1638,6 +1673,7 @@ const TITLES = {
 const NAV = [
   { s:'Vue globale' },
   { id:'dashboard',    ic:'◈',  lb:'Tableau de bord' },
+  { id:'communiques',  ic:'📢', lb:'Communiqués',    bg:'nb-comm' },
   { s:'Sarpa Béton' },
   { id:'production',   ic:'🏗', lb:'Production' },
   { id:'stocks',       ic:'📦', lb:'Stocks & Appro',       bg:'nb-s' },
@@ -2214,7 +2250,7 @@ async function render(p) {
     banques:renderBanques, releves:renderReleves, rapprochement:renderRapprochement,
     cheques:renderCheques, etats_fin:renderEtatsFin,
     fin_beton:renderFinBeton, fin_logistics:renderFinLogistics, fin_immo:renderFinImmo,
-    recherche:renderRecherche
+    communiques:renderCommuniques, recherche:renderRecherche
   };
   if (map[p]) await map[p]();
 }
@@ -2224,10 +2260,10 @@ async function renderDash() {
   const m = new Date().toISOString().slice(0,7);
 
   // Fetch all needed data in parallel
-  const [trucks, prods, stocks, livs, factures, loyers, biens, pointages, accidents, projets] = await Promise.all([
+  const [trucks, prods, stocks, livs, factures, loyers, biens, pointages, accidents, projets, banques_list, releves_list, cheques_list] = await Promise.all([
     db('trucks'), db('productions'), db('stocks'), db('livraisons'),
     db('factures'), db('loyers'), db('biens'), db('pointages'),
-    db('accidents'), db('projets')
+    db('accidents'), db('projets'), db('banques'), db('releves'), db('cheques')
   ]);
 
   // ═══ SARPA BÉTON ═══
@@ -2243,6 +2279,18 @@ async function renderDash() {
   const todayLivs = (livs||[]).filter(l=>l.date_depart?.startsWith(today));
   const mLivs = (livs||[]).filter(l=>l.date_depart?.startsWith(m));
   const pendingVal = (livs||[]).filter(l=>l.statut!=='Terminée'&&l.statut!=='Annulée'&&(!l.valide_centrale||!l.valide_flotte)).length;
+
+  // ═══ TRÉSORERIE BANCAIRE ═══
+  const tresorerie = (banques_list||[]).reduce((tot, b) => {
+    const bRel = (releves_list||[]).filter(r=>r.banque_id===String(b.id)&&r.rapproche&&r.rapproche!=='0');
+    const ent = bRel.filter(r=>r.type_mouvement==='Entrée').reduce((a,x)=>a+(+x.montant||0),0);
+    const sor = bRel.filter(r=>r.type_mouvement==='Sortie').reduce((a,x)=>a+(+x.montant||0),0);
+    const cE = (cheques_list||[]).filter(c=>c.banque_id===String(b.id)&&c.type_cheque==='Émis'&&c.statut!=='Annulé').reduce((a,x)=>a+(+x.montant||0),0);
+    const cR = (cheques_list||[]).filter(c=>c.banque_id===String(b.id)&&c.type_cheque==='Reçu'&&c.statut!=='Annulé').reduce((a,x)=>a+(+x.montant||0),0);
+    return tot + (+b.solde_initial||0) + ent - sor + cR - cE;
+  }, 0);
+  const chqEnAttente = (cheques_list||[]).filter(c=>c.statut==='En attente').length;
+  const mvtNonRapr = (releves_list||[]).filter(r=>!r.rapproche||r.rapproche==='0').length;
 
   // ═══ SARPA IMMOBILIER ═══
   const biensOccupes = (biens||[]).filter(b=>b.statut==='Occupé').length;
@@ -2278,6 +2326,8 @@ async function renderDash() {
   if (critStocks > 0) alerts.push({type:'r', msg:`🔴 ${critStocks} stock(s) en niveau critique — Commander urgent`});
   if (accsOuverts > 0) alerts.push({type:'r', msg:`🚨 ${accsOuverts} incident(s) de sécurité ouvert(s)`});
   if (loyersRetard > 0) alerts.push({type:'r', msg:`💰 ${loyersRetard} loyer(s) en retard ce mois`});
+  if (chqEnAttente > 0) alerts.push({type:'m', msg:'📝 '+chqEnAttente+' chèque(s) en attente'});
+  if (mvtNonRapr > 0) alerts.push({type:'m', msg:'🔄 '+mvtNonRapr+' mvt(s) à rapprocher'});
   if (facsEnRetard > 0) alerts.push({type:'m', msg:`🧾 ${facsEnRetard} facture(s) en retard de paiement`});
   if (pendingVal > 0) alerts.push({type:'m', msg:`🚚 ${pendingVal} livraison(s) en attente de validation`});
   if (lowStocks > 0) alerts.push({type:'m', msg:`📦 ${lowStocks} stock(s) bas — Réapprovisionner bientôt`});
@@ -2749,7 +2799,8 @@ async function renderParams() {
     ['messages','💬 Messages'],['pointage','⏰ Pointage'],
     ['opening','🌅 Opening'],['closing','🌙 Closing'],
     ['evaluations','📊 Évaluations'],['rapports','▣ Rapports'],
-    ['notifications','🔔 Alertes'],['acces','🔐 Accès'],['apparence','🎨 Apparence']
+    ['notifications','🔔 Alertes'],['acces','🔐 Accès'],['apparence','🎨 Apparence'],
+    ['production','📌 production'],['quality','📌 quality'],['fleet','📌 fleet'],['contrats_immo','📌 contrats_immo'],['etats_lieux','📌 etats_lieux'],['fin_beton','🏗 Finance Béton'],['fin_logistics','🚛 Finance Logistics'],['fin_immo','🏠 Finance Immo'],['banques','🏦 Comptes bancaires'],['releves','📋 Relevés théoriques'],['rapprochement','🔄 Rapprochement'],['cheques','📝 Chèques'],['etats_fin','📊 États financiers']
   ];
 
   const pc = document.getElementById('param-content');
@@ -3091,6 +3142,20 @@ async function renderParams() {
       <button class="btn bm" onclick="saveConfig('acces')">💾 Enregistrer</button>
     </div>`);
 
+
+  mkSec('production', '<div class="card sp"><div class="ch"><div class="ct">📌 production</div><button class="btn bm" data-goto="production" style="font-size:11px">Ouvrir le module</button></div><p style="font-size:12px;color:var(--tx3);padding:12px">Configurez production directement dans le module.</p></div>');
+  mkSec('quality', '<div class="card sp"><div class="ch"><div class="ct">📌 quality</div><button class="btn bm" data-goto="quality" style="font-size:11px">Ouvrir le module</button></div><p style="font-size:12px;color:var(--tx3);padding:12px">Configurez quality directement dans le module.</p></div>');
+  mkSec('fleet', '<div class="card sp"><div class="ch"><div class="ct">📌 fleet</div><button class="btn bm" data-goto="fleet" style="font-size:11px">Ouvrir le module</button></div><p style="font-size:12px;color:var(--tx3);padding:12px">Configurez fleet directement dans le module.</p></div>');
+  mkSec('contrats_immo', '<div class="card sp"><div class="ch"><div class="ct">📌 contrats_immo</div><button class="btn bm" data-goto="contrats_immo" style="font-size:11px">Ouvrir le module</button></div><p style="font-size:12px;color:var(--tx3);padding:12px">Configurez contrats_immo directement dans le module.</p></div>');
+  mkSec('etats_lieux', '<div class="card sp"><div class="ch"><div class="ct">📌 etats_lieux</div><button class="btn bm" data-goto="etats_lieux" style="font-size:11px">Ouvrir le module</button></div><p style="font-size:12px;color:var(--tx3);padding:12px">Configurez etats_lieux directement dans le module.</p></div>');
+  mkSec('fin_beton', '<div class="card sp"><div class="ch"><div class="ct">🏗 Finance Béton</div><button class="btn bm" data-goto="fin_beton" style="font-size:11px">Ouvrir le module</button></div><p style="font-size:12px;color:var(--tx3);padding:12px">Configurez Finance Béton directement dans le module.</p></div>');
+  mkSec('fin_logistics', '<div class="card sp"><div class="ch"><div class="ct">🚛 Finance Logistics</div><button class="btn bm" data-goto="fin_logistics" style="font-size:11px">Ouvrir le module</button></div><p style="font-size:12px;color:var(--tx3);padding:12px">Configurez Finance Logistics directement dans le module.</p></div>');
+  mkSec('fin_immo', '<div class="card sp"><div class="ch"><div class="ct">🏠 Finance Immo</div><button class="btn bm" data-goto="fin_immo" style="font-size:11px">Ouvrir le module</button></div><p style="font-size:12px;color:var(--tx3);padding:12px">Configurez Finance Immo directement dans le module.</p></div>');
+  mkSec('banques', '<div class="card sp"><div class="ch"><div class="ct">🏦 Comptes bancaires</div><button class="btn bm" data-goto="banques" style="font-size:11px">Ouvrir le module</button></div><p style="font-size:12px;color:var(--tx3);padding:12px">Configurez Comptes bancaires directement dans le module.</p></div>');
+  mkSec('releves', '<div class="card sp"><div class="ch"><div class="ct">📋 Relevés théoriques</div><button class="btn bm" data-goto="releves" style="font-size:11px">Ouvrir le module</button></div><p style="font-size:12px;color:var(--tx3);padding:12px">Configurez Relevés théoriques directement dans le module.</p></div>');
+  mkSec('rapprochement', '<div class="card sp"><div class="ch"><div class="ct">🔄 Rapprochement</div><button class="btn bm" data-goto="rapprochement" style="font-size:11px">Ouvrir le module</button></div><p style="font-size:12px;color:var(--tx3);padding:12px">Configurez Rapprochement directement dans le module.</p></div>');
+  mkSec('cheques', '<div class="card sp"><div class="ch"><div class="ct">📝 Chèques</div><button class="btn bm" data-goto="cheques" style="font-size:11px">Ouvrir le module</button></div><p style="font-size:12px;color:var(--tx3);padding:12px">Configurez Chèques directement dans le module.</p></div>');
+  mkSec('etats_fin', '<div class="card sp"><div class="ch"><div class="ct">📊 États financiers</div><button class="btn bm" data-goto="etats_fin" style="font-size:11px">Ouvrir le module</button></div><p style="font-size:12px;color:var(--tx3);padding:12px">Configurez États financiers directement dans le module.</p></div>');
   mkSec('apparence', `<div class="card sp">
     <div class="ch"><div class="ct">🎨 Apparence</div></div>
     <div class="fg"><label>Nom entreprise</label><input type="text" id="cfg-company" value="${cfg.companyName||'Sarpa Groupe'}"></div>
@@ -7869,6 +7934,153 @@ function renderRapprochementRows(mR, canE) {
 }
 
 function escapeRegex(s) { return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'); }
+
+// ══ SEARCH TOPBAR ══
+function openSearchPanel() {
+  const p = document.getElementById('search-panel');
+  const i = document.getElementById('search-topbar-input');
+  if(p) p.style.display='block';
+  if(i) { i.value=''; setTimeout(()=>i.focus(),100); }
+  const r = document.getElementById('search-topbar-results');
+  if(r) r.innerHTML='<div style="text-align:center;padding:24px;color:var(--tx3)"><div style="font-size:36px;margin-bottom:8px">🔍</div><div>Tapez pour rechercher...</div></div>';
+}
+function closeSearchPanel() {
+  const p = document.getElementById('search-panel');
+  if(p) p.style.display='none';
+}
+let _tbst = null;
+function doTopbarSearch(q) {
+  clearTimeout(_tbst);
+  const r = document.getElementById('search-topbar-results');
+  if(!r) return;
+  if(q.length < 2) { r.innerHTML='<div style="text-align:center;padding:24px;color:var(--tx3)"><div style="font-size:36px;margin-bottom:8px">🔍</div><div>Tapez au moins 2 caractères...</div></div>'; return; }
+  r.innerHTML='<div style="text-align:center;padding:16px;color:var(--tx3)">⏳ Recherche...</div>';
+  _tbst = setTimeout(()=>execTopbarSearch(q), 250);
+}
+async function execTopbarSearch(q) {
+  const r = document.getElementById('search-topbar-results');
+  if(!r) return;
+  const qL = q.toLowerCase();
+  const tableNav = {
+    employes:'rh', trucks:'fleet', factures:'factures', livraisons:'livraisons',
+    projets:'projets', fournisseurs:'fournisseurs', annuaire:'annuaire', biens:'biens',
+    accidents:'accidents', partenaires:'partenaires', cheques:'cheques',
+    banques:'banques', contrats_immo:'contrats_immo', loyers:'loyers', formations:'formation'
+  };
+  const icons = {
+    employes:'👤', trucks:'🚛', factures:'🧾', livraisons:'🚚', projets:'📋',
+    fournisseurs:'🏭', annuaire:'📒', biens:'🏠', accidents:'🚨', partenaires:'🤝',
+    cheques:'📝', banques:'🏦', contrats_immo:'📄', loyers:'💰', formations:'🎓'
+  };
+  const results = [];
+  await Promise.all(Object.keys(tableNav).map(async table => {
+    try {
+      const data = await db(table);
+      (data||[]).forEach(item => {
+        if(Object.values(item).join(' ').toLowerCase().includes(qL)) {
+          const main = getMainFields(table, item);
+          results.push({ table, item, main, icon: icons[table]||'📌', nav: tableNav[table]||table });
+        }
+      });
+    } catch(e) {}
+  }));
+  if(!r) return;
+  if(!results.length) { r.innerHTML='<div style="text-align:center;padding:24px;color:var(--tx3)"><div style="font-size:36px;margin-bottom:8px">😕</div><div>Aucun résultat pour "'+q.replace(/[<>&]/g,'') +'"</div></div>'; return; }
+  let html = '<div style="padding:8px 12px;font-size:11px;color:var(--tx3);border-bottom:1px solid var(--sf3)">' + results.length + ' résultat(s) pour "' + q.replace(/[<>&]/g,'') + '"</div>';
+  results.slice(0,20).forEach(r2 => {
+    const txt = (r2.main.text||'').replace(new RegExp(escapeRegex(q),'gi'), '<mark style="background:var(--must)40;border-radius:2px;padding:0 2px">$&</mark>');
+    html += '<div data-nav="'+r2.nav+'" class="search-result-item" style="display:flex;align-items:center;gap:12px;padding:12px 14px;cursor:pointer;border-bottom:1px solid var(--sf3)">'
+      + '<span style="font-size:20px;flex-shrink:0">' + r2.icon + '</span>'
+      + '<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + txt + '</div>'
+      + '<div style="font-size:11px;color:var(--tx3)">' + (r2.main.sub||'') + '</div></div>'
+      + '<span style="font-size:10px;color:var(--tx3);flex-shrink:0">' + (r2.main.badge||'') + '</span>'
+      + '</div>';
+  });
+  if(results.length > 20) html += '<div style="text-align:center;padding:10px;font-size:11px;color:var(--tx3)">...et '+(results.length-20)+' de plus</div>';
+  r.innerHTML = html;
+  r.querySelectorAll('.search-result-item').forEach(el => {
+    el.addEventListener('click', () => { closeSearchPanel(); go(el.dataset.nav); });
+    el.addEventListener('mouseover', () => el.style.background='var(--sf2)');
+    el.addEventListener('mouseout', () => el.style.background='');
+  });
+}
+
+// ══ COMMUNIQUES ══
+async function renderCommuniques() {
+  const comms = await db('communiques');
+  const canP = ['dg','directeur','coordinatrice','manager_beton','manager_logistics','manager_immo'].includes(userRole);
+  const pg = document.getElementById('communiques-content');
+  if(!pg) return;
+  pg.innerHTML = '';
+  const hdr = document.createElement('div');
+  hdr.className = 'sh';
+  const hdrL = document.createElement('div');
+  hdrL.innerHTML = '<div class="stl">📢 Communiqués</div><div class="sst">Informations officielles Sarpa Groupe</div>';
+  hdr.appendChild(hdrL);
+  if(canP) {
+    const btn = document.createElement('button');
+    btn.className = 'btn bm'; btn.style.fontSize='11px'; btn.textContent = '+ Nouveau communiqué';
+    btn.onclick = () => openM('m-communique');
+    hdr.appendChild(btn);
+  }
+  pg.appendChild(hdr);
+  if(!(comms||[]).length) {
+    const em = document.createElement('div'); em.className='al al-m'; em.textContent='Aucun communiqué.'; pg.appendChild(em); return;
+  }
+  const prioColors = {'Urgent':'var(--rd2)','Important':'var(--must2)','Normal':'var(--ac2)'};
+  (comms||[]).sort((a,b)=>(b.created_at||'').localeCompare(a.created_at||'')).forEach(c => {
+    const card = document.createElement('div');
+    card.className = 'card'; card.style.marginBottom='14px';
+    const col = prioColors[c.priorite]||'var(--ac2)';
+    card.innerHTML = '<div style="border-left:4px solid '+col+';padding:16px;border-radius:0 8px 8px 0">'
+      + '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">'
+      + '<div><span class="b" style="background:'+col+'20;color:'+col+';font-size:10px;margin-right:8px">'+(c.priorite||'Normal')+'</span>'
+      + '<strong style="font-size:14px;color:var(--tx)">'+(c.titre||'—')+'</strong></div>'
+      + '<div style="font-size:10px;color:var(--tx3);text-align:right"><div>'+(c.auteur||'—')+'</div>'
+      + '<div>'+(c.created_at?new Date(c.created_at).toLocaleDateString('fr-FR'):'—')+'</div></div></div>'
+      + (c.contenu?'<div style="font-size:13px;color:var(--tx2);line-height:1.6;white-space:pre-wrap;margin-bottom:10px">'+c.contenu+'</div>':'')
+      + (c.pdf_nom?'<div style="background:var(--sf2);border-radius:6px;padding:8px 12px;display:flex;align-items:center;gap:8px;cursor:pointer" data-comm-id="'+c.id+'"><span style="font-size:16px">📄</span><span style="font-size:12px;color:var(--must2);font-weight:600">'+c.pdf_nom+'</span><span style="font-size:10px;color:var(--tx3);margin-left:auto">Voir PDF</span></div>':'')
+      + '</div>'
+      + (canP?'<div style="padding:8px 16px;border-top:1px solid var(--sf3);display:flex;justify-content:flex-end"><button data-del-id="'+c.id+'" style="background:none;border:1px solid var(--rd2);color:var(--rd2);border-radius:4px;padding:3px 10px;cursor:pointer;font-size:11px">🗑 Supprimer</button></div>':'');
+    pg.appendChild(card);
+    // Bind PDF view
+    card.querySelectorAll('[data-comm-id]').forEach(el => el.onclick=()=>viewCommPDF(el.dataset.commId));
+    card.querySelectorAll('[data-del-id]').forEach(el => el.onclick=()=>deleteComm(el.dataset.delId));
+  });
+}
+async function savCommunique() {
+  const titre = document.getElementById('comm-titre').value.trim();
+  if(!titre) { toast('Titre requis'); return; }
+  const pdfInput = document.getElementById('comm-pdf');
+  let pdf_data='', pdf_nom='';
+  if(pdfInput && pdfInput.files && pdfInput.files[0]) {
+    const file = pdfInput.files[0];
+    if(file.size > 500000) { toast('PDF trop lourd — max 500KB'); return; }
+    pdf_nom = file.name;
+    pdf_data = await new Promise((res,rej) => { const r=new FileReader(); r.onload=()=>res(r.result.split(',')[1]); r.onerror=rej; r.readAsDataURL(file); });
+  }
+  await dbSave('communiques', {
+    titre, contenu: document.getElementById('comm-contenu').value,
+    priorite: document.getElementById('comm-priorite').value,
+    auteur: userName, pdf_nom, pdf_data
+  }, 'm-communique', 'communiques', 'Communiqué publié ✓');
+}
+async function viewCommPDF(id) {
+  const comms = await db('communiques');
+  const c = (comms||[]).find(x=>String(x.id)===String(id));
+  if(!c || !c.pdf_data) { toast('PDF non disponible'); return; }
+  const win = window.open('');
+  if(!win) { toast('Autorisez les popups'); return; }
+  win.document.write('<html><body style="margin:0"><button onclick="window.close()" style="position:fixed;top:10px;left:10px;z-index:99;background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer">← Retour</button><iframe src="data:application/pdf;base64,'+c.pdf_data+'" width="100%" height="100%" style="border:none;padding-top:45px"></iframe></body></html>');
+  win.document.close();
+}
+async function deleteComm(id) {
+  if(!confirm('Supprimer ce communiqué ?')) return;
+  await db('communiques','DELETE',null,{id});
+  logAction('delete','communiques',{id,par:userName});
+  toast('Supprimé'); render('communiques');
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('login-btn').addEventListener('click', doLogin);
   document.getElementById('l-code').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
@@ -7923,7 +8135,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
+
+
+
 </script>
+
+
+
 
 
 
