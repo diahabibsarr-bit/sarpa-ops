@@ -571,7 +571,7 @@ body{-webkit-overflow-scrolling:touch;overscroll-behavior:none}
 </div>
 
 <!-- ═══ MESSAGERIE ═══ -->
-<div class="pg" id="pg-messages">
+<div class="pg" id="pg-messages"><div id="messages-content"></div>
   <div class="sh"><div><div class="stl">Messages & Notes</div><div class="sst">Communication interne</div></div><button class="btn bm" onclick="openM('m-msg')">+ Message</button></div>
   <div id="msg-list" style="display:flex;flex-direction:column;gap:10px;max-width:700px"></div>
 </div>
@@ -1549,6 +1549,7 @@ body{-webkit-overflow-scrolling:touch;overscroll-behavior:none}
     <button class="btn bm" onclick="saveSignature()">✅ Confirmer</button>
   </div>
 </div></div><script>
+
 
 
 
@@ -8387,6 +8388,76 @@ async function saveSignature() {
 
 
 
+
+async function renderCommuniques() {
+  const comms = await db('communiques');
+  const canP = ['dg','directeur','coordinatrice','manager_beton','manager_logistics','manager_immo','rh','resp_info','commercial'].includes(userRole);
+  const pg = document.getElementById('communiques-content');
+  if(!pg) return;
+  pg.innerHTML = '';
+  const hdr = document.createElement('div'); hdr.className='sh';
+  const hdrL = document.createElement('div');
+  hdrL.innerHTML = '<div class="stl">📢 Communiqués</div><div class="sst">Informations officielles</div>';
+  hdr.appendChild(hdrL);
+  if(canP){const btn=document.createElement('button');btn.className='btn bm';btn.style.fontSize='11px';btn.textContent='+ Nouveau communiqué';btn.onclick=()=>openM('m-communique');hdr.appendChild(btn);}
+  pg.appendChild(hdr);
+  if(!(comms||[]).length){const em=document.createElement('div');em.className='al al-m';em.textContent='Aucun communiqué.';pg.appendChild(em);return;}
+  const prioC={'Urgent':'var(--rd2)','Important':'var(--must2)','Normal':'var(--ac2)'};
+  (comms||[]).sort((a,b)=>(b.created_at||'').localeCompare(a.created_at||'')).forEach(c=>{
+    const card=document.createElement('div');card.className='card';card.style.marginBottom='14px';
+    const col=prioC[c.priorite]||'var(--ac2)';
+    const inner=document.createElement('div');inner.style.cssText='border-left:4px solid '+col+';padding:16px;border-radius:0 8px 8px 0';
+    const topRow=document.createElement('div');topRow.style.cssText='display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px';
+    const lp=document.createElement('div');
+    const bdg=document.createElement('span');bdg.className='b';bdg.style.cssText='background:'+col+'20;color:'+col+';font-size:10px;margin-right:8px';bdg.textContent=c.priorite||'Normal';
+    const ttl=document.createElement('strong');ttl.style.cssText='font-size:14px;color:var(--tx)';ttl.textContent=c.titre||'—';
+    lp.appendChild(bdg);lp.appendChild(ttl);
+    const rp=document.createElement('div');rp.style.cssText='font-size:10px;color:var(--tx3);text-align:right';
+    rp.innerHTML='<div>'+(c.auteur||'—')+'</div><div>'+(c.created_at?new Date(c.created_at).toLocaleDateString('fr-FR'):'—')+'</div>';
+    topRow.appendChild(lp);topRow.appendChild(rp);inner.appendChild(topRow);
+    if(c.contenu){const ct=document.createElement('div');ct.style.cssText='font-size:13px;color:var(--tx2);line-height:1.6;white-space:pre-wrap;margin-bottom:10px';ct.textContent=c.contenu;inner.appendChild(ct);}
+    if(c.pdf_nom){const pb=document.createElement('div');pb.style.cssText='background:var(--sf2);border-radius:6px;padding:8px 12px;display:flex;align-items:center;gap:8px;cursor:pointer';pb.innerHTML='<span style="font-size:16px">📄</span><span style="font-size:12px;color:var(--must2);font-weight:600">'+c.pdf_nom+'</span>';const cid=String(c.id);pb.onclick=()=>viewCommPDF(cid);inner.appendChild(pb);}
+    card.appendChild(inner);
+    if(canP){const ft=document.createElement('div');ft.style.cssText='padding:8px 16px;border-top:1px solid var(--sf3);display:flex;justify-content:flex-end';const db2=document.createElement('button');db2.style.cssText='background:none;border:1px solid var(--rd2);color:var(--rd2);border-radius:4px;padding:3px 10px;cursor:pointer;font-size:11px';db2.textContent='Supprimer';const cid=String(c.id);db2.onclick=()=>deleteComm(cid);ft.appendChild(db2);card.appendChild(ft);}
+    pg.appendChild(card);
+  });
+}
+
+async function savCommunique() {
+  const titre=document.getElementById('comm-titre').value.trim();
+  if(!titre){toast('Titre requis');return;}
+  const pdfIn=document.getElementById('comm-pdf');
+  let pdata='',pnom='';
+  if(pdfIn&&pdfIn.files&&pdfIn.files[0]){
+    const f=pdfIn.files[0];
+    if(f.size>500000){toast('PDF max 500KB');return;}
+    pnom=f.name;
+    pdata=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(f);});
+  }
+  await dbSave('communiques',{titre,contenu:document.getElementById('comm-contenu').value,priorite:document.getElementById('comm-priorite').value,auteur:userName,pdf_nom:pnom,pdf_data:pdata},'m-communique','communiques','Communique publie');
+}
+
+async function viewCommPDF(id) {
+  const comms=await db('communiques');
+  const c=(comms||[]).find(x=>String(x.id)===id);
+  if(!c||!c.pdf_data){toast('PDF non disponible');return;}
+  const win=window.open('');if(!win){toast('Autorisez les popups');return;}
+  win.document.write('<html><body style="margin:0"><button onclick="window.close()" style="position:fixed;top:10px;left:10px;z-index:99;background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer">Retour</button><iframe src="data:application/pdf;base64,'+c.pdf_data+'" width="100%" height="100%" style="border:none;padding-top:44px"></iframe></body></html>');
+  win.document.close();
+}
+
+async function deleteComm(id) {
+  if(!confirm('Supprimer ?')) return;
+  await db('communiques','DELETE',null,{id});
+  logAction('delete','communiques',{id,par:userName});
+  toast('Supprime'); render('communiques');
+}
+
+async function renderRecherche() {
+  const pg = document.getElementById('recherche-content');
+  if(pg) { const d=document.createElement('div'); d.className='al al-m'; d.textContent='Utilisez la loupe dans la barre du haut pour rechercher.'; pg.appendChild(d); }
+}
+
 document.addEventListener('DOMContentLoaded', async function() {
   const loginBtn = document.getElementById('login-btn');
   const codeInp = document.getElementById('l-code');
@@ -8403,7 +8474,9 @@ document.addEventListener('DOMContentLoaded', async function() {
 });
 
 
+
 </script>
+
 
 
 
