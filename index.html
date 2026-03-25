@@ -1600,6 +1600,7 @@ body{-webkit-overflow-scrolling:touch;overscroll-behavior:none}
 
 
 
+
 const ROLE_CODES = {
   'DG4X9K2M': { role:'dg',                    name:'Directeur Général'              },
   'OP7R3N8W': { role:'directeur',              name:'Dir. Opérations et Logistique'  },
@@ -1813,7 +1814,7 @@ function doLogout() {
   document.getElementById('l-err').textContent = '';
 }
 
-function startApp(role, name) {
+async function startApp(role, name) {
   userRole = role; userName = name;
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').style.display = 'flex';
@@ -1882,7 +1883,7 @@ function buildQuickGrid() {
 }
 
 // ═══ NAV ═══
-function go(p) {
+async function go(p) {
   const allowed = ROLES[userRole]?.pages || [];
   if (!allowed.includes(p)) { toast('Accès non autorisé'); return; }
   const isGuest = userRole === 'guest';
@@ -1893,7 +1894,7 @@ function go(p) {
   const ni = document.getElementById('nav-'+p);
   if (ni) ni.classList.add('active');
   document.getElementById('ptitle').textContent = TITLES[p]||p;
-  render(p);
+  await render(p);
   if (window.innerWidth<900) document.getElementById('sb').classList.remove('open');
 }
 
@@ -8386,7 +8387,7 @@ async function saveSignature() {
 
 
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
   const loginBtn = document.getElementById('login-btn');
   const codeInp = document.getElementById('l-code');
   if(loginBtn) loginBtn.addEventListener('click', doLogin);
@@ -8394,14 +8395,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
   const s = JSON.parse(localStorage.getItem('sarpa_s')||'null');
   if (s && s.role && (Date.now()-s.ts < 7*24*60*60*1000)) {
-    startApp(s.role, s.name);
+    await startApp(s.role, s.name);
   } else {
     const ls = document.getElementById('login-screen');
     if(ls) ls.style.display = 'flex';
   }
 });
 
+
 </script>
+
 
 
 
