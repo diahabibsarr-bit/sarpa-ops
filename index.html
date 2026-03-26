@@ -70,7 +70,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 @media(min-width:600px){.user-tag{display:block}}
 
 /* LAYOUT */
-.app-body{display:flex;flex:1;overflow:hidden;height:calc(100vh - var(--topH))}
+.app-.app-/* removed conflicting body rule */
 
 /* SIDEBAR */
 #sb{width:240px;flex-shrink:0;background:var(--sf);border-right:1px solid var(--bd);overflow-y:auto;transition:transform .25s;display:flex;flex-direction:column}
@@ -236,7 +236,7 @@ tr:hover td{background:var(--sf2)}
 </div>
 
 <!-- ══ MAIN APP ══ -->
-<div id="app">
+<div id="app" style="display:none">
 
   <!-- TOPBAR -->
   <header class="topbar">
@@ -797,8 +797,6 @@ tr:hover td{background:var(--sf2)}
 
 
 
-
-
 const ROLE_CODES = {
   'DG4X9K2M': { role:'dg',                    name:'Directeur Général'              },
   'OP7R3N8W': { role:'directeur',              name:'Dir. Opérations et Logistique'  },
@@ -823,6 +821,82 @@ const ROLE_CODES = {
   '5SCCAR70': { role:'commercial',             name:'Commercial 2'                  },
 };
 
+const SB_URL = 'https://ijnfostobsaaxdzdfoum.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlqbmZvc3RvYnNhYXhkemRmb3VtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyNDc2ODgsImV4cCI6MjA4ODgyMzY4OH0.Itb-chucTGkCOaLqCe4o8HO95NZTX3B0pDJoBj98xgI';
+
+let userRole = null, userName = null;
+const fmt = n => Number(n||0).toLocaleString('fr-FR');
+
+// ═══ DB ═══
+// ═══ GOOGLE SHEETS DB ═══
+const API_URL = 'https://script.google.com/macros/s/AKfycbzGDWHkSJlDQ3Ycs5QlyIwIfG7yGqXHoYv6FVWrC3WtK50lYuGkd6PDB7Zk28wmgcwn7w/exec';
+
+// Cache pour éviter trop de requêtes
+const _cache = {};
+const _cacheTime = {};
+const CACHE_TTL = 30000; // 30 secondes
+
+async function db(table, method='GET', data=null, filters={}) {
+  if (method === 'GET') {
+    // Check cache
+    const cacheKey = table + JSON.stringify(filters);
+    if (_cache[cacheKey] && Date.now() - _cacheTime[cacheKey] < CACHE_TTL) {
+      return _cache[cacheKey];
+    }
+    try {
+      const params = new URLSearchParams({table, action:'get', ...filters});
+      const r = await fetch(API_URL + '?' + params);
+      const j = await r.json();
+      const result = Array.isArray(j.data) ? j.data : [];
+      _cache[cacheKey] = result;
+      _cacheTime[cacheKey] = Date.now();
+      return result;
+    } catch(e) { console.warn('GET error', table, e); return []; }
+  }
+  if (method === 'POST') {
+    // Invalidate cache
+    Object.keys(_cache).forEach(k => { if(k.startsWith(table)) delete _cache[k]; });
+    try {
+      await fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify({table, action:'post', data})
+      });
+    } catch(e) { console.warn('POST error', table, e); }
+    return [];
+  }
+  if (method === 'PATCH') {
+    Object.keys(_cache).forEach(k => { if(k.startsWith(table)) delete _cache[k]; });
+    try {
+      await fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify({table, action:'patch', data, filters})
+      });
+    } catch(e) { console.warn('PATCH error', table, e); }
+    return [];
+  }
+  if (method === 'DELETE') {
+    Object.keys(_cache).forEach(k => { if(k.startsWith(table)) delete _cache[k]; });
+    try {
+      await fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify({table, action:'delete', filters})
+      });
+    } catch(e) { console.warn('DELETE error', table, e); }
+    return [];
+  }
+  return [];
+}
+
+// Init Google Sheets structure on first load
+async function initGoogleSheets() {
+  try {
+    await fetch(API_URL + '?action=init');
+    console.log('Google Sheets initialized');
+  } catch(e) { console.warn('Init error', e); }
+}
+
+// ═══ ROLES ═══
+const ALL = ['dashboard','communiques','production','stocks','quality','fleet','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','acces_mgr','rh','formation','planning','carburant','checklist','messages','annuaire','conges','partenariats','objectifs','graphiques','journal','livraisons','factures','pointage','opening','closing','biens','visites','contrats_immo','etats_lieux','loyers','banques','releves','rapprochement','cheques','etats_fin','fin_beton','fin_logistics','fin_immo'];
 const ROLES = {
   dg                       : { label:'Directeur Général', badge:'rb-director', pages:['dashboard','communiques','communiques','production','stocks','quality','fleet','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','rh','formation','planning','carburant','checklist','messages','annuaire','conges','partenariats','objectifs','graphiques','journal','livraisons','factures','pointage','opening','closing','biens','visites','contrats_immo','etats_lieux','loyers','banques','releves','rapprochement','cheques','etats_fin','fin_beton','fin_logistics','fin_immo','recherche','acces_mgr'] },
   directeur                : { label:'Dir. Opérations et Logistique', badge:'rb-director', pages:['dashboard','communiques','communiques','production','stocks','quality','fleet','maintenance','accidents','fournisseurs','projets','partenaires','finances','evaluations','rapports','parametres','users','rh','formation','planning','carburant','checklist','messages','annuaire','conges','partenariats','objectifs','graphiques','journal','livraisons','factures','pointage','opening','closing','biens','visites','contrats_immo','etats_lieux','loyers','banques','releves','rapprochement','cheques','etats_fin','fin_beton','fin_logistics','fin_immo','recherche','acces_mgr'] },
@@ -845,6 +919,651 @@ const ROLES = {
   guest                    : { label:'Invité', badge:'rb-guest', pages:['dashboard','communiques','communiques','planning','projets','partenariats'] },
 };
 
+const TITLES = {
+  dashboard:'Tableau de bord', production:'Production Béton', stocks:'Stocks et Approvisionnement',
+  quality:'Contrôle Qualité', fleet:'Flotte de Camions', maintenance:'Maintenance',
+  accidents:'Accidents et Sécurité', fournisseurs:'Fournisseurs', projets:'Projets et Chantiers',
+  partenaires:'Partenaires', finances:'Finances et Budget', evaluations:'Évaluations',
+  rapports:'Rapports consolidés', parametres:'Paramètres', users:'Utilisateurs',
+  rh:'Employés & RH', formation:'Formations', planning:'Planning Opérationnel',
+  carburant:'Suivi Carburant', checklist:'Checklist Préventive', messages:'Messages & Notes',
+  annuaire:'Clients & Fournisseurs', conges:'Congés et Absences', partenariats:'Partenariats',
+  objectifs:'Objectifs Mensuels', graphiques:'Graphiques & Analyses',
+  journal:'Journal des modifications', livraisons:'Livraisons', factures:'Factures',
+  pointage:'Pointage Équipes', opening:'Opening — Ouverture', closing:'Closing — Fermeture',
+};
+
+const NAV = [
+  { s:'Vue globale' },
+  { id:'dashboard',    ic:'◈',  lb:'Tableau de bord' },
+  { id:'communiques',  ic:'📢', lb:'Communiqués',    bg:'nb-comm' },
+  { s:'Sarpa Béton' },
+  { id:'production',   ic:'🏗', lb:'Production' },
+  { id:'stocks',       ic:'📦', lb:'Stocks et Appro',       bg:'nb-s' },
+  { id:'quality',      ic:'✦',  lb:'Qualité' },
+  { s:'Sarpa Logistics' },
+  { id:'fleet',        ic:'🚛', lb:'Flotte',               bg:'nb-f' },
+  { id:'maintenance',  ic:'⚙',  lb:'Maintenance' },
+  { id:'livraisons',   ic:'🚚', lb:'Livraisons',           bg:'nb-liv' },
+  { s:'Sarpa Immobilier' },
+  { id:'biens',        ic:'🏠', lb:'Biens immobiliers' },
+  { id:'visites',      ic:'👥', lb:'Visites & Prospects' },
+  { id:'contrats_immo',ic:'📄', lb:'Contrats immo' },
+  { id:'etats_lieux',  ic:'📋', lb:'États des lieux' },
+  { id:'loyers',       ic:'💰', lb:'Suivi loyers',         bg:'nb-loy' },
+  { s:'Planning & Terrain' },
+  { id:'planning',     ic:'📅', lb:'Planning opérationnel', bg:'nb-plan' },
+  { id:'carburant',    ic:'⛽', lb:'Suivi carburant' },
+  { id:'checklist',    ic:'🔧', lb:'Checklist préventive' },
+  { s:'Opérations' },
+  { id:'accidents',    ic:'🚨', lb:'Accidents et Sécurité', bg:'nb-acc' },
+  { id:'fournisseurs', ic:'🏭', lb:'Fournisseurs' },
+  { id:'projets',      ic:'📋', lb:'Projets et Chantiers' },
+  { id:'partenaires',  ic:'🤝', lb:'Partenaires' },
+  { id:'factures',     ic:'🧾', lb:'Factures' },
+  { s:'Commercial' },
+  { id:'annuaire',     ic:'📒', lb:'Clients & Fournisseurs' },
+  { id:'partenariats', ic:'🤝', lb:'Partenariats' },
+  { s:'Finance & Comptabilité' },
+  { id:'fin_beton',    ic:'🏗', lb:'Finance Béton' },
+  { id:'fin_logistics',ic:'🚛', lb:'Finance Logistics' },
+  { id:'fin_immo',     ic:'🏠', lb:'Finance Immobilier' },
+  { id:'banques',      ic:'🏦', lb:'Comptes bancaires' },
+  { id:'releves',      ic:'📋', lb:'Relevés théoriques' },
+  { id:'rapprochement',ic:'🔄', lb:'Rapprochement' },
+  { id:'cheques',      ic:'📝', lb:'Chèques' },
+  { id:'etats_fin',    ic:'📊', lb:'États financiers' },
+  { id:'finances',     ic:'💰', lb:'Finances et Budget',    dir:true },
+  { id:'objectifs',    ic:'📊', lb:'Objectifs mensuels' },
+  { s:'RH & Équipe' },
+  { id:'rh',           ic:'👤', lb:'Employés' },
+  { id:'formation',    ic:'🎓', lb:'Formations' },
+  { id:'conges',       ic:'🗓', lb:'Congés et Absences' },
+  { id:'messages',     ic:'💬', lb:'Messages',             bg:'nb-msg' },
+  { id:'pointage',     ic:'⏰', lb:'Pointage',             bg:'nb-pt' },
+  { id:'opening',      ic:'🌅', lb:'Opening — Ouverture' },
+  { id:'closing',      ic:'🌙', lb:'Closing — Fermeture' },
+  { s:'🔒 Direction & Analyse' },
+  { id:'graphiques',   ic:'📈', lb:'Graphiques & Analyses', dir:true },
+  { id:'evaluations',  ic:'📊', lb:'Évaluations',           dir:true },
+  { id:'rapports',     ic:'▣',  lb:'Rapports consolidés',   dir:true },
+  { id:'journal',      ic:'🔍', lb:'Journal modifications',  dir:true },
+  { id:'parametres',   ic:'⚙',  lb:'Paramètres app.',        dir:true },
+  { id:'users',        ic:'👥', lb:'Utilisateurs',           dir:true },
+  { id:'acces_mgr',    ic:'🔐', lb:'Gestion des accès',        dir:true },
+];
+
+// ═══ AUTH ═══
+function doLogin() {
+  const code = (document.getElementById('l-code').value || '').trim().toUpperCase();
+  const user = ROLE_CODES[code];
+  if (!user) { document.getElementById('l-err').textContent = 'Code incorrect'; return; }
+  localStorage.setItem('sarpa_s', JSON.stringify({role:user.role, name:user.name, ts:Date.now()}));
+  startApp(user.role, user.name);
+}
+
+function doLogout() {
+  localStorage.removeItem('sarpa_s');
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('l-code').value = '';
+  document.getElementById('l-err').textContent = '';
+}
+
+async function startApp(role, name) {
+  userRole = role; userName = name;
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  document.getElementById('sb-username').textContent = name;
+  document.getElementById('sb-role').textContent = ROLES[role]?.label || role;
+  const rb = document.getElementById('role-badge');
+  rb.textContent = ROLES[role]?.label || role;
+  rb.className = 'role-badge ' + (ROLES[role]?.badge || 'rb-coord');
+  if (role==='directeur'||role==='dg') {
+    const btn = document.getElementById('btn-add-truck');
+    if (btn) btn.style.display = 'flex';
+  }
+  buildNav();
+  buildQuickGrid();
+  initGoogleSheets().then(() => seedData());
+  applyAppearance();
+  go('dashboard');
+  startNotifPolling();
+  setTimeout(checkPendingValidations, 4000);
+  updateBadges();
+  setTimeout(autoBackup, 5000);
+  setTimeout(async () => {
+    const alerts = await checkVidangeAlerts();
+    if (alerts.length > 0) {
+      setTimeout(() => toast(`🔧 ${alerts.length} camion(s) nécessitent un contrôle`), 2000);
+    }
+    syncOfflineQueue();
+  }, 3000);
+  document.getElementById('rt-status').textContent = 'Connecté';
+}
+
+function buildNav() {
+  const allowed = ROLES[userRole]?.pages || [];
+  const isDir = userRole==='directeur'||userRole==='dg';
+  let h = '';
+  NAV.forEach(item => {
+    if (item.s) {
+      if (item.s.includes('🔒') && !isDir) return;
+      h += `<div class="ns">${item.s}</div>`;
+      return;
+    }
+    if (!allowed.includes(item.id)) return;
+    const dc = item.dir ? ' director-only' : '';
+    const bg = item.bg ? `<span class="nbadge" id="${item.bg}" style="display:none">0</span>` : '';
+    h += `<div class="ni${dc}" id="nav-${item.id}" onclick="go('${item.id}')"><span class="ic">${item.ic}</span> ${item.lb}${bg}</div>`;
+  });
+  document.getElementById('sidebar-nav').innerHTML = h;
+}
+
+function buildQuickGrid() {
+  const allowed = ROLES[userRole]?.pages || [];
+  const items = [
+    {m:'mp',   ic:'🏗', lb:'Production',  pg:'production'},
+    {m:'mf',   ic:'🚛', lb:'Camion',      pg:'fleet'},
+    {m:'mm',   ic:'⚙', lb:'Maintenance', pg:'maintenance'},
+    {m:'ms',   ic:'📦', lb:'Stock',       pg:'stocks'},
+    {m:'mq2',  ic:'✦', lb:'Qualité',     pg:'quality'},
+    {m:'mc',   ic:'📋', lb:'Commande',    pg:'stocks'},
+    {m:'m-liv',ic:'🚚', lb:'Livraison',   pg:'livraisons'},
+    {m:'m-acc',ic:'🚨', lb:'Incident',    pg:'accidents'},
+    {m:'m-facture',ic:'🧾', lb:'Facture',    pg:'factures'},
+  ].filter(i => allowed.includes(i.pg));
+  document.getElementById('quick-grid').innerHTML = items.map(i =>
+    `<button class="btn bg2" style="justify-content:center;padding:14px;flex-direction:column;gap:4px;font-size:12px" onclick="sw('mq','${i.m}')">${i.ic}<br>${i.lb}</button>`
+  ).join('');
+}
+
+// ═══ NAV ═══
+async function go(p) {
+  const allowed = ROLES[userRole]?.pages || [];
+  if (!allowed.includes(p)) { toast('Accès non autorisé'); return; }
+  const isGuest = userRole === 'guest';
+  document.querySelectorAll('.pg').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(x=>x.classList.remove('active'));
+  const pg = document.getElementById('pg-'+p);
+  if (pg) pg.classList.add('active');
+  const ni = document.getElementById('nav-'+p);
+  if (ni) ni.classList.add('active');
+  document.getElementById('ptitle').textContent = TITLES[p]||p;
+  await render(p);
+  if (window.innerWidth<900) document.getElementById('sb').classList.remove('open');
+}
+
+function toggleSB() {
+  const sb = document.getElementById('sb');
+  const ov = document.getElementById('sb-overlay');
+  sb.classList.toggle('open');
+  ov.classList.toggle('show');
+}
+function closeSB() {
+  document.getElementById('sb').classList.remove('open');
+  document.getElementById('sb-overlay').classList.remove('show');
+}
+
+// ═══ MODALS ═══
+function openM(id) {
+  document.getElementById(id).classList.add('open');
+  const today = new Date().toISOString().slice(0,10);
+  const df = {mp:'ip-d', mt:'it-d', mm:'im-d', mc:'ic-d', mq2:'iq-d', 'm-acc':'acc-dt', 'm-budget':'fin-d', 'm-carb':'carb-d', 'm-check':'chk-d'};
+  if (df[id]) {
+    const el = document.getElementById(df[id]);
+    if (el) el.value = df[id]==='acc-dt' ? new Date().toISOString().slice(0,16) : today;
+  }
+  if (id==='mf'||id==='mt') loadTrucks(document.getElementById(id==='mf'?'if-t':'it-t'), id==='mt');
+  if (id==='m-plan') loadTrucks(document.getElementById('plan-truck'), false);
+  if (id==='m-carb') loadTrucks(document.getElementById('carb-truck'), false);
+  if (id==='m-check') loadTrucks(document.getElementById('chk-truck'), false);
+  if (id==='m-assurance') loadTrucks(document.getElementById('ass-truck'), false);
+  if (id==='m-visite') loadTrucks(document.getElementById('vt-truck'), false);
+  if (id==='m-entretien') loadTrucks(document.getElementById('ent-truck'), false);
+  if (id==='m-doc-flotte') loadTrucks(document.getElementById('doc-truck'), false);
+  if (id==='m-facture') { document.getElementById('fac-date').value=new Date().toISOString().slice(0,10); updateFactureTotal(); }
+  if (id==='m-liv') { loadTrucks(document.getElementById('liv-truck'), false); document.getElementById('liv-date').value=new Date().toISOString().slice(0,10); }
+  if (id==='m-bien') { document.getElementById('bien-date-acq').value=new Date().toISOString().slice(0,10); }
+  if (id==='m-visite-immo') { document.getElementById('vi-date').value=new Date().toISOString().slice(0,10); }
+  if (id==='m-etat-lieux') { document.getElementById('el-date').value=new Date().toISOString().slice(0,10); }
+  if (id==='m-loyer') { document.getElementById('loy-mois').value=new Date().toISOString().slice(0,7); }
+  if (id==='m-contrat-immo') { document.getElementById('ci-date-debut').value=new Date().toISOString().slice(0,10); }
+  if (id==='m-releve') {
+    document.getElementById('relev-date').value=new Date().toISOString().slice(0,10);
+    db('banques').then(banques => {
+      const sel = document.getElementById('relev-banque');
+      if(sel) sel.innerHTML = '<option value="">— Sélectionner —</option>' +
+        (banques||[]).map(b=>'<option value="'+b.id+'">'+b.nom_banque+' — '+(b.nom_compte||b.filiere)+'</option>').join('');
+    });
+  }
+  if (id==='m-cheque') {
+    document.getElementById('chq-date').value=new Date().toISOString().slice(0,10);
+    db('banques').then(banques => {
+      const sel = document.getElementById('chq-banque');
+      if(sel) sel.innerHTML = '<option value="">— Sélectionner —</option>' +
+        (banques||[]).map(b=>'<option value="'+b.id+'">'+b.nom_banque+' — '+(b.nom_compte||b.filiere)+'</option>').join('');
+    });
+  }
+  if (id==='m-banque') { document.getElementById('bq-solde').value='0'; }
+}
+
+function showActionBtn(module) {
+  const btns = document.querySelectorAll('.action-btn-' + module);
+  const ok = canEdit(module);
+  btns.forEach(b => b.style.display = ok ? '' : 'none');
+}
+
+async function loadTrucks(sel, opOnly) {
+  if (!sel) return;
+  const data = await db('trucks');
+  const list = opOnly ? (data||[]).filter(t=>t.status==='operational') : (data||[]);
+  sel.innerHTML = list.map(t=>`<option value="${t.id}">${t.id} — ${t.type}</option>`).join('');
+}
+
+function closeM(id) { document.getElementById(id).classList.remove('open'); }
+function sw(a,b) { closeM(a); openM(b); }
+document.querySelectorAll('.mo').forEach(m => m.addEventListener('click', e=>{ if(e.target===m) m.classList.remove('open'); }));
+
+// ═══ TOAST ═══
+function toast(msg) {
+  document.getElementById('tmsg').textContent = msg;
+  const el = document.getElementById('toast');
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'), 3000);
+}
+
+// ═══ BADGE helpers ═══
+function stBadge(s) {
+  if (s==='operational') return '<span class="b bg-g">✅ Op.</span>';
+  if (s==='breakdown')   return '<span class="b bg-r">🔴 Panne</span>';
+  if (s==='maintenance') return '<span class="b bg-m">🟡 Maint.</span>';
+  return '<span class="b bg-x">—</span>';
+}
+function stockRow(s) {
+  const p = Math.min(100, Math.round(s.current_qty/s.max_qty*100));
+  const c = s.current_qty<=s.critical_qty ? 'var(--rd2)' : s.current_qty<=s.alert_qty ? 'var(--must2)' : 'var(--gn2)';
+  const l = s.current_qty<=s.critical_qty ? '🔴 CRITIQUE' : s.current_qty<=s.alert_qty ? '🟡 ALERTE' : '✅ OK';
+  return `<div style="margin-bottom:11px">
+    <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+      <span style="font-size:12.5px;color:var(--tx)">${s.label}</span>
+      <span style="font-size:11px;color:var(--tx2);font-family:var(--fm)">${s.current_qty}/${s.max_qty} ${s.unit}</span>
+    </div>
+    <div class="pb"><div class="pf" style="width:${p}%;background:${c}"></div></div>
+    <div style="display:flex;justify-content:space-between;margin-top:2px">
+      <span style="font-size:9.5px;color:var(--tx3)">${p}%</span>
+      <span style="font-size:9.5px;color:${c}">${l}</span>
+    </div>
+  </div>`;
+}
+
+// ═══ SAVES ═══
+async function savProd() {
+  const v = +document.getElementById('ip-v').value;
+  if (!v) { toast('Volume requis'); return; }
+  await db('productions','POST',{
+    date: document.getElementById('ip-d').value,
+    formulation: document.getElementById('ip-f').value,
+    volume: v,
+    operateur: document.getElementById('ip-o').value||'—',
+    non_conformites: +document.getElementById('ip-n').value||0,
+    gachees: +document.getElementById('ip-g').value||0,
+    remarques: document.getElementById('ip-r').value,
+    created_by: userName
+  });
+  closeM('mp'); logAction('insert','productions',{volume:v,date:document.getElementById('ip-d').value}); toast(`Production : ${v} m³ enregistrés ✓`); render('production'); render('dashboard');
+}
+
+async function savFleet() {
+  const id = document.getElementById('if-t').value;
+  await db('trucks','PATCH',{
+    status: document.getElementById('if-s').value,
+    km: +document.getElementById('if-k').value||0,
+    description: document.getElementById('if-d').value
+  }, {id});
+  closeM('mf'); logAction('update','trucks',{id}); toast(`Camion ${id} mis à jour ✓`); render('fleet'); render('dashboard'); updateBadges();
+}
+
+async function savTour() {
+  await db('POST',{
+    date: document.getElementById('it-d').value,
+    truck_id: document.getElementById('it-t').value,
+    chauffeur: document.getElementById('it-ch').value||'—',
+    destination: document.getElementById('it-de').value||'—',
+    volume: +document.getElementById('it-v').value||0,
+    km: +document.getElementById('it-k').value||0,
+    heure_depart: document.getElementById('it-dp').value,
+    heure_retour: document.getElementById('it-r').value,
+    ponctuel: document.getElementById('it-p').value==='1',
+    created_by: userName
+  });
+  closeM('mt'); logAction('insert',{truck:document.getElementById('it-t').value}); toast('Tournée enregistrée ✓'); render('tours'); render('dashboard');
+}
+
+async function savMaint() {
+  await db('maintenances','POST',{
+    date: document.getElementById('im-d').value,
+    equipement: document.getElementById('im-e').value,
+    type_intervention: document.getElementById('im-t').value,
+    description: document.getElementById('im-de').value||'—',
+    responsable: document.getElementById('im-r').value||'—',
+    cout: +document.getElementById('im-c').value||0,
+    statut: document.getElementById('im-s').value,
+    created_by: userName
+  });
+  closeM('mm'); logAction('insert','maintenances',{equipement:document.getElementById('im-e').value}); toast('Intervention enregistrée ✓'); render('maintenance');
+}
+
+function quickEditMax(id,curMax,unit){
+  const v=prompt('Nouveau maximum ('+unit+'):',curMax);
+  if(v===null)return;
+  const n=parseFloat(v);
+  if(isNaN(n)||n<=0){toast('Valeur invalide');return;}
+  db('stocks','PATCH',{max_qty:n},{id}).then(()=>{window._src=null;toast('Max: '+n+' '+unit);render('stocks');});
+}
+async function savStock() {
+  const k = document.getElementById('is-i').value;
+  const q = +document.getElementById('is-q').value;
+  await db('stocks','PATCH',{current_qty:q},{item:k});
+  closeM('ms'); toast('Stock mis à jour ✓'); render('stocks'); render('dashboard'); updateBadges();
+}
+
+async function savCmd() {
+  const data = {
+    date: document.getElementById('ic-d').value,
+    fournisseur: document.getElementById('ic-f').value||'—',
+    article: document.getElementById('ic-a').value||'—',
+    quantite: document.getElementById('ic-q').value||'—',
+    montant: +document.getElementById('ic-m').value||0,
+    statut: document.getElementById('ic-s').value,
+    mode_paiement: document.getElementById('ic-pay').value,
+    statut_paiement: document.getElementById('ic-pay-st').value,
+    montant_recu: +document.getElementById('ic-pay-m').value||0,
+  };
+  await dbSave('commandes', data, 'mc', 'stocks', 'Commande enregistrée ✓');
+}
+
+async function updatePaiement(id) {
+  // Comptable can update payment info only
+  const rows = await db('commandes');
+  const row = (rows||[]).find(r=>String(r.id)===String(id));
+  if (!row) return;
+  // Pre-fill payment modal
+  document.getElementById('pay-id').value = id;
+  document.getElementById('pay-mode').value = row.mode_paiement||'';
+  document.getElementById('pay-status').value = row.statut_paiement||'En attente';
+  document.getElementById('pay-montant').value = row.montant||0;
+  document.getElementById('pay-recu').value = row.montant_recu||0;
+  document.getElementById('pay-article').textContent = row.article||'—';
+  document.getElementById('pay-fournisseur').textContent = row.fournisseur||'—';
+  openM('m-paiement');
+}
+
+async function savPaiement() {
+  const id = document.getElementById('pay-id').value;
+  await db('commandes','PATCH',{
+    mode_paiement: document.getElementById('pay-mode').value,
+    statut_paiement: document.getElementById('pay-status').value,
+    montant: +document.getElementById('pay-montant').value||0,
+    montant_recu: +document.getElementById('pay-recu').value||0,
+  },{id});
+  logAction('update','commandes',{id, action:'paiement mis à jour'});
+  closeM('m-paiement');
+  toast('Paiement mis à jour ✓');
+  render('stocks');
+}
+
+async function savQual() {
+  await db('quality','POST',{
+    date: document.getElementById('iq-d').value,
+    formulation: document.getElementById('iq-f').value,
+    resistance: +document.getElementById('iq-r').value||0,
+    slump: +document.getElementById('iq-s').value||0,
+    conforme: document.getElementById('iq-o').value==='1',
+    observation: document.getElementById('iq-n').value,
+    created_by: userName
+  });
+  closeM('mq2'); toast('Contrôle enregistré ✓'); render('quality');
+}
+
+async function savAccident() {
+  await db('accidents','POST',{
+    datetime: document.getElementById('acc-dt').value,
+    gravite: document.getElementById('acc-grav').value,
+    type_incident: document.getElementById('acc-type').value,
+    equipement: document.getElementById('acc-equip').value||'—',
+    description: document.getElementById('acc-desc').value||'—',
+    lieu: document.getElementById('acc-lieu').value||'—',
+    declare_par: document.getElementById('acc-by').value||userName,
+    actions_correctives: document.getElementById('acc-action').value,
+    statut: document.getElementById('acc-status').value,
+    created_by: userName
+  });
+  closeM('m-acc'); logAction('insert','accidents',{type:document.getElementById('acc-type').value,gravite:document.getElementById('acc-grav').value}); toast('Incident déclaré ✓'); render('accidents'); render('dashboard'); updateBadges();
+}
+
+async function savFournisseur() {
+  await db('fournisseurs','POST',{
+    nom: document.getElementById('four-n').value,
+    categorie: document.getElementById('four-cat').value,
+    contact: document.getElementById('four-contact').value,
+    telephone: document.getElementById('four-tel').value,
+    email: document.getElementById('four-email').value,
+    localisation: document.getElementById('four-loc').value,
+    statut: document.getElementById('four-status').value,
+    notes: document.getElementById('four-notes').value,
+    created_by: userName
+  });
+  closeM('m-four'); toast('Fournisseur enregistré ✓'); render('fournisseurs');
+}
+
+async function savProjet() {
+  await db('projets','POST',{
+    nom: document.getElementById('proj-n').value,
+    client: document.getElementById('proj-client').value,
+    date_debut: document.getElementById('proj-deb').value,
+    date_fin_prevue: document.getElementById('proj-fin').value,
+    volume_prevu: +document.getElementById('proj-vol').value||0,
+    valeur_contrat: +document.getElementById('proj-val').value||0,
+    localisation: document.getElementById('proj-loc').value,
+    statut: document.getElementById('proj-status').value,
+    description: document.getElementById('proj-desc').value,
+    created_by: userName
+  });
+  closeM('m-proj'); toast('Projet enregistré ✓'); render('projets');
+}
+
+async function savPartenaire() {
+  await db('partenaires','POST',{
+    nom: document.getElementById('part-n').value,
+    type_partenariat: document.getElementById('part-type').value,
+    contact: document.getElementById('part-contact').value,
+    telephone: document.getElementById('part-tel').value,
+    description: document.getElementById('part-desc').value,
+    statut: document.getElementById('part-status').value,
+    created_by: userName
+  });
+  closeM('m-part'); toast('Partenaire enregistré ✓'); render('partenaires');
+}
+
+async function savNewTruck() {
+  const tid=document.getElementById('ntr-id')?.value?.trim();
+  if(!tid){toast('ID Camion requis');return;}
+  await db('trucks','POST',{
+    id:tid, marque:document.getElementById('ntr-marque')?.value||'',
+    modele:document.getElementById('ntr-modele')?.value||'',
+    type:document.getElementById('ntr-type')?.value||'',
+    annee:document.getElementById('ntr-annee')?.value||'',
+    immatriculation:document.getElementById('ntr-immat')?.value||'',
+    chauffeur:document.getElementById('ntr-chauffeur')?.value||'',
+    capacite:document.getElementById('ntr-capacite')?.value||'',
+    status:'operational', notes:document.getElementById('ntr-notes')?.value||'',
+  });
+  const aD=document.getElementById('ntr-ass-date')?.value;
+  const aE=document.getElementById('ntr-ass-exp')?.value;
+  if(aD||aE) await db('assurances','POST',{
+    camion:tid, compagnie:document.getElementById('ntr-ass-comp')?.value||'',
+    numero_police:document.getElementById('ntr-ass-police')?.value||'',
+    date_debut:aD||'', date_fin:aE||'',
+    type_assurance:document.getElementById('ntr-ass-type')?.value||'Tous risques',
+    montant_prime:document.getElementById('ntr-ass-prime')?.value||0, created_by:userName,
+  });
+  const vD=document.getElementById('ntr-vt-date')?.value;
+  const vE=document.getElementById('ntr-vt-exp')?.value;
+  if(vD||vE) await db('visites_techniques','POST',{
+    camion:tid, date_visite:vD||'', date_expiration:vE||'',
+    resultat:document.getElementById('ntr-vt-resultat')?.value||'Conforme',
+    centre_controle:document.getElementById('ntr-vt-centre')?.value||'', created_by:userName,
+  });
+  const eD=document.getElementById('ntr-ent-date')?.value;
+  if(eD) await db('entretiens','POST',{
+    camion:tid, date:eD,
+    type:document.getElementById('ntr-ent-type')?.value||'Entretien initial',
+    description:document.getElementById('ntr-ent-desc')?.value||'Mise en service',
+    km:document.getElementById('ntr-ent-km')?.value||0,
+    cout:document.getElementById('ntr-ent-cout')?.value||0,
+    prochain_entretien_km:document.getElementById('ntr-ent-prochain')?.value||0,
+    created_by:userName,
+  });
+  const docN=document.getElementById('ntr-doc-nom')?.value;
+  if(docN) await db('documents_flotte','POST',{
+    camion:tid, nom_document:docN,
+    type_document:document.getElementById('ntr-doc-type')?.value||'',
+    date_emission:document.getElementById('ntr-doc-date')?.value||'',
+    date_expiration:document.getElementById('ntr-doc-exp')?.value||'',
+    notes:document.getElementById('ntr-doc-notes')?.value||'', created_by:userName,
+  });
+  logAction('create','trucks',{id:tid,par:userName});
+  closeM('mf'); window._src=null;
+  toast('Camion '+tid+' enregistré avec tous ses documents ✓'); render('fleet');
+}
+
+async function savEval() {
+  if (userRole!=='directeur'&&userRole!=='dg') { toast('Réservé Direction'); return; }
+  await db('evaluations','POST',{
+    nom_responsable: document.getElementById('ev-name').value,
+    periode: document.getElementById('ev-period').value,
+    score_performance: +document.getElementById('ev-perf').value||0,
+    score_ponctualite: +document.getElementById('ev-ponc').value||0,
+    score_qualite: +document.getElementById('ev-qual').value||0,
+    commentaire: document.getElementById('ev-comment').value,
+    recommandation: document.getElementById('ev-reco').value,
+    created_by: userName
+  });
+  closeM('m-eval'); toast('Évaluation enregistrée ✓'); render('evaluations');
+}
+
+async function savFinance() {
+  if (userRole!=='directeur'&&userRole!=='dg'&&userRole!=='comptabilite') { toast('Accès non autorisé'); return; }
+  await db('finances','POST',{
+    date: document.getElementById('fin-d').value,
+    categorie: document.getElementById('fin-cat').value,
+    montant: +document.getElementById('fin-m').value||0,
+    type_mouvement: document.getElementById('fin-type').value,
+    description: document.getElementById('fin-desc').value,
+    created_by: userName
+  });
+  closeM('m-budget'); toast('Enregistré ✓'); render('finances');
+}
+
+// RH — localStorage
+const rh_get = k => { try { return JSON.parse(localStorage.getItem('sarpa_'+k)||'[]'); } catch(e) { return []; } };
+const rh_set = (k,d) => { try { localStorage.setItem('sarpa_'+k, JSON.stringify(d)); } catch(e) {} };
+
+async function savEmploye() {
+  if (!document.getElementById('emp-nom').value) { toast('Nom requis'); return; }
+  await db('employes','POST',{
+    nom: document.getElementById('emp-nom').value,
+    prenom: document.getElementById('emp-prenom').value,
+    poste: document.getElementById('emp-poste').value,
+    departement: document.getElementById('emp-dept').value,
+    telephone: document.getElementById('emp-tel').value,
+    email: document.getElementById('emp-email').value,
+    date_embauche: document.getElementById('emp-date').value,
+    salaire: +document.getElementById('emp-sal').value||0,
+    statut: document.getElementById('emp-status').value,
+    notes: document.getElementById('emp-notes').value,
+    created_by: userName
+  });
+  logAction('insert','employes',{nom:document.getElementById('emp-nom').value});
+  closeM('m-emp'); toast('Employé enregistré ✓'); render('rh');
+}
+
+async function savFormation() {
+  if (!document.getElementById('form-titre').value) { toast('Titre requis'); return; }
+  await db('formations','POST',{
+    titre: document.getElementById('form-titre').value,
+    employe: document.getElementById('form-emp').value,
+    organisme: document.getElementById('form-org').value,
+    date_debut: document.getElementById('form-deb').value,
+    date_fin: document.getElementById('form-fin').value,
+    cout: +document.getElementById('form-cout').value||0,
+    statut: document.getElementById('form-status').value,
+    observations: document.getElementById('form-obs').value,
+    created_by: userName
+  });
+  logAction('insert','formations',{titre:document.getElementById('form-titre').value});
+  closeM('m-form'); toast('Formation enregistrée ✓'); render('formation');
+}
+
+// ═══ SEED ═══
+async function seedData() {
+  const trucks = await db('trucks');
+  if (trucks && trucks.length > 0) return;
+  await db('trucks','POST',[
+    {id:'SN-001-DK',type:'Toupie 8m³',km:87420,status:'operational',description:''},
+    {id:'SN-002-DK',type:'Toupie 8m³',km:64100,status:'operational',description:''},
+    {id:'SN-003-DK',type:'Plateau',km:112300,status:'breakdown',description:'Panne moteur — carter fissuré'},
+    {id:'SN-004-DK',type:'Plateau',km:45800,status:'operational',description:''},
+    {id:'SN-005-DK',type:'Benne 10T',km:98700,status:'maintenance',description:'Frein avant en réparation'},
+    {id:'SN-006-DK',type:'Toupie 6m³',km:33200,status:'operational',description:''},
+    {id:'SN-007-DK',type:'Benne 10T',km:143500,status:'breakdown',description:'Boite de vitesses URGENT'},
+    {id:'SN-008-DK',type:'Citerne',km:57900,status:'operational',description:''},
+    {id:'SN-009-DK',type:'Toupie 8m³',km:72100,status:'operational',description:''},
+    {id:'SN-010-DK',type:'Plateau',km:88400,status:'operational',description:''},
+    {id:'SN-011-DK',type:'Benne 10T',km:56200,status:'operational',description:''},
+    {id:'SN-012-DK',type:'Toupie 6m³',km:41300,status:'operational',description:''},
+    {id:'SN-013-DK',type:'Plateau',km:95600,status:'operational',description:''},
+    {id:'SN-014-DK',type:'Benne 10T',km:67800,status:'operational',description:''},
+    {id:'SN-015-DK',type:'Toupie 8m³',km:23400,status:'maintenance',description:'Révision 25 000 km'},
+    {id:'SN-016-DK',type:'Citerne',km:78900,status:'operational',description:''},
+    {id:'SN-017-DK',type:'Toupie 6m³',km:49100,status:'operational',description:''},
+    {id:'SN-018-DK',type:'Plateau',km:61500,status:'operational',description:''},
+  ]);
+  await db('stocks','POST',[
+    {item:'ciment',    label:'Ciment',       unit:'T', max_qty:120,  alert_qty:80,  critical_qty:60, current_qty:87},
+    {item:'sable',     label:'Sable',        unit:'T', max_qty:300,  alert_qty:150, critical_qty:80, current_qty:210},
+    {item:'gravillons',label:'Gravillons',   unit:'T', max_qty:250,  alert_qty:120, critical_qty:70, current_qty:158},
+    {item:'adjuvants', label:'Adjuvants',    unit:'L', max_qty:500,  alert_qty:200, critical_qty:100,current_qty:420},
+    {item:'gasoil',    label:'Gasoil',       unit:'L', max_qty:5000, alert_qty:2000,critical_qty:1000,current_qty:3200},
+    {item:'huile',     label:'Huile moteur', unit:'L', max_qty:500,  alert_qty:150, critical_qty:50, current_qty:280},
+    {item:'filtres',   label:'Filtres huile',unit:'u', max_qty:30,   alert_qty:10,  critical_qty:5,  current_qty:14},
+    {item:'pneus',     label:'Pneus PL',     unit:'u', max_qty:8,    alert_qty:4,   critical_qty:2,  current_qty:5},
+  ]);
+}
+
+// ═══ RENDER ═══
+async function render(p) {
+  const map = {
+    dashboard:renderDash, production:renderProd, stocks:renderStocks, quality:renderQual,
+    fleet:renderFleet, maintenance:renderMaint, accidents:renderAccidents,
+    fournisseurs:renderFournisseurs, projets:renderProjets, partenaires:renderPartenaires,
+    finances:renderFinances, evaluations:renderEvals, rapports:renderRapports,
+    parametres:renderParams, users:renderUsers, acces_mgr:renderAccesMgr, rh:renderRH, formation:renderFormation,
+    planning:renderPlanning, annuaire:renderAnnuaire, messages:renderMessages,
+    carburant:renderCarburant, objectifs:renderObjectifs, conges:renderConges,
+    checklist:renderChecklist, partenariats:renderPartenariats,
+    graphiques:renderGraphiques, journal:renderJournal, livraisons:renderLivraisons, factures:renderFactures,
+    pointage:renderPointage, opening:renderOpening, closing:renderClosing,
+    biens:renderBiens, visites:renderVisites, contrats_immo:renderContratsImmo,
+    etats_lieux:renderEtatsLieux, loyers:renderLoyers,
+    banques:renderBanques, releves:renderReleves, rapprochement:renderRapprochement,
+    cheques:renderCheques, etats_fin:renderEtatsFin,
+    fin_beton:renderFinBeton, fin_logistics:renderFinLogistics, fin_immo:renderFinImmo,
+    communiques:renderCommuniques, recherche:renderRecherche
+  };
+  if (map[p]) await map[p]();
+}
 
 async function renderDash() {
   const today = new Date().toISOString().slice(0,10);
@@ -6936,11 +7655,6 @@ async function renderRecherche() {
 
 
 
-// ══════════════════════════════════════════════════
-// SARPA GROUPE — PORTAIL ERP v24
-// ══════════════════════════════════════════════════
-
-// ── CONFIG DÉPARTEMENTS ──
 const DEPARTMENTS = [
   {
     id: 'transport',
@@ -7106,9 +7820,9 @@ const DEPARTMENTS = [
 ];
 
 // ── GLOBALS ──
-let userRole = '', userName = '', userDept = null;
-const CACHE_TTL = 30000;
-const _cache = {}, _cacheTime = {};
+userRole = '', userName = '', userDept = null;
+CACHE_TTL = 30000;
+_cache = {}, _cacheTime = {};
 
 // ── PORTAL INIT ──
 function buildPortal() {
@@ -7116,7 +7830,7 @@ function buildPortal() {
   if(!grid) return;
   grid.innerHTML = '';
   DEPARTMENTS.forEach(dept => {
-    const card = document.createElement('div');
+    card = document.createElement('div');
     card.className = 'dept-card';
     card.style.setProperty('--card-color', dept.color);
     card.innerHTML = '<span class="dept-icon">'+dept.icon+'</span>'
@@ -7143,13 +7857,13 @@ function closeLogin() {
 }
 
 function doLogin() {
-  const code = document.getElementById('l-code').value.trim().toUpperCase();
+  code = document.getElementById('l-code').value.trim().toUpperCase();
   const deptId = document.getElementById('login-overlay').dataset.deptId;
-  const dept = DEPARTMENTS.find(d => d.id === deptId);
+  dept = DEPARTMENTS.find(d => d.id === deptId);
   if(!dept) return;
 
   // Find user with this code
-  const user = ROLE_CODES[code];
+  user = ROLE_CODES[code];
   if(!user) {
     document.getElementById('login-error').textContent = 'Code incorrect';
     document.getElementById('l-code').value = '';
@@ -7188,7 +7902,7 @@ async function startApp(role, name, dept) {
   document.getElementById('sb-username').textContent = name;
   document.getElementById('sb-username2').textContent = name;
   document.getElementById('sb-dept-label').textContent = dept.name;
-  const rb = document.getElementById('role-badge');
+  rb = document.getElementById('role-badge');
   rb.textContent = ROLES[role]?.label || role;
   rb.className = 'role-badge ' + (ROLES[role]?.badge || 'rb-coord');
   if(window.innerWidth < 900) document.getElementById('mbtn').style.display = 'flex';
@@ -7209,7 +7923,7 @@ function doLogout() {
 function buildNav(dept) {
   const nav = document.getElementById('sidebar-nav');
   if(!nav) return;
-  let h = '';
+  h = '';
   (dept.sections||[]).forEach(item => {
     if(item.s) { h += '<div class="ns">'+item.s+'</div>'; return; }
     h += '<div class="ni" id="nav-'+item.id+'" onclick="go(\"'+item.id+'\")"><span class="ic">'+item.ic+'</span> '+item.lb+'</div>';
@@ -7221,9 +7935,9 @@ async function go(page) {
   if(!page) return;
   document.querySelectorAll('.pg').forEach(x => x.classList.remove('active'));
   document.querySelectorAll('.ni').forEach(x => x.classList.remove('active'));
-  const pg = document.getElementById('pg-'+page);
+  pg = document.getElementById('pg-'+page);
   if(pg) pg.classList.add('active');
-  const ni = document.getElementById('nav-'+page);
+  ni = document.getElementById('nav-'+page);
   if(ni) ni.classList.add('active');
   document.getElementById('ptitle').textContent = TITLES[page] || page;
   if(window.innerWidth < 900) document.getElementById('sb')?.classList.remove('open');
@@ -7236,7 +7950,7 @@ function toggleSB() {
 
 // ── RENDER DISPATCH ──
 async function render(p) {
-  const map = {
+  map = {
     dashboard:renderDash, production:renderProd, stocks:renderStocks, quality:renderQual,
     fleet:renderFleet, maintenance:renderMaint, accidents:renderAccidents,
     fournisseurs:renderFournisseurs, projets:renderProjets, partenaires:renderPartenaires,
@@ -7292,10 +8006,10 @@ function doTopbarSearch(q) {
 async function execSearch(q) {
   const res = document.getElementById('search-results');
   if(!res) return;
-  const qL = q.toLowerCase();
+  qL = q.toLowerCase();
   if(!window._src || (Date.now()-window._srcTime) > 30000) {
     window._srcTime = Date.now(); window._src = {};
-    const tbl = {employes:'rh',trucks:'fleet',factures:'factures',livraisons:'livraisons',
+    tbl = {employes:'rh',trucks:'fleet',factures:'factures',livraisons:'livraisons',
       projets:'projets',fournisseurs:'fournisseurs',annuaire:'annuaire',biens:'biens',
       accidents:'accidents',partenaires:'partenaires',cheques:'cheques',banques:'banques',
       contrats_immo:'contrats_immo',loyers:'loyers',formations:'formation',
@@ -7304,11 +8018,11 @@ async function execSearch(q) {
       try{ window._src[t]={data:await db(t),nav}; }catch(e){}
     }));
   }
-  const ICO={employes:'👤',trucks:'🚛',factures:'🧾',livraisons:'🚚',projets:'📋',
+  ICO = {employes:'👤',trucks:'🚛',factures:'🧾',livraisons:'🚚',projets:'📋',
     fournisseurs:'🏭',annuaire:'📒',biens:'🏠',accidents:'🚨',partenaires:'🤝',
     cheques:'📝',banques:'🏦',contrats_immo:'📄',loyers:'💰',formations:'🎓',
     communiques:'📢',productions:'🏗',maintenances:'🔧'};
-  const results=[];
+  results = [];
   for(const [t,cache] of Object.entries(window._src)){
     (cache.data||[]).forEach(item=>{
       if(Object.values(item).join(' ').toLowerCase().includes(qL))
@@ -7318,7 +8032,7 @@ async function execSearch(q) {
   if(!results.length){ res.innerHTML='<div style="padding:24px;text-align:center;color:var(--tx3)">😕 Aucun résultat</div>'; return; }
   let h='<div style="padding:8px 14px;font-size:11px;color:var(--tx3)">'+results.length+' résultat(s)</div>';
   results.slice(0,25).forEach(r=>{
-    const txt=(r.main.text||'').replace(new RegExp(escapeRegex(q),'gi'),'<mark style="background:var(--must)40;border-radius:2px;padding:0 2px">$&</mark>');
+    txt = (r.main.text||'').replace(new RegExp(escapeRegex(q),'gi'),'<mark style="background:var(--must)40;border-radius:2px;padding:0 2px">$&</mark>');
     h+='<div class="src-item" data-nav="'+r.nav+'">'
       +'<span style="font-size:20px">'+r.ico+'</span>'
       +'<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+txt+'</div>'
@@ -7343,8 +8057,8 @@ function startNotifPolling() {
 }
 async function checkNotifs() {
   // Check stocks, loyers, assurances expiry etc.
-  const today = new Date().toISOString().slice(0,10);
-  const alerts = [];
+  today = new Date().toISOString().slice(0,10);
+  alerts = [];
   try {
     const [stocks, loyers, assurances] = await Promise.all([
       db('stocks'), db('loyers'), db('assurances')
@@ -7355,14 +8069,14 @@ async function checkNotifs() {
     (loyers||[]).filter(l=>l.statut==='En retard').forEach(l=>{
       alerts.push({ic:'💰',txt:'Loyer en retard: '+l.bien+' — '+l.locataire});
     });
-    const soon = new Date(); soon.setDate(soon.getDate()+30);
+    soon = new Date(); soon.setDate(soon.getDate()+30);
     const soonStr = soon.toISOString().slice(0,10);
     (assurances||[]).filter(a=>a.date_fin&&a.date_fin<=soonStr&&a.date_fin>=today).forEach(a=>{
       alerts.push({ic:'🛡',txt:'Assurance expire bientôt: '+a.camion});
     });
   } catch(e) {}
-  const list = document.getElementById('notif-list');
-  const badge = document.getElementById('nb-badge');
+  list = document.getElementById('notif-list');
+  badge = document.getElementById('nb-badge');
   if(list) list.innerHTML = alerts.length
     ? alerts.map(a=>'<div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--bd)"><span style="font-size:18px">'+a.ic+'</span><div style="font-size:12px;color:var(--tx2)">'+a.txt+'</div></div>').join('')
     : '<div style="color:var(--tx3);font-size:13px">Aucune alerte</div>';
@@ -7372,7 +8086,7 @@ async function checkNotifs() {
 // ── TOAST ──
 let _toastTimer;
 function toast(msg, type='') {
-  const el = document.getElementById('toast');
+  el = document.getElementById('toast');
   if(!el) return;
   el.textContent = msg;
   el.className = 'show';
@@ -7388,7 +8102,7 @@ function openM(id) {
   if(id==='m-cheque') {
     if(!window._bsnList){window._bsnList=['CBAO Groupe Attijariwafa','Ecobank Sénégal','Banque Atlantique Sénégal','BHS Banque Habitat','SGBS Société Générale','BICIS BNP Paribas','UBA Sénégal','Bank of Africa Sénégal','Citibank Sénégal','Banque Islamique du Sénégal','Credit du Sénégal','BSIC Sénégal','Wave Sénégal','Orange Money Sénégal','Autre banque SN'];}
     const typeC = document.getElementById('chq-type')?.value;
-    const sel = document.getElementById('chq-banque');
+    sel = document.getElementById('chq-banque');
     if(sel && typeC==='Reçu') {
       sel.innerHTML='<option value="">Banque émettrice</option>'+window._bsnList.map(b=>'<option>'+b+'</option>').join('');
     } else if(sel) {
@@ -7425,12 +8139,7 @@ document.addEventListener('click', e => {
 });
 
 // ── CANEDIT — all roles can edit in their own dept ──
-function canEdit(module) {
-  if(!userRole) return false;
-  if(userRole==='dg'||userRole==='directeur') return true;
-  const deptModules = userDept?.pages || [];
-  return deptModules.includes(module);
-}
+
 
 // ── DBSAVE HELPER ──
 async function dbSave(table, data, modalId, page, msg) {
@@ -7450,10 +8159,10 @@ async function dbSave(table, data, modalId, page, msg) {
 
 // ── EDIT ROW ──
 async function editRow(table, id, page) {
-  const data = await db(table);
-  const row = (data||[]).find(r=>String(r.id)===String(id));
+  data = await db(table);
+  row = (data||[]).find(r=>String(r.id)===String(id));
   if(!row) return;
-  const modalMap = {
+  modalMap = {
     trucks:'mf', productions:'mp', maintenances:'mm', stocks:'mc',
     quality:'mq2', accidents:'m-acc', fournisseurs:'m-four',
     projets:'m-proj', partenaires:'m-part', finances:'m-budget',
@@ -7466,7 +8175,7 @@ async function editRow(table, id, page) {
     loyers:'m-loyer', banques:'m-banque', releves:'m-releve', cheques:'m-cheque',
     commandes:'mc',
   };
-  const modal = modalMap[table];
+  modal = modalMap[table];
   if(!modal) return;
   prefillModal(table, row);
   if(row.id) {
@@ -7478,7 +8187,7 @@ async function editRow(table, id, page) {
 
 // ── PREFILL MODAL ──
 function prefillModal(table, row) {
-  const set = (id, val) => { const el=document.getElementById(id); if(el) el.value=(val===null||val===undefined)?'':val; };
+  set = (id, val) => { const el=document.getElementById(id); if(el) el.value=(val===null||val===undefined)?'':val; };
   if(table==='trucks'){set('ntr-id',row.id);set('ntr-marque',row.marque);set('ntr-modele',row.modele);set('ntr-type',row.type);set('ntr-annee',row.annee);set('ntr-immat',row.immatriculation);set('ntr-chauffeur',row.chauffeur);set('ntr-capacite',row.capacite);set('ntr-notes',row.notes);}
   else if(table==='productions'){set('p-date',row.date);set('p-form',row.formulation);set('p-vol',row.volume);set('p-op',row.operateur);set('p-nc',row.non_conformites);set('p-rem',row.remarques);}
   else if(table==='maintenances'){set('maint-truck',row.camion);set('maint-type',row.type);set('maint-date',row.date);set('maint-desc',row.description);set('maint-cout',row.cout);set('maint-statut',row.statut);set('maint-notes',row.notes);}
@@ -7497,7 +8206,7 @@ function prefillModal(table, row) {
 
 // ── STATUS BADGE ──
 function stBadge(st) {
-  const m={'operational':'bg-g','maintenance':'bg-o','breakdown':'bg-r',
+  m = {'operational':'bg-g','maintenance':'bg-o','breakdown':'bg-r',
     'Terminée':'bg-g','En cours':'bg-b','En attente':'bg-o','Annulée':'bg-r',
     'Conforme':'bg-g','Non conforme':'bg-r','Payée':'bg-g','Partielle':'bg-o',
     'Impayée':'bg-r','En retard':'bg-r','Actif':'bg-g','Inactif':'bg-x',
@@ -7510,7 +8219,7 @@ function stBadge(st) {
 // ── LOAD TRUCKS ──
 async function loadTrucks(sel, all=false) {
   if(!sel) return;
-  const trucks = await db('trucks');
+  trucks = await db('trucks');
   const list = all ? trucks : (trucks||[]).filter(t=>t.status==='operational');
   sel.innerHTML = '<option value="">— Sélectionner —</option>'
     + (list||[]).map(t=>'<option value="'+t.id+'">'+t.id+(t.chauffeur?' — '+t.chauffeur:'')+'</option>').join('');
@@ -7518,9 +8227,9 @@ async function loadTrucks(sel, all=false) {
 
 // ── QUICK EDIT MAX (stocks) ──
 function quickEditMax(id, curMax, unit) {
-  const v = prompt('Nouveau maximum ('+unit+'):', curMax);
+  v = prompt('Nouveau maximum ('+unit+'):', curMax);
   if(v===null) return;
-  const n = parseFloat(v);
+  n = parseFloat(v);
   if(isNaN(n)||n<=0){toast('Valeur invalide');return;}
   db('stocks','PATCH',{max_qty:n},{id}).then(()=>{ window._src=null; _cache['stocks']=null; toast('Max: '+n+' '+unit); render('stocks'); });
 }
@@ -7535,7 +8244,7 @@ async function logAction(action, table, details={}) {
 // ── APPEARANCE ──
 function applyAppearance() {
   try {
-    const cfg = JSON.parse(localStorage.getItem('sarpa_cfg')||'{}');
+    cfg = JSON.parse(localStorage.getItem('sarpa_cfg')||'{}');
     if(cfg.accentColor) document.documentElement.style.setProperty('--must',cfg.accentColor);
     if(cfg.darkMode===false) document.body.classList.add('light-mode');
   } catch(e){}
@@ -7546,7 +8255,7 @@ function getConfig() {
 }
 
 // ── TITLES ──
-const TITLES = {
+TITLES = {
   dashboard:'Tableau de bord', production:'Production Béton', stocks:'Stocks et Appro',
   quality:'Contrôle Qualité', fleet:'Flotte de Camions', maintenance:'Maintenance',
   accidents:'Accidents et Sécurité', fournisseurs:'Fournisseurs', projets:'Projets',
@@ -7568,7 +8277,7 @@ const TITLES = {
 
 // ── GETMAINFIELDS (search helper) ──
 function getMainFields(table, item) {
-  const maps = {
+  maps = {
     employes:{text:(item.nom||'')+(item.prenom?' '+item.prenom:''),sub:(item.poste||'')+(item.departement?' — '+item.departement:''),badge:item.statut},
     trucks:{text:item.id||'',sub:(item.type||'')+(item.chauffeur?' — '+item.chauffeur:''),badge:item.status},
     factures:{text:(item.numero_facture||'')+(item.nom?' — '+item.nom:''),sub:item.type_facture||'',badge:item.montant_total?fmt(item.montant_total)+' FCFA':''},
@@ -7598,7 +8307,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
   // Check saved session
   try {
-    const s = JSON.parse(localStorage.getItem('sarpa_s')||'null');
+    s = JSON.parse(localStorage.getItem('sarpa_s')||'null');
     if(s && s.role && s.deptId && (Date.now()-s.ts < 7*24*60*60*1000)) {
       const dept = DEPARTMENTS.find(d=>d.id===s.deptId);
       if(dept) {
@@ -7611,22 +8320,22 @@ document.addEventListener('DOMContentLoaded', async function() {
 });
 
 async function renderCommuniques() {
-  const comms = await db('communiques');
-  const canP = ['dg','directeur','coordinatrice','manager_beton','manager_logistics','manager_immo','rh','resp_info','commercial'].includes(userRole);
+  comms = await db('communiques');
+  canP = ['dg','directeur','coordinatrice','manager_beton','manager_logistics','manager_immo','rh','resp_info','commercial'].includes(userRole);
   const pg = document.getElementById('communiques-content');
   if(!pg) return;
   pg.innerHTML = '';
-  const hdr = document.createElement('div'); hdr.className='sh';
-  const hdrL = document.createElement('div');
+  hdr = document.createElement('div'); hdr.className='sh';
+  hdrL = document.createElement('div');
   hdrL.innerHTML = '<div class="stl">📢 Communiqués</div><div class="sst">Informations officielles</div>';
   hdr.appendChild(hdrL);
-  if(canP){const btn=document.createElement('button');btn.className='btn bm';btn.style.fontSize='11px';btn.textContent='+ Nouveau';btn.onclick=()=>openM('m-communique');hdr.appendChild(btn);}
+  if(canP){btn = document.createElement('button');btn.className='btn bm';btn.style.fontSize='11px';btn.textContent='+ Nouveau';btn.onclick=()=>openM('m-communique');hdr.appendChild(btn);}
   pg.appendChild(hdr);
-  if(!(comms||[]).length){const em=document.createElement('div');em.className='al al-m';em.textContent='Aucun communiqué.';pg.appendChild(em);return;}
-  const prioC={'Urgent':'var(--rd2)','Important':'var(--must2)','Normal':'var(--ac2)'};
+  if(!(comms||[]).length){em = document.createElement('div');em.className='al al-m';em.textContent='Aucun communiqué.';pg.appendChild(em);return;}
+  prioC = {'Urgent':'var(--rd2)','Important':'var(--must2)','Normal':'var(--ac2)'};
   (comms||[]).sort((a,b)=>(b.created_at||'').localeCompare(a.created_at||'')).forEach(c=>{
     const card=document.createElement('div');card.className='card';card.style.marginBottom='14px';
-    const col=prioC[c.priorite]||'var(--ac2)';
+    col = prioC[c.priorite]||'var(--ac2)';
     card.innerHTML='<div style="border-left:4px solid '+col+';padding:16px;border-radius:0 8px 8px 0">'
       +'<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">'
       +'<div><span class="b" style="background:'+col+'20;color:'+col+';font-size:10px;margin-right:8px">'+(c.priorite||'Normal')+'</span>'
@@ -7643,17 +8352,17 @@ async function renderCommuniques() {
   });
 }
 async function savCommunique(){
-  const titre=document.getElementById('comm-titre').value.trim();
+  titre = document.getElementById('comm-titre').value.trim();
   if(!titre){toast('Titre requis');return;}
   const pi=document.getElementById('comm-pdf');
   let pd='',pn='';
-  if(pi&&pi.files&&pi.files[0]){const f=pi.files[0];if(f.size>500000){toast('PDF max 500KB');return;}pn=f.name;pd=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(f);});}
+  if(pi&&pi.files&&pi.files[0]){f = pi.files[0];if(f.size>500000){toast('PDF max 500KB');return;}pn=f.name;pd=await new Promise((res,rej)=>{r = new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(f);});}
   await dbSave('communiques',{titre,contenu:document.getElementById('comm-contenu').value,priorite:document.getElementById('comm-priorite').value,auteur:userName,pdf_nom:pn,pdf_data:pd},'m-communique','communiques','Communique publie');
 }
 async function viewCommPDF(id){
-  const comms=await db('communiques');const c=(comms||[]).find(x=>String(x.id)===id);
+  const comms=await db('communiques');c = (comms||[]).find(x=>String(x.id)===id);
   if(!c||!c.pdf_data){toast('PDF non disponible');return;}
-  const win=window.open('');if(!win){toast('Autorisez les popups');return;}
+  win = window.open('');if(!win){toast('Autorisez les popups');return;}
   win.document.write('<html><body style="margin:0"><button onclick="window.close()" style="position:fixed;top:10px;left:10px;z-index:99;background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer">Retour</button><iframe src="data:application/pdf;base64,'+c.pdf_data+'" width="100%" height="100%" style="border:none;padding-top:44px"></iframe></body></html>');
   win.document.close();
 }
@@ -7665,7 +8374,7 @@ async function deleteComm(id){
 }
 async function renderRecherche(){
   const pg=document.getElementById('recherche-content');
-  if(pg){const d=document.createElement('div');d.className='al al-b';d.textContent='Utilisez la loupe en haut pour rechercher partout.';pg.innerHTML='';pg.appendChild(d);}
+  if(pg){d = document.createElement('div');d.className='al al-b';d.textContent='Utilisez la loupe en haut pour rechercher partout.';pg.innerHTML='';pg.appendChild(d);}
 }
 async function renderAccesMgr(){
   const pg=document.getElementById('acces_mgr-content');
@@ -7679,7 +8388,13 @@ async function renderAccesMgr(){
 }
 
 
+
+
+
 </script>
+
+
+
 
 </body>
 </html>
