@@ -3,281 +3,312 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#1E1035">
-<title>Sarpa Groupe — ERP</title>
+<title>Sarpa Ops/SCM</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-/* ── RESET & BASE ── */
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{
-  --bg:#0f0e17;--sf:#1a1826;--sf2:#231f35;--sf3:#2e2a45;
-  --tx:#f0eeff;--tx2:#c8c0e8;--tx3:#8878aa;
-  --must:#D4A017;--must2:#f0b429;--must3:#7a5c00;
-  --ac:#3D1A6E;--ac2:#7c3aed;--ac3:#a78bfa;
-  --gn:#064e3b;--gn2:#10b981;--rd:#7f1d1d;--rd2:#ef4444;
-  --bd:#2e2a45;--bd2:#3d3860;
-  --radius:12px;--shadow:0 4px 24px rgba(0,0,0,.4);
-  --topH:54px;
+  --mp:#1E1035;--md:#2D1B4E;--mm:#3A2260;--ms:#6B3FA0;--ml:#9B6DD0;
+  --must:#D4A017;--must2:#F0BB30;--mustgh:rgba(212,160,23,.15);
+  --white:#fff;--bg:#160B2E;--sf:#1E1035;--sf2:#2D1B4E;--sf3:#3A2260;
+  --bd:rgba(155,109,208,.15);--bd2:rgba(155,109,208,.28);
+  --tx:#F0EBF8;--tx2:#C4ADDF;--tx3:#7A5BA8;
+  --gn:#1BA87A;--gn2:#22D49C;--lgn:rgba(27,168,122,.12);
+  --rd:#C0392B;--rd2:#F05545;--lrd:rgba(240,85,69,.12);
+  --or:#C96A10;--or2:#F08030;--lor:rgba(240,128,48,.12);
+  --bl:#2563EB;--bl2:#3B82F6;--lbl:rgba(59,130,246,.12);
+  --fh:'Outfit',sans-serif;--fb:'Instrument Sans',sans-serif;--fm:'JetBrains Mono',monospace;
+  --r:14px;--r2:9px;
 }
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:var(--fb);background:var(--bg);color:var(--tx);overflow-x:hidden}
 
-/* ── PORTAL ── */
-#portal{display:flex;flex-direction:column;min-height:100vh;align-items:center;justify-content:flex-start;padding:40px 20px 60px}
-#portal-header{text-align:center;margin-bottom:40px}
-#portal-header h1{font-size:clamp(22px,5vw,38px);font-weight:900;color:var(--tx);letter-spacing:-0.5px}
-#portal-header h1 span{color:var(--must)}
-#portal-header p{font-size:13px;color:var(--tx3);margin-top:6px}
-.portal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:16px;width:100%;max-width:900px}
-.dept-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--radius);padding:28px 20px;text-align:center;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
-.dept-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--card-color,var(--ac))15,transparent);opacity:0;transition:opacity .2s}
-.dept-card:hover{border-color:var(--must);transform:translateY(-3px);box-shadow:0 8px 32px rgba(212,160,23,.2)}
-.dept-card:hover::before{opacity:.07}
-.dept-card:active{transform:translateY(0)}
-.dept-icon{font-size:42px;margin-bottom:12px;display:block;filter:drop-shadow(0 2px 8px rgba(0,0,0,.3))}
-.dept-name{font-size:14px;font-weight:700;color:var(--tx);margin-bottom:4px}
-.dept-desc{font-size:11px;color:var(--tx3);line-height:1.4}
-.dept-badge{position:absolute;top:10px;right:10px;background:var(--must);color:#000;border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700;display:none}
+/* LOGIN */
+#login-screen{position:fixed;inset:0;background:linear-gradient(135deg,#0D0620 0%,#1E1035 50%,#2D1B4E 100%);display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:0}
+.login-card{background:rgba(45,27,78,.8);border:1px solid var(--bd2);border-radius:20px;padding:40px;width:380px;max-width:95vw;backdrop-filter:blur(20px);box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.login-logo{text-align:center;margin-bottom:28px}
+.login-diamond{width:56px;height:56px;background:linear-gradient(135deg,var(--must),var(--must2));border-radius:14px;display:inline-flex;align-items:center;justify-content:center;font-family:var(--fh);font-weight:900;font-size:24px;color:var(--md);box-shadow:0 4px 20px rgba(212,160,23,.4);margin-bottom:12px}
+.login-title{font-family:var(--fh);font-size:22px;font-weight:800;color:var(--white)}
+.login-sub{font-size:12px;color:var(--tx3);font-family:var(--fm);letter-spacing:.08em;text-transform:uppercase;margin-top:3px}
+.login-fg{margin-bottom:14px}
+.login-fg label{display:block;font-size:11.5px;color:var(--tx2);margin-bottom:5px;font-weight:600}
+.login-fg input{width:100%;padding:10px 14px;background:rgba(255,255,255,.06);border:1px solid var(--bd2);border-radius:var(--r2);color:var(--tx);font-family:var(--fb);font-size:14px}
+.login-fg input:focus{outline:none;border-color:var(--must);box-shadow:0 0 0 3px rgba(212,160,23,.15)}
+.login-btn{width:100%;padding:12px;background:linear-gradient(135deg,var(--must),var(--must2));border:none;border-radius:var(--r2);font-family:var(--fh);font-size:15px;font-weight:700;color:var(--md);cursor:pointer;transition:all .2s;margin-top:4px}
+.login-btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(212,160,23,.4)}
+.login-err{color:var(--rd2);font-size:12px;margin-top:8px;text-align:center;min-height:16px}
+.login-register{text-align:center;margin-top:16px;font-size:12px;color:var(--tx3)}
+.login-register span{color:var(--must2);cursor:pointer;font-weight:600}
 
-/* ── LOGIN OVERLAY ── */
-#login-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);z-index:500;align-items:center;justify-content:center}
-#login-overlay.show{display:flex}
-.login-box{background:var(--sf);border:1px solid var(--bd2);border-radius:20px;padding:36px 32px;width:min(420px,90vw);box-shadow:var(--shadow)}
-.login-dept-header{display:flex;align-items:center;gap:14px;margin-bottom:28px}
-.login-dept-icon{font-size:48px}
-.login-dept-info h2{font-size:20px;font-weight:800;color:var(--tx)}
-.login-dept-info p{font-size:12px;color:var(--tx3);margin-top:3px}
-.login-box label{display:block;font-size:12px;color:var(--tx3);margin-bottom:6px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}
-.login-box input{width:100%;background:var(--sf2);border:2px solid var(--bd2);border-radius:10px;padding:14px 16px;color:var(--tx);font-size:18px;letter-spacing:4px;text-align:center;font-weight:700;transition:border-color .2s;outline:none}
-.login-box input:focus{border-color:var(--must)}
-#login-error{color:var(--rd2);font-size:12px;text-align:center;min-height:18px;margin-top:8px}
-.login-actions{display:flex;gap:10px;margin-top:20px}
-.btn-login{flex:1;background:linear-gradient(135deg,var(--must),var(--must2));border:none;border-radius:10px;padding:14px;color:#000;font-size:15px;font-weight:800;cursor:pointer;transition:all .2s}
-.btn-login:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(212,160,23,.4)}
-.btn-cancel{background:var(--sf2);border:1px solid var(--bd2);border-radius:10px;padding:14px 20px;color:var(--tx3);font-size:14px;cursor:pointer}
+/* REGISTER */
+#register-screen{position:fixed;inset:0;background:linear-gradient(135deg,#0D0620 0%,#1E1035 50%,#2D1B4E 100%);display:none;align-items:center;justify-content:center;z-index:9999}
 
-/* ── MAIN APP ── */
-#app{display:none;flex-direction:column;min-height:100vh}
-
-/* TOPBAR */
-.topbar{position:sticky;top:0;z-index:200;height:var(--topH);background:var(--sf);border-bottom:1px solid var(--bd);display:flex;align-items:center;padding:0 16px;gap:12px}
-.topbar-dept{display:flex;align-items:center;gap:8px;flex:1;min-width:0}
-.dept-tag{background:linear-gradient(135deg,var(--ac),var(--ac2));border-radius:8px;padding:4px 12px;font-size:12px;font-weight:700;color:#fff;white-space:nowrap}
-.topbar-title{font-size:14px;font-weight:700;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.topbar-actions{display:flex;align-items:center;gap:6px}
-.tb-btn{background:none;border:none;cursor:pointer;font-size:18px;padding:6px 8px;color:var(--tx2);border-radius:8px;transition:background .15s}
-.tb-btn:hover{background:var(--sf2)}
-.user-tag{font-size:11px;color:var(--tx3);display:none}
-@media(min-width:600px){.user-tag{display:block}}
-
-/* LAYOUT */
-.app-.app-/* removed conflicting body rule */
+/* APP */
+#app{display:none;height:100vh}
+#app.visible{display:flex;flex-direction:column}
 
 /* SIDEBAR */
-#sb{width:240px;flex-shrink:0;background:var(--sf);border-right:1px solid var(--bd);overflow-y:auto;transition:transform .25s;display:flex;flex-direction:column}
-@media(max-width:899px){#sb{position:fixed;top:var(--topH);bottom:0;left:0;z-index:150;transform:translateX(-100%)}#sb.open{transform:translateX(0)}}
-.sb-top{padding:14px 12px 8px}
-.sb-dept-label{font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;padding:0 4px}
-.sb-back{display:flex;align-items:center;gap:6px;background:var(--sf2);border:1px solid var(--bd);border-radius:8px;padding:8px 12px;cursor:pointer;font-size:12px;color:var(--tx2);margin-bottom:8px;transition:all .15s}
-.sb-back:hover{color:var(--must);border-color:var(--must)}
-.ns{font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:1px;padding:14px 16px 4px;font-weight:700}
-.ni{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;border-radius:8px;margin:1px 8px;font-size:13px;color:var(--tx2);transition:all .15s;position:relative}
-.ni:hover{background:var(--sf2);color:var(--tx)}
-.ni.active{background:linear-gradient(135deg,var(--must)15,var(--must2)08);color:var(--must2);font-weight:600}
-.ni .ic{font-size:16px;width:22px;text-align:center;flex-shrink:0}
-.nbadge{background:var(--must);color:#000;border-radius:10px;padding:1px 6px;font-size:10px;font-weight:700;margin-left:auto}
+#sb{position:fixed;left:0;top:0;bottom:0;width:248px;background:var(--sf);border-right:1px solid var(--bd);display:flex;flex-direction:column;z-index:200;transition:transform .3s}
+.logo-block{padding:20px 18px 16px;border-bottom:1px solid var(--bd);background:linear-gradient(160deg,var(--md),var(--mm))}
+.logo-row{display:flex;align-items:center;gap:10px}
+.logo-d{width:36px;height:36px;background:linear-gradient(135deg,var(--must),var(--must2));border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-weight:900;font-size:16px;color:var(--md);box-shadow:0 3px 12px rgba(212,160,23,.3);flex-shrink:0}
+.logo-n{font-family:var(--fh);font-size:15px;font-weight:800;color:#fff}
+.logo-t{font-size:9px;color:var(--must2);font-family:var(--fm);letter-spacing:.1em;text-transform:uppercase;margin-top:1px}
+.logo-user{display:flex;align-items:center;gap:7px;margin-top:10px;padding-top:10px;border-top:1px solid var(--bd)}
+.user-dot{width:7px;height:7px;border-radius:50%;background:var(--gn2);animation:glow 2s infinite;flex-shrink:0}
+@keyframes glow{0%,100%{box-shadow:0 0 4px var(--gn2)}50%{box-shadow:0 0 10px var(--gn2)}}
+.user-info{font-size:10px;color:var(--tx3);font-family:var(--fm);line-height:1.4}
+.user-name{color:var(--must2);font-weight:500}
+nav{flex:1;padding:8px 0;overflow-y:auto}
+.ns{padding:12px 16px 3px;font-size:8.5px;font-weight:700;color:var(--tx3);font-family:var(--fm);letter-spacing:.14em;text-transform:uppercase}
+.ni{display:flex;align-items:center;gap:9px;padding:8px 16px;cursor:pointer;color:var(--tx2);font-size:12.5px;font-weight:500;border-left:2px solid transparent;transition:all .15s;user-select:none}
+.ni:hover{background:rgba(107,63,160,.15);color:var(--tx)}
+.ni.active{background:rgba(212,160,23,.1);color:var(--must2);border-left-color:var(--must2)}
+.ni.director-only{position:relative}
+.ni.director-only::after{content:'🔒';font-size:9px;margin-left:auto;opacity:.6}
+.ni .ic{font-size:14px;width:18px;text-align:center}
+.nbadge{margin-left:auto;font-size:9px;font-weight:700;background:var(--rd2);color:#fff;padding:1px 5px;border-radius:20px}
+.sb-foot{padding:12px 16px;border-top:1px solid var(--bd)}
+.sf-time{font-family:var(--fm);font-size:11px;color:var(--must2);font-weight:500}
+.sf-logout{font-size:11px;color:var(--tx3);cursor:pointer;margin-top:4px;transition:color .15s}
+.sf-logout:hover{color:var(--rd2)}
 
-/* MAIN CONTENT */
-#main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
-.pg{display:none;padding:20px 20px 60px;min-height:100%}
-.pg.active{display:block;animation:fadeIn .15s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+/* TOPBAR */
+#mn{margin-left:248px;flex:1;min-height:100vh;display:flex;flex-direction:column;width:calc(100% - 248px);max-width:calc(100% - 248px);overflow-x:hidden}
+.topbar{position:sticky;top:0;z-index:100;height:54px;padding:0 24px;background:rgba(22,11,46,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.ttl{font-family:var(--fh);font-size:17px;font-weight:700;color:#fff}
+.tba{display:flex;gap:8px;align-items:center}
+.role-badge{font-size:10px;font-family:var(--fm);padding:3px 10px;border-radius:20px;font-weight:600}
+.rb-director{background:rgba(212,160,23,.2);color:var(--must2);border:1px solid rgba(212,160,23,.3)}
+.rb-resp{background:rgba(107,63,160,.2);color:var(--ml);border:1px solid var(--bd2)}
+.rb-coord{background:rgba(27,168,122,.15);color:var(--gn2);border:1px solid rgba(27,168,122,.3)}
 
-/* NOTIF PANEL */
-#notif-panel{display:none;position:fixed;top:var(--topH);right:0;width:min(380px,100vw);bottom:0;background:var(--sf);border-left:1px solid var(--bd);z-index:300;overflow-y:auto;box-shadow:-8px 0 32px rgba(0,0,0,.3)}
-#notif-panel.open{display:block}
+/* PAGES */
+.pg{display:none;padding:20px 24px 48px;flex:1;box-sizing:border-box;overflow-x:hidden;width:100%;max-width:100%}
+.pg.active{display:block;animation:fu .2s ease}
+@keyframes fu{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
-/* SEARCH PANEL */
-#search-panel{display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.6);backdrop-filter:blur(6px)}
-#search-panel.open{display:flex;align-items:flex-start;justify-content:center;padding-top:60px}
-.search-box{background:var(--sf);border-radius:16px;width:min(600px,92vw);overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--bd2)}
-.search-input-row{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--bd)}
-.search-input-row input{flex:1;background:transparent;border:none;outline:none;color:var(--tx);font-size:16px}
-#search-results{max-height:60vh;overflow-y:auto}
-.src-item{display:flex;align-items:center;gap:12px;padding:12px 16px;cursor:pointer;border-bottom:1px solid var(--bd);transition:background .1s}
-.src-item:hover{background:var(--sf2)}
+/* BUTTONS */
+.btn{padding:7px 14px;border-radius:var(--r2);font-family:var(--fb);font-size:12.5px;font-weight:600;cursor:pointer;border:none;transition:all .15s;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.bm{background:var(--must);color:var(--md)}.bm:hover{background:var(--must2);transform:translateY(-1px)}
+.bp{background:var(--ms);color:#fff}.bp:hover{background:var(--ml)}
+.bg2{background:rgba(107,63,160,.2);color:var(--tx2);border:1px solid var(--bd2)}.bg2:hover{background:var(--sf3);color:var(--tx)}
+.br{background:var(--rd2);color:#fff}.bs{background:var(--gn);color:#fff}
 
-/* CARDS & COMPONENTS */
-.card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--radius);overflow:hidden;margin-bottom:14px}
-.ch{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--bd)}
-.ct{font-size:13px;font-weight:700;color:var(--tx)}
-.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:10px;flex-wrap:wrap}
-.stl{font-size:18px;font-weight:800;color:var(--tx)}
-.sst{font-size:12px;color:var(--tx3);margin-top:2px}
-.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-bottom:14px}
-.kg{display:grid;gap:10px;margin-bottom:14px}
-.kc{background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:14px 16px}
-.kc-g{border-left:3px solid var(--gn2)}.kc-r{border-left:3px solid var(--rd2)}
-.kc-b{border-left:3px solid var(--ac3)}.kc-m{border-left:3px solid var(--must)}
-.kc-p{border-left:3px solid #a78bfa}
-.kl{font-size:11px;color:var(--tx3);margin-bottom:4px}
-.kv{font-size:22px;font-weight:800;color:var(--tx)}
-.ks{font-size:11px;color:var(--tx3);margin-top:2px}
+/* KPI */
+.kg{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:12px;margin-bottom:20px}
+.kc{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:16px 18px;position:relative;overflow:hidden;transition:transform .15s,border-color .15s}
+.kc:hover{transform:translateY(-2px);border-color:var(--bd2)}
+.kc::after{content:'';position:absolute;top:0;left:0;right:0;height:2.5px;border-radius:var(--r) var(--r) 0 0}
+.kc-m::after{background:linear-gradient(90deg,var(--must),var(--must2))}
+.kc-g::after{background:linear-gradient(90deg,var(--gn),var(--gn2))}
+.kc-r::after{background:linear-gradient(90deg,var(--rd),var(--rd2))}
+.kc-p::after{background:linear-gradient(90deg,var(--ms),var(--ml))}
+.kc-o::after{background:linear-gradient(90deg,var(--or),var(--or2))}
+.kc-b::after{background:linear-gradient(90deg,var(--bl),var(--bl2))}
+.kl{font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}
+.kv{font-family:var(--fh);font-size:28px;font-weight:800;color:#fff;line-height:1}
+.ks{font-size:11px;color:var(--tx2);margin-top:4px}
+.kt{font-size:10.5px;margin-top:5px;font-weight:600}
+.kt.up{color:var(--gn2)}.kt.dn{color:var(--rd2)}.kt.wn{color:var(--or2)}.kt.mt{color:var(--tx3)}
+
+/* CARD */
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:18px}
+.ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.ct{font-family:var(--fh);font-size:12px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.07em;display:flex;align-items:center;gap:6px}
+
+/* TABLE */
 .tw{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:12px}
-th{background:var(--sf2);padding:8px 10px;text-align:left;font-size:11px;color:var(--tx3);font-weight:600;white-space:nowrap;position:sticky;top:0}
-td{padding:8px 10px;border-bottom:1px solid var(--bd);color:var(--tx2)}
-tr:hover td{background:var(--sf2)}
-.mono{font-family:monospace;font-size:11px}
-.al{border-radius:8px;padding:10px 14px;font-size:12px;margin-bottom:10px}
-.al-m{background:var(--must3)20;color:var(--must2);border:1px solid var(--must3)50}
-.al-r{background:var(--rd)30;color:var(--rd2);border:1px solid var(--rd)50}
-.al-g{background:var(--gn)30;color:var(--gn2);border:1px solid var(--gn)50}
-.al-b{background:var(--ac)20;color:var(--ac3);border:1px solid var(--ac)50}
-.pb{height:6px;background:var(--sf3);border-radius:3px;overflow:hidden;margin-top:4px}
-.pf{height:100%;border-radius:3px;transition:width .3s}
-.fcard{background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:14px;margin-bottom:10px}
-.fcard-title{font-size:13px;font-weight:700;color:var(--tx)}
-.fcard-sub{font-size:11px;color:var(--tx3)}
-.b{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700}
-.bg-g{background:var(--gn)40;color:var(--gn2)}.bg-r{background:var(--rd)40;color:var(--rd2)}
-.bg-o{background:#78350f30;color:#f59e0b}.bg-p{background:var(--ac)30;color:var(--ac3)}
-.bg-x{background:var(--sf3);color:var(--tx3)}.bg-m{background:var(--must3)30;color:var(--must2)}
-.bg-b{background:var(--ac)20;color:var(--ac3)}.bg-2{background:var(--sf2);color:var(--tx2)}
-.bg-y{background:#78350f20;color:#fbbf24}
-.sp{padding:16px}
-.fr{display:flex;gap:10px;flex-wrap:wrap}
-.fr .fg{flex:1;min-width:140px}
-.fg{margin-bottom:12px}
-.fg label{display:block;font-size:11px;color:var(--tx3);margin-bottom:5px;font-weight:600}
-.fg input,.fg select,.fg textarea{width:100%;background:var(--sf2);border:1px solid var(--bd2);border-radius:8px;padding:8px 10px;color:var(--tx);font-size:13px;outline:none;transition:border-color .15s}
-.fg input:focus,.fg select,.fg textarea:focus{border-color:var(--must)}
-.fg textarea{resize:vertical;min-height:70px}
-.btn{border:none;border-radius:8px;padding:8px 16px;cursor:pointer;font-size:12px;font-weight:700;transition:all .15s;display:inline-flex;align-items:center;gap:6px}
-.btn:hover{opacity:.9;transform:translateY(-1px)}
-.bm{background:linear-gradient(135deg,var(--must),var(--must2));color:#000}
-.bg2{background:var(--sf2);border:1px solid var(--bd2);color:var(--tx2)}
-.bd3{background:var(--rd)30;border:1px solid var(--rd)50;color:var(--rd2)}
-.sp{padding:16px}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{background:var(--sf2);color:var(--tx3);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:9px 12px;text-align:left;border-bottom:1px solid var(--bd)}
+td{padding:9px 12px;border-bottom:1px solid var(--bd);color:var(--tx2);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(107,63,160,.08)}
+td strong{color:var(--tx)}
+.mono{font-family:var(--fm);font-size:11px}
 
-/* MODALS */
-.mo{display:none;position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);align-items:flex-end;justify-content:center}
-@media(min-width:600px){.mo{align-items:center}}
+/* BADGE */
+.b{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:20px;font-size:10.5px;font-weight:600}
+.bg-g{background:rgba(27,168,122,.18);color:#34d399}
+.bg-r{background:rgba(240,85,69,.18);color:#f87171}
+.bg-o{background:rgba(240,128,48,.18);color:#fb923c}
+.bg-p{background:rgba(107,63,160,.2);color:var(--ml)}
+.bg-m{background:var(--mustgh);color:var(--must2)}
+.bg-x{background:rgba(255,255,255,.07);color:var(--tx3)}
+.bg-b{background:rgba(59,130,246,.18);color:#60a5fa}
+
+/* ALERT */
+.al{padding:10px 14px;border-radius:var(--r2);font-size:12.5px;display:flex;align-items:flex-start;gap:9px;margin-bottom:8px;border-left:3px solid}
+.al-r{background:var(--lrd);border-color:var(--rd2);color:#fca5a5}
+.al-o{background:var(--lor);border-color:var(--or2);color:#fdba74}
+.al-g{background:var(--lgn);border-color:var(--gn2);color:#6ee7b7}
+.al-m{background:var(--mustgh);border-color:var(--must2);color:var(--must2)}
+
+/* PROGRESS */
+.pb{height:4px;background:var(--sf3);border-radius:2px;overflow:hidden}
+.pf{height:100%;border-radius:2px;transition:width .5s}
+
+/* FORM */
+.fg{margin-bottom:12px}
+label{display:block;font-size:11px;color:var(--tx2);margin-bottom:4px;font-weight:600}
+input,select,textarea{width:100%;padding:9px 12px;background:var(--sf2);border:1px solid var(--bd2);border-radius:var(--r2);color:var(--tx);font-family:var(--fb);font-size:12.5px;transition:border-color .15s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--must);box-shadow:0 0 0 3px rgba(212,160,23,.15)}
+select option{background:var(--sf2)}
+textarea{resize:vertical;min-height:70px}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fr3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+
+/* MODAL */
+.mo{position:fixed;inset:0;background:rgba(10,4,22,.82);backdrop-filter:blur(6px);z-index:1000;display:none;align-items:center;justify-content:center;padding:16px}
 .mo.open{display:flex}
-.md{background:var(--sf);border-radius:20px 20px 0 0;width:100%;max-width:580px;max-height:90vh;overflow-y:auto;padding-bottom:env(safe-area-inset-bottom)}
-@media(min-width:600px){.md{border-radius:20px;max-height:85vh}}
-.mh{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 14px;border-bottom:1px solid var(--bd);position:sticky;top:0;background:var(--sf);z-index:1}
-.mt{font-size:16px;font-weight:800;color:var(--tx)}
-.mc{background:var(--sf2);border:1px solid var(--bd);border-radius:8px;padding:4px 10px;cursor:pointer;color:var(--tx3);font-size:16px}
-.mf{display:flex;gap:8px;justify-content:flex-end;padding:14px 20px;border-top:1px solid var(--bd);position:sticky;bottom:0;background:var(--sf)}
-.md > *:not(.mh):not(.mf){padding:0 20px}
-.md > .fg,.md > .fr,.md > .al{padding-left:20px;padding-right:20px}
+.mdl{background:var(--sf);border:1px solid var(--bd2);border-radius:var(--r);padding:24px;width:540px;max-width:100%;max-height:92vh;overflow-y:auto;animation:su .2s cubic-bezier(.34,1.4,.64,1)}
+@keyframes su{from{opacity:0;transform:translateY(20px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.mt2{font-family:var(--fh);font-size:18px;font-weight:700;color:#fff;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--bd)}
+.mf{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+
+/* TRUCK GRID */
+.tg{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px}
+.tc{background:var(--sf2);border:1px solid var(--bd);border-radius:var(--r2);padding:12px;cursor:pointer;transition:all .15s;border-top:3px solid transparent}
+.tc:hover{transform:translateY(-2px);border-color:var(--bd2)}
+.tc.operational{border-top-color:var(--gn2)}
+.tc.breakdown{border-top-color:var(--rd2)}
+.tc.maintenance{border-top-color:var(--must2)}
+.tc-id{font-family:var(--fm);font-size:11px;font-weight:500;color:#fff}
+.tc-t{font-size:10.5px;color:var(--tx3);margin-top:1px}
+.tc-k{font-size:11.5px;color:var(--tx2);margin-top:7px}
+
+/* GRIDS */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+
+/* SECTION HEADER */
+.sh{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;gap:12px}
+.stl{font-family:var(--fh);font-size:15px;font-weight:700;color:#fff}
+.sst{font-size:11.5px;color:var(--tx3);margin-top:2px}
+.sp{margin-top:14px}
+.div{height:1px;background:var(--bd);margin:16px 0}
+
+/* CHART */
+.cb{display:flex;align-items:flex-end;gap:3px;height:72px}
+.cbar{flex:1;border-radius:3px 3px 0 0;min-height:2px;opacity:.85;transition:opacity .2s}
+.cbar:hover{opacity:1}
+.cl{display:flex;gap:3px;margin-top:4px}
+.clb{flex:1;text-align:center;font-size:8.5px;color:var(--tx3);font-family:var(--fm)}
 
 /* TOAST */
-#toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--sf2);border:1px solid var(--bd2);border-radius:30px;padding:10px 20px;font-size:13px;font-weight:600;z-index:9999;pointer-events:none;opacity:0;transition:all .3s;white-space:nowrap;max-width:90vw;text-align:center;box-shadow:var(--shadow)}
-#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast{position:fixed;bottom:20px;right:20px;z-index:3000;padding:11px 16px;border-radius:var(--r2);font-size:12.5px;font-weight:600;background:var(--sf2);border:1px solid var(--must);color:var(--must2);display:flex;align-items:center;gap:7px;transform:translateY(80px);opacity:0;transition:all .3s cubic-bezier(.34,1.5,.64,1);box-shadow:0 8px 30px rgba(0,0,0,.4);max-width:300px}
+#toast.show{transform:translateY(0);opacity:1}
+
+/* ACCIDENT CARD */
+.acc-card{background:var(--sf2);border:1px solid var(--bd);border-radius:var(--r2);padding:14px;margin-bottom:10px;border-left:3px solid var(--rd2)}
+.acc-card.grave{border-left-color:var(--rd2);background:rgba(240,85,69,.06)}
+.acc-card.moyen{border-left-color:var(--or2);background:rgba(240,128,48,.06)}
+.acc-card.leger{border-left-color:var(--must2);background:rgba(212,160,23,.06)}
+
+/* FOURNISSEUR / PROJET CARD */
+.fcard{background:var(--sf2);border:1px solid var(--bd);border-radius:var(--r2);padding:14px;transition:all .15s;cursor:pointer}
+.fcard:hover{border-color:var(--bd2);transform:translateY(-1px)}
+.fcard-title{font-family:var(--fh);font-size:13px;font-weight:700;color:var(--tx)}
+.fcard-sub{font-size:11px;color:var(--tx3);margin-top:2px}
+.fcard-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
 
 /* DIRECTOR LOCK */
-.director-lock{text-align:center;padding:60px 20px;color:var(--tx3)}
-.lock-icon{font-size:56px;margin-bottom:14px}
-.lock-title{font-size:18px;font-weight:700;color:var(--tx);margin-bottom:8px}
+.psec{animation:fadeIn .2s ease}
+.director-lock{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;gap:12px;color:var(--tx3)}
+.lock-icon{font-size:48px;margin-bottom:8px}
+.lock-title{font-family:var(--fh);font-size:18px;font-weight:700;color:var(--tx2)}
+.lock-sub{font-size:13px;text-align:center;max-width:280px;line-height:1.5}
 
-/* SCROLLBAR */
-::-webkit-scrollbar{width:4px;height:4px}
+/* REALTIME INDICATOR */
+.rt-indicator{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--gn2);font-family:var(--fm)}
+.rt-dot{width:6px;height:6px;border-radius:50%;background:var(--gn2);animation:glow 1.5s infinite}
+
+::-webkit-scrollbar{width:3px;height:3px}
 ::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:2px}
+::-webkit-scrollbar-thumb{background:var(--sf3);border-radius:2px}
 
-/* ROLE BADGES */
-.role-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
-.rb-director{background:#1e1b4b;color:#818cf8}
-.rb-beton{background:#1c1917;color:#fb923c}
-.rb-flotte{background:#052e16;color:#4ade80}
-.rb-immo{background:#0c1a2e;color:#38bdf8}
-.rb-rh{background:#2d1b69;color:#c084fc}
-.rb-compta{background:#14532d;color:#86efac}
-.rb-info{background:#1e3a5f;color:#7dd3fc}
-.rb-coord{background:#1a1a1a;color:#d4d4d4}
-.rb-comm{background:#422006;color:#fdba74}
-.rb-qual{background:#1a2e1a;color:#4ade80}
-.rb-guest{background:var(--sf2);color:var(--tx3)}
+@media(max-width:900px){
+  #sb{transform:translateX(-100%)}
+  #sb.open{transform:translateX(0);box-shadow:4px 0 40px rgba(0,0,0,.6)}
+  #mn{margin-left:0;width:100%;max-width:100%}
+  .g2,.g3,.g4{grid-template-columns:1fr}
+  .fr,.fr3{grid-template-columns:1fr}
+  .kg{grid-template-columns:repeat(2,1fr)}
+}
+
+/* New modal aliases */
+.md{background:var(--sf);border:1px solid var(--bd2);border-radius:var(--r);padding:20px;width:90%;max-width:480px;max-height:90vh;overflow-y:auto;position:relative}
+.mh{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.mc{background:none;border:none;color:var(--tx3);font-size:20px;cursor:pointer;padding:0;line-height:1}
+/* KPI colors */
+.kpi{display:inline-block;background:var(--sf2);border-radius:8px;padding:12px 20px;margin:6px;text-align:center;min-width:100px}
+/* Sidebar overlay */
+#sb-overlay{display:none;position:fixed;inset:0;z-index:199;background:rgba(0,0,0,.4)}
+#sb-overlay.show{display:block}
+
+@keyframes slideInRight{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+.fsec{animation:fadeIn .2s ease}
+
+/* Mobile fix */
+.pg{-webkit-transform:translateZ(0);transform:translateZ(0)}
+.pg.active{display:block!important;opacity:1!important}
+*{-webkit-tap-highlight-color:transparent}
+body{-webkit-overflow-scrolling:touch;overscroll-behavior:none}
 </style>
 </head>
 <body>
 
-<!-- ══ PORTAL ══ -->
-<div id="portal">
-  <div id="portal-header">
-    <h1>SARPA <span>GROUPE</span></h1>
-    <p>Système de gestion intégré — Choisissez votre espace</p>
-  </div>
-  <div class="portal-grid" id="portal-grid">
-    <!-- Cards generated by JS -->
-  </div>
-</div>
-
-<!-- ══ LOGIN OVERLAY ══ -->
-<div id="login-overlay">
-  <div class="login-box">
-    <div class="login-dept-header">
-      <span class="login-dept-icon" id="login-icon">🏢</span>
-      <div class="login-dept-info">
-        <h2 id="login-dept-name">Espace</h2>
-        <p id="login-dept-desc">Entrez votre code d'accès</p>
-      </div>
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-diamond" id="sb-initial">S</div>
+      <div class="login-title">Sarpa Ops/SCM</div>
+      <div class="login-sub">Accès sécurisé</div>
     </div>
-    <label>Code d'accès</label>
-    <input type="password" id="l-code" maxlength="12" autocomplete="off"
-      placeholder="••••••••" oninput="this.value=this.value.toUpperCase()">
-    <div id="login-error"></div>
-    <div class="login-actions">
-      <button class="btn-cancel" onclick="closeLogin()">Annuler</button>
-      <button class="btn-login" onclick="doLogin()">Accéder →</button>
+    <div class="login-fg">
+      <label>Code d'accès</label>
+      <input type="text" id="l-code" placeholder="XXXXXXXX"
+        style="text-transform:uppercase;letter-spacing:.2em;font-family:monospace;font-size:20px;text-align:center;padding:16px"
+        maxlength="8" autocomplete="off" autocorrect="off" spellcheck="false">
     </div>
+    <button class="login-btn" id="login-btn">Accéder</button>
+    <div class="login-err" id="l-err"></div>
+    <div style="text-align:center;margin-top:14px;font-size:11px;color:var(--tx3)">Code fourni par le Directeur des Opérations</div>
   </div>
 </div>
+<div id="register-screen" style="display:none!important"></div>
+<!-- APP -->
+<div id="app">
 
-<!-- ══ MAIN APP ══ -->
-<div id="app" style="display:none">
-
-  <!-- TOPBAR -->
-  <header class="topbar">
-    <button class="tb-btn" id="mbtn" onclick="toggleSB()" style="display:none">☰</button>
-    <div class="topbar-dept">
-      <span class="dept-tag" id="dept-tag">—</span>
-      <span class="topbar-title" id="ptitle">Tableau de bord</span>
+<!-- SIDEBAR -->
+<div id="sb-overlay" onclick="closeSB()"></div>
+<aside id="sb">
+  <div class="logo-block">
+    <div class="logo-row">
+      <div class="logo-d">S</div>
+      <div><div class="logo-n">Sarpa Groupe</div><div class="logo-t">Ops/SCM</div></div>
     </div>
-    <div class="topbar-actions">
-      <div style="font-size:9px;color:var(--gn2);display:flex;align-items:center;gap:3px"><span style="width:6px;height:6px;background:var(--gn2);border-radius:50%;display:inline-block" id="rt-dot"></span><span id="rt-status">—</span></div>
-      <button class="tb-btn" onclick="openSearchPanel()" title="Rechercher">🔍</button>
-      <button class="tb-btn" onclick="openNotifCenter()" title="Notifications" style="position:relative">
-        🔔<span id="nb-badge" style="display:none;position:absolute;top:2px;right:2px;width:8px;height:8px;background:var(--rd2);border-radius:50%"></span>
-      </button>
-      <span class="user-tag" id="sb-username">—</span>
-      <button class="tb-btn" onclick="doLogout()" title="Déconnexion">⏻</button>
+    <div class="logo-user">
+      <span class="user-dot"></span>
+      <div class="user-info"><div class="user-name" id="sb-username">—</div><div id="sb-role">—</div></div>
     </div>
-  </header>
+  </div>
+  <nav id="sidebar-nav">
+    <!-- populated by JS based on role -->
+  </nav>
+  <div class="sb-foot">
+    <div class="sf-time" id="clock">—</div>
+    <div class="rt-indicator" style="margin-top:4px"><span class="rt-dot"></span><span id="rt-status">Connexion temps réel</span></div>
+    <div class="sf-logout" onclick="doLogout()">⎋ Déconnexion</div>
+  </div>
+</aside>
 
-  <!-- APP BODY -->
-  <div class="app-body">
+<!-- TOAST -->
+<div id="toast">✦ <span id="tmsg"></span></div>
 
-    <!-- SIDEBAR -->
-    <nav id="sb">
-      <div class="sb-top">
-        <div class="sb-back" onclick="goPortal()">← Changer d'espace</div>
-        <div class="sb-dept-label" id="sb-dept-label">—</div>
-      </div>
-      <div id="sidebar-nav"></div>
-      <div style="padding:16px;margin-top:auto">
-        <div style="font-size:10px;color:var(--tx3)">Connecté en tant que</div>
-        <div style="font-size:12px;font-weight:700;color:var(--tx);margin-top:3px" id="sb-username2">—</div>
-        <span class="role-badge rb-coord" id="role-badge" style="margin-top:6px">—</span>
-      </div>
-    </nav>
-
-    <!-- PAGES CONTAINER -->
-    <div id="main">
-      <div id="pg-overlay" style="display:none;position:fixed;inset:0;z-index:99;background:var(--bg);opacity:0;pointer-events:none;transition:opacity .15s"></div>
-
-
+<!-- MAIN -->
+<div id="mn">
   <div id="search-panel" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:9000;background:rgba(0,0,0,0.5)">
   <div onclick="closeSearchPanel()" style="position:absolute;top:0;left:0;right:0;bottom:0"></div>
   <div style="position:relative;max-width:600px;margin:56px auto 0;background:var(--sf);border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.4)">
@@ -687,6 +718,813 @@ tr:hover td{background:var(--sf2)}
 <div class="pg" id="pg-communiques"><div id="communiques-content"></div></div>
 
 <div class="pg" id="pg-acces_mgr"><div id="acces_mgr-content"></div></div>
+</div><!-- /mn -->
+</div><!-- /app -->
+
+<!-- ═══ MODALS ═══ -->
+<div class="mo" id="mq"><div class="mdl" style="width:380px">
+  <div class="mt2">✦ Saisie rapide</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px" id="quick-grid"></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('mq')">Fermer</button></div>
+</div></div>
+
+<div class="mo" id="mp"><div class="mdl">
+  <div class="mt2">🏗 Production</div>
+  <div class="fr"><div class="fg"><label>Date</label><input type="date" id="ip-d"></div><div class="fg"><label>Formulation</label><select id="ip-f"><option>B20 — Voirie</option><option>B25 — Standard</option><option>B30 — Structurel</option><option>B35 — Haute résistance</option><option>B40 — Spécial</option></select></div></div>
+  <div class="fr"><div class="fg"><label>Volume (m³)</label><input type="number" id="ip-v" min="0"></div><div class="fg"><label>Opérateur</label><input type="text" id="ip-o" placeholder="Prénom Nom"></div></div>
+  <div class="fr"><div class="fg"><label>Non-conformités (m³)</label><input type="number" id="ip-n" value="0" min="0"></div><div class="fg"><label>Gâchées</label><input type="number" id="ip-g" value="0" min="0"></div></div>
+  <div class="fg"><label>Remarques</label><textarea id="ip-r"></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('mp')">Annuler</button><button class="btn bm" onclick="savProd()">Enregistrer</button></div>
+</div></div>
+
+<div class="mo" id="mf"><div class="mdl">
+  <div class="mt2">🚛 Statut camion</div>
+  <div class="fg"><label>Camion</label><select id="if-t"></select></div>
+  <div class="fr"><div class="fg"><label>Statut</label><select id="if-s"><option value="operational">✅ Opérationnel</option><option value="breakdown">🔴 En panne</option><option value="maintenance">🟡 Maintenance</option></select></div><div class="fg"><label>Km actuels</label><input type="number" id="if-k"></div></div>
+  <div class="fg"><label>Description</label><textarea id="if-d"></textarea></div>
+  
+  <div style="margin-top:16px;padding-top:14px;border-top:2px solid var(--sf3)">
+    <div style="font-size:13px;font-weight:700;color:var(--must2);margin-bottom:10px">🛡 Assurance</div>
+    <div class="fr">
+      <div class="fg"><label>Compagnie</label><input type="text" id="ntr-ass-comp" placeholder="NSIA, Allianz..."></div>
+      <div class="fg"><label>N° Police</label><input type="text" id="ntr-ass-police"></div>
+      <div class="fg"><label>Type</label><select id="ntr-ass-type"><option>Tous risques</option><option>RC seulement</option></select></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label>Date début</label><input type="date" id="ntr-ass-date"></div>
+      <div class="fg"><label>Expiration</label><input type="date" id="ntr-ass-exp"></div>
+      <div class="fg"><label>Prime FCFA</label><input type="number" id="ntr-ass-prime" placeholder="0"></div>
+    </div>
+  </div>
+  <div style="margin-top:14px;padding-top:14px;border-top:2px solid var(--sf3)">
+    <div style="font-size:13px;font-weight:700;color:var(--must2);margin-bottom:10px">🔧 Visite technique</div>
+    <div class="fr">
+      <div class="fg"><label>Date visite</label><input type="date" id="ntr-vt-date"></div>
+      <div class="fg"><label>Expiration</label><input type="date" id="ntr-vt-exp"></div>
+      <div class="fg"><label>Résultat</label><select id="ntr-vt-resultat"><option>Conforme</option><option>Non conforme</option></select></div>
+      <div class="fg"><label>Centre</label><input type="text" id="ntr-vt-centre" placeholder="SOTES..."></div>
+    </div>
+  </div>
+  <div style="margin-top:14px;padding-top:14px;border-top:2px solid var(--sf3)">
+    <div style="font-size:13px;font-weight:700;color:var(--must2);margin-bottom:10px">⚙️ Entretien initial</div>
+    <div class="fr">
+      <div class="fg"><label>Date</label><input type="date" id="ntr-ent-date"></div>
+      <div class="fg"><label>Type</label><select id="ntr-ent-type"><option>Entretien initial</option><option>Vidange</option></select></div>
+      <div class="fg"><label>Km actuel</label><input type="number" id="ntr-ent-km" placeholder="0"></div>
+      <div class="fg"><label>Prochain km</label><input type="number" id="ntr-ent-prochain" placeholder="0"></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label>Description</label><input type="text" id="ntr-ent-desc" placeholder="Mise en service"></div>
+      <div class="fg"><label>Coût FCFA</label><input type="number" id="ntr-ent-cout" placeholder="0"></div>
+    </div>
+  </div>
+  <div style="margin-top:14px;padding-top:14px;border-top:2px solid var(--sf3)">
+    <div style="font-size:13px;font-weight:700;color:var(--must2);margin-bottom:10px">📄 Document</div>
+    <div class="fr">
+      <div class="fg"><label>Nom du document</label><input type="text" id="ntr-doc-nom" placeholder="Carte grise..."></div>
+      <div class="fg"><label>Type</label><select id="ntr-doc-type"><option>Carte grise</option><option>Certificat</option><option>Autre</option></select></div>
+      <div class="fg"><label>Émission</label><input type="date" id="ntr-doc-date"></div>
+      <div class="fg"><label>Expiration</label><input type="date" id="ntr-doc-exp"></div>
+    </div>
+  </div>
+<div class="mf"><button class="btn bg2" onclick="closeM('mf')">Annuler</button><button class="btn bm" onclick="savFleet()">Enregistrer</button></div>
+</div></div>
+
+<div class="mo" id="mt"><div class="mdl">
+  <div class="mt2">◎ Nouvelle tournée</div>
+  <div class="fr"><div class="fg"><label>Date</label><input type="date" id="it-d"></div><div class="fg"><label>Camion</label><select id="it-t"></select></div></div>
+  <div class="fr"><div class="fg"><label>Chauffeur</label><input type="text" id="it-ch"></div><div class="fg"><label>Destination / Chantier</label><input type="text" id="it-de"></div></div>
+  <div class="fr"><div class="fg"><label>Volume (m³)</label><input type="number" id="it-v" min="0"></div><div class="fg"><label>Km</label><input type="number" id="it-k" min="0"></div></div>
+  <div class="fr"><div class="fg"><label>Départ</label><input type="time" id="it-dp"></div><div class="fg"><label>Retour</label><input type="time" id="it-r"></div></div>
+  <div class="fg"><label>Ponctuelle ?</label><select id="it-p"><option value="1">✅ Oui</option><option value="0">❌ Non</option></select></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('mt')">Annuler</button><button class="btn bm" onclick="savTour()">Enregistrer</button></div>
+</div></div>
+
+<div class="mo" id="mm"><div class="mdl">
+  <div class="mt2">⚙ Intervention maintenance</div>
+  <div class="fr"><div class="fg"><label>Date</label><input type="date" id="im-d"></div><div class="fg"><label>Équipement</label><select id="im-e"><option>SN-001-DK — Toupie 8m³</option><option>SN-002-DK — Toupie 8m³</option><option>SN-003-DK — Plateau</option><option>SN-004-DK — Plateau</option><option>SN-005-DK — Benne 10T</option><option>SN-006-DK — Toupie 6m³</option><option>SN-007-DK — Benne 10T</option><option>SN-008-DK — Citerne</option><option>Malaxeur principal</option><option>Pompe à béton</option><option>Autre</option></select></div></div>
+  <div class="fr"><div class="fg"><label>Type</label><select id="im-t"><option>Préventif</option><option>Curatif</option><option>Urgent</option></select></div><div class="fg"><label>Responsable</label><input type="text" id="im-r"></div></div>
+  <div class="fg"><label>Description</label><textarea id="im-de"></textarea></div>
+  <div class="fr"><div class="fg"><label>Coût (FCFA)</label><input type="number" id="im-c" min="0" value="0"></div><div class="fg"><label>Statut</label><select id="im-s"><option>En cours</option><option>Terminé</option><option>Planifié</option></select></div></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('mm')">Annuler</button><button class="btn bm" onclick="savMaint()">Enregistrer</button></div>
+</div></div>
+
+<div class="mo" id="ms"><div class="mdl">
+  <div class="mt2">📦 Mise à jour stock</div>
+  <div class="fr"><div class="fg"><label>Article</label><select id="is-i"><option value="ciment">Ciment (T)</option><option value="sable">Sable (T)</option><option value="gravillons">Gravillons (T)</option><option value="adjuvants">Adjuvants (L)</option><option value="gasoil">Gasoil (L)</option><option value="huile">Huile moteur (L)</option><option value="filtres">Filtres à huile</option><option value="pneus">Pneus PL</option></select></div><div class="fg"><label>Quantité</label><input type="number" id="is-q" min="0"></div></div>
+  <div class="fg"><label>Note</label><input type="text" id="is-n" placeholder="Livraison reçue, ajustement…"></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('ms')">Annuler</button><button class="btn bm" onclick="savStock()">Enregistrer</button></div>
+</div></div>
+
+<div class="mo" id="mc"><div class="mdl">
+  <div class="mt2">📋 Commande fournisseur</div>
+  <div class="fr"><div class="fg"><label>Date</label><input type="date" id="ic-d"></div><div class="fg"><label>Fournisseur</label><input type="text" id="ic-f"></div></div>
+  <div class="fr"><div class="fg"><label>Article</label><input type="text" id="ic-a"></div><div class="fg"><label>Quantité</label><input type="text" id="ic-q"></div></div>
+  <div class="fr"><div class="fg"><label>Montant (FCFA)</label><input type="number" id="ic-m" min="0"></div><div class="fg"><label>Statut commande</label><select id="ic-s"><option>En attente</option><option>Confirmée</option><option>Livrée</option></select></div></div>
+  <div class="fr"><div class="fg"><label>Mode de paiement</label><select id="ic-pay">
+    <option value="">— Non défini —</option>
+    <option>📱 Wave</option><option>📱 Orange Money</option><option>📱 Free Money</option>
+    <option>🏦 Transfert bancaire</option><option>📝 Chèque</option>
+    <option>💵 Espèces</option><option>⏳ À crédit</option>
+  </select></div><div class="fg"><label>Statut paiement</label><select id="ic-pay-st">
+    <option value="En attente">⏳ En attente</option>
+    <option value="Partiel">🔄 Partiel</option>
+    <option value="Payé">✅ Payé</option>
+  </select></div></div>
+  <div class="fg"><label>Montant reçu (FCFA)</label><input type="number" id="ic-pay-m" min="0" placeholder="0"></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('mc')">Annuler</button><button class="btn bm" onclick="savCmd()">Enregistrer</button></div>
+</div></div>
+
+<div class="mo" id="mq2"><div class="mdl">
+  <div class="mt2">✦ Contrôle qualité</div>
+  <div class="fr"><div class="fg"><label>Date</label><input type="date" id="iq-d"></div><div class="fg"><label>Formulation</label><select id="iq-f"><option>B20</option><option>B25</option><option>B30</option><option>B35</option><option>B40</option></select></div></div>
+  <div class="fr"><div class="fg"><label>Résistance 28j (MPa)</label><input type="number" id="iq-r" step="0.1"></div><div class="fg"><label>Slump (cm)</label><input type="number" id="iq-s" step="0.5"></div></div>
+  <div class="fg"><label>Résultat</label><select id="iq-o"><option value="1">✅ Conforme</option><option value="0">❌ Non conforme</option></select></div>
+  <div class="fg"><label>Observation</label><textarea id="iq-n"></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('mq2')">Annuler</button><button class="btn bm" onclick="savQual()">Enregistrer</button></div>
+</div></div>
+
+<div class="mo" id="m-acc"><div class="mdl">
+  <div class="mt2">🚨 Déclarer un incident / accident</div>
+  <div class="fr"><div class="fg"><label>Date & heure</label><input type="datetime-local" id="acc-dt"></div><div class="fg"><label>Gravité</label><select id="acc-grav"><option value="grave">🔴 Grave</option><option value="moyen">🟠 Moyen</option><option value="leger">🟡 Léger</option></select></div></div>
+  <div class="fr"><div class="fg"><label>Type</label><select id="acc-type"><option>Accident véhicule</option><option>Blessure personnel</option><option>Incident mécanique</option><option>Incident qualité</option><option>Incident sécurité site</option><option>Autre</option></select></div><div class="fg"><label>Impliqué (camion/équip.)</label><input type="text" id="acc-equip"></div></div>
+  <div class="fg"><label>Description détaillée</label><textarea id="acc-desc" style="min-height:90px"></textarea></div>
+  <div class="fr"><div class="fg"><label>Lieu</label><input type="text" id="acc-lieu" placeholder="Chantier, route, dépôt…"></div><div class="fg"><label>Déclaré par</label><input type="text" id="acc-by"></div></div>
+  <div class="fg"><label>Actions correctives</label><textarea id="acc-action"></textarea></div>
+  <div class="fg"><label>Statut suivi</label><select id="acc-status"><option>Ouvert</option><option>En cours</option><option>Clôturé</option></select></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-acc')">Annuler</button><button class="btn br" onclick="savAccident()">Déclarer</button></div>
+</div></div>
+
+<div class="mo" id="m-four"><div class="mdl">
+  <div class="mt2">🏭 Nouveau fournisseur</div>
+  <div class="fr"><div class="fg"><label>Nom</label><input type="text" id="four-n"></div><div class="fg"><label>Catégorie</label><select id="four-cat"><option>Ciment & matériaux</option><option>Carburant & lubrifiants</option><option>Pièces détachées</option><option>Transport sous-traitant</option><option>Équipements</option><option>Autre</option></select></div></div>
+  <div class="fr"><div class="fg"><label>Contact</label><input type="text" id="four-contact"></div><div class="fg"><label>Téléphone</label><input type="text" id="four-tel"></div></div>
+  <div class="fg"><label>Email</label><input type="email" id="four-email"></div>
+  <div class="fr"><div class="fg"><label>Localisation</label><input type="text" id="four-loc" placeholder="Dakar, Thiès…"></div><div class="fg"><label>Statut</label><select id="four-status"><option>Actif</option><option>Homologué</option><option>En évaluation</option><option>Suspendu</option></select></div></div>
+  <div class="fg"><label>Notes</label><textarea id="four-notes"></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-four')">Annuler</button><button class="btn bm" onclick="savFournisseur()">Enregistrer</button></div>
+</div></div>
+
+<div class="mo" id="m-proj"><div class="mdl">
+  <div class="mt2">🏗 Nouveau projet / chantier</div>
+  <div class="fr"><div class="fg"><label>Nom du projet</label><input type="text" id="proj-n"></div><div class="fg"><label>Client</label><input type="text" id="proj-client"></div></div>
+  <div class="fr"><div class="fg"><label>Date début</label><input type="date" id="proj-deb"></div><div class="fg"><label>Date fin prévue</label><input type="date" id="proj-fin"></div></div>
+  <div class="fr"><div class="fg"><label>Volume béton prévu (m³)</label><input type="number" id="proj-vol" min="0"></div><div class="fg"><label>Valeur contrat (FCFA)</label><input type="number" id="proj-val" min="0"></div></div>
+  <div class="fr"><div class="fg"><label>Localisation</label><input type="text" id="proj-loc"></div><div class="fg"><label>Statut</label><select id="proj-status"><option>En cours</option><option>Planifié</option><option>Terminé</option><option>Suspendu</option></select></div></div>
+  <div class="fg"><label>Description</label><textarea id="proj-desc"></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-proj')">Annuler</button><button class="btn bm" onclick="savProjet()">Enregistrer</button></div>
+</div></div>
+
+<div class="mo" id="m-part"><div class="mdl">
+  <div class="mt2">🤝 Nouveau partenaire</div>
+  <div class="fr"><div class="fg"><label>Nom</label><input type="text" id="part-n"></div><div class="fg"><label>Type</label><select id="part-type"><option>Institutionnel</option><option>Financier</option><option>Commercial</option><option>Technique</option><option>Autre</option></select></div></div>
+  <div class="fr"><div class="fg"><label>Contact principal</label><input type="text" id="part-contact"></div><div class="fg"><label>Téléphone</label><input type="text" id="part-tel"></div></div>
+  <div class="fg"><label>Description partenariat</label><textarea id="part-desc"></textarea></div>
+  <div class="fg"><label>Statut</label><select id="part-status"><option>Actif</option><option>En négociation</option><option>Suspendu</option></select></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-part')">Annuler</button><button class="btn bm" onclick="savPartenaire()">Enregistrer</button></div>
+</div></div>
+
+<div class="mo" id="m-emp"><div class="mdl">
+  <div class="mt2">👤 Nouvel employé</div>
+  <div class="fr"><div class="fg"><label>Nom</label><input type="text" id="emp-nom"></div><div class="fg"><label>Prénom</label><input type="text" id="emp-prenom"></div></div>
+  <div class="fr"><div class="fg"><label>Poste</label><input type="text" id="emp-poste" placeholder="Chauffeur, Opérateur…"></div><div class="fg"><label>Département</label><select id="emp-dept"><option>Centrale à Béton</option><option>Flotte Camions</option><option>Administration</option><option>Commercial</option><option>Comptabilité</option><option>RH</option><option>Agence Immobilière</option><option>Direction</option></select></div></div>
+  <div class="fr"><div class="fg"><label>Téléphone</label><input type="text" id="emp-tel"></div><div class="fg"><label>Email</label><input type="email" id="emp-email"></div></div>
+  <div class="fr"><div class="fg"><label>Date d'embauche</label><input type="date" id="emp-date"></div><div class="fg"><label>Salaire (FCFA)</label><input type="number" id="emp-sal" min="0"></div></div>
+  <div class="fg"><label>Statut</label><select id="emp-status"><option>Actif</option><option>En période d'essai</option><option>Suspendu</option><option>Parti</option></select></div>
+  <div class="fg"><label>Notes</label><textarea id="emp-notes"></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-emp')">Annuler</button><button class="btn bm" onclick="savEmploye()">Enregistrer</button></div>
+</div></div>
+
+<div class="mo" id="m-form"><div class="mdl">
+  <div class="mt2">🎓 Nouvelle formation</div>
+  <div class="fg"><label>Titre de la formation</label><input type="text" id="form-titre" placeholder="Ex: Recyclage permis PL…"></div>
+  <div class="fr"><div class="fg"><label>Employé concerné</label><input type="text" id="form-emp" placeholder="Nom de l'employé"></div><div class="fg"><label>Organisme</label><input type="text" id="form-org" placeholder="Centre de formation…"></div></div>
+  <div class="fr"><div class="fg"><label>Date début</label><input type="date" id="form-deb"></div><div class="fg"><label>Date fin</label><input type="date" id="form-fin"></div></div>
+  <div class="fr"><div class="fg"><label>Coût (FCFA)</label><input type="number" id="form-cout" min="0" value="0"></div><div class="fg"><label>Statut</label><select id="form-status"><option>Planifiée</option><option>En cours</option><option>Terminée</option><option>Annulée</option></select></div></div>
+  <div class="fg"><label>Observations</label><textarea id="form-obs"></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-form')">Annuler</button><button class="btn bm" onclick="savFormation()">Enregistrer</button></div>
+</div></div>
+
+<div class="mo" id="m-add-truck"><div class="mdl">
+  <div class="mt2">🚛 Ajouter un camion</div>
+  <div class="fr"><div class="fg"><label>Immatriculation</label><input type="text" id="trk-id" placeholder="SN-019-DK"></div><div class="fg"><label>Type</label><select id="trk-type"><option>Toupie 8m³</option><option>Toupie 6m³</option><option>Benne 10T</option><option>Plateau</option><option>Citerne</option><option>Autre</option></select></div></div>
+  <div class="fr"><div class="fg"><label>Km actuels</label><input type="number" id="trk-km" min="0" value="0"></div><div class="fg"><label>Statut initial</label><select id="trk-status"><option value="operational">✅ Opérationnel</option><option value="maintenance">🟡 Maintenance</option></select></div></div>
+  <div class="fg"><label>Notes</label><input type="text" id="trk-note"></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-add-truck')">Annuler</button><button class="btn bm" onclick="savNewTruck()">Ajouter</button></div>
+</div></div>
+
+<div class="mo" id="m-eval"><div class="mdl">
+  <div class="mt2">📊 Évaluation responsable</div>
+  <div class="fr"><div class="fg"><label>Responsable</label><input type="text" id="ev-name"></div><div class="fg"><label>Période</label><input type="month" id="ev-period"></div></div>
+  <div class="fr3">
+    <div class="fg"><label>Performance (0-10)</label><input type="number" id="ev-perf" min="0" max="10" step="0.5"></div>
+    <div class="fg"><label>Ponctualité (0-10)</label><input type="number" id="ev-ponc" min="0" max="10" step="0.5"></div>
+    <div class="fg"><label>Qualité (0-10)</label><input type="number" id="ev-qual" min="0" max="10" step="0.5"></div>
+  </div>
+  <div class="fg"><label>Commentaire Directeur</label><textarea id="ev-comment" style="min-height:80px"></textarea></div>
+  <div class="fg"><label>Recommandation</label><select id="ev-reco"><option>Félicitations</option><option>Satisfaisant</option><option>À améliorer</option><option>Avertissement</option></select></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-eval')">Annuler</button><button class="btn bm" onclick="savEval()">Enregistrer</button></div>
+</div></div>
+
+<div class="mo" id="m-budget"><div class="mdl">
+  <div class="mt2">💰 Saisir une donnée financière</div>
+  <div class="fr"><div class="fg"><label>Date</label><input type="date" id="fin-d"></div><div class="fg"><label>Catégorie</label><select id="fin-cat"><option>Recette — Vente béton</option><option>Recette — Transport</option><option>Recette — Immobilier</option><option>Charge — Ciment</option><option>Charge — Gasoil</option><option>Charge — Maintenance</option><option>Charge — Salaires</option><option>Charge — Autre</option></select></div></div>
+  <div class="fr"><div class="fg"><label>Montant (FCFA)</label><input type="number" id="fin-m" min="0"></div><div class="fg"><label>Type</label><select id="fin-type"><option value="recette">Recette</option><option value="charge">Charge</option></select></div></div>
+  <div class="fg"><label>Description</label><input type="text" id="fin-desc"></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-budget')">Annuler</button><button class="btn bm" onclick="savFinance()">Enregistrer</button></div>
+</div></div>
+
+
+
+
+<!-- MODALS NOUVEAUX -->
+<div class="mo" id="m-plan"><div class="md">
+  <div class="mh"><div class="mt">Planifier une opération</div><button class="mc" onclick="closeM('m-plan')">✕</button></div>
+  <div class="fg"><label>Date et Heure</label><input type="datetime-local" id="plan-dt"></div>
+  <div class="fg"><label>Type</label><select id="plan-type"><option>Livraison</option><option>Ramasse</option><option>Production</option><option>Transfert</option><option>Maintenance</option><option>Autre</option></select></div>
+  <div class="fg"><label>Lieu / Adresse</label><input type="text" id="plan-lieu" placeholder="Adresse ou nom du chantier"></div>
+  <div class="fg"><label>Client / Chantier</label><input type="text" id="plan-client"></div>
+  <div class="fg"><label>Contact / Chef chantier</label><input type="text" id="plan-contact"></div>
+  <div class="fg"><label>Téléphone contact</label><input type="tel" id="plan-tel"></div>
+  <div class="fg"><label>Camion</label><select id="plan-truck"><option value="">— Sélectionner —</option></select></div>
+  <div class="fg"><label>Chauffeur</label><input type="text" id="plan-chauffeur"></div>
+  <div class="fg"><label>Volume / Quantité</label><input type="number" id="plan-vol" placeholder="m³ ou T"></div>
+  <div class="fg"><label>Formulation béton</label><input type="text" id="plan-form" placeholder="Ex: C25/30"></div>
+  <div class="fg"><label>Notes</label><textarea id="plan-notes" rows="2"></textarea></div>
+  <div class="fg"><label>Statut</label><select id="plan-status"><option>Planifié</option><option>Confirmé</option><option>En cours</option><option>Terminé</option><option>Annulé</option></select></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-plan')">Annuler</button><button class="btn bm" onclick="savPlanning()">Enregistrer</button></div>
+</div></div>
+
+<div class="mo" id="m-contact"><div class="md">
+  <div class="mh"><div class="mt">Ajouter un contact</div><button class="mc" onclick="closeM('m-contact')">✕</button></div>
+  <div class="fg"><label>Nom</label><input type="text" id="ct-nom"></div>
+  <div class="fg"><label>Prénom</label><input type="text" id="ct-prenom"></div>
+  <div class="fg"><label>Poste / Fonction</label><input type="text" id="ct-poste"></div>
+  <div class="fg"><label>Département</label><select id="ct-dept"><option>Direction</option><option>Centrale à Béton</option><option>Flotte Camions</option><option>Comptabilité</option><option>RH</option><option>Commercial</option><option>Agence Immobilière</option><option>Externe</option></select></div>
+  <div class="fg"><label>Téléphone</label><input type="tel" id="ct-tel"></div>
+  <div class="fg"><label>WhatsApp</label><input type="tel" id="ct-wa"></div>
+  <div class="fg"><label>Email</label><input type="email" id="ct-email"></div>
+  <div class="fg"><label>Site / Localisation</label><input type="text" id="ct-loc"></div>
+  <div class="fg"><label>Notes</label><textarea id="ct-notes" rows="2"></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-contact')">Annuler</button><button class="btn bm" onclick="savContact()">Enregistrer</button></div>
+</div></div>
+
+<div class="mo" id="m-msg"><div class="md">
+  <div class="mh"><div class="mt">Nouveau message</div><button class="mc" onclick="closeM('m-msg')">✕</button></div>
+  <div class="fg"><label>Destinataire</label><select id="msg-to"><option value="Tous">Toute l&#39;équipe</option><option value="Direction">Direction</option><option value="Centrale à Béton">Centrale à Béton</option><option value="Flotte Camions">Flotte Camions</option><option value="RH">RH</option><option value="Comptabilité">Comptabilité</option></select></div>
+  <div class="fg"><label>Priorité</label><select id="msg-prio"><option value="normal">Normal</option><option value="important">Important</option><option value="urgent">Urgent</option></select></div>
+  <div class="fg"><label>Message</label><textarea id="msg-body" rows="4" placeholder="Votre message..."></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-msg')">Annuler</button><button class="btn bm" onclick="savMessage()">Envoyer</button></div>
+</div></div>
+
+<div class="mo" id="m-carb"><div class="md">
+  <div class="mh"><div class="mt">Saisir un plein</div><button class="mc" onclick="closeM('m-carb')">✕</button></div>
+  <div class="fg"><label>Date</label><input type="date" id="carb-d"></div>
+  <div class="fg"><label>Camion</label><select id="carb-truck"></select></div>
+  <div class="fg"><label>Chauffeur</label><input type="text" id="carb-ch"></div>
+  <div class="fg"><label>Litres</label><input type="number" id="carb-l" placeholder="0"></div>
+  <div class="fg"><label>Prix / Litre (FCFA)</label><input type="number" id="carb-p" placeholder="0"></div>
+  <div class="fg"><label>Km relevé</label><input type="number" id="carb-km" placeholder="0"></div>
+  <div class="fg"><label>Station</label><input type="text" id="carb-station" placeholder="Nom de la station"></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-carb')">Annuler</button><button class="btn bm" onclick="savCarburant()">Enregistrer</button></div>
+</div></div>
+
+<div class="mo" id="m-obj"><div class="md">
+  <div class="mh"><div class="mt">Définir un objectif</div><button class="mc" onclick="closeM('m-obj')">✕</button></div>
+  <div class="fg"><label>Mois</label><input type="month" id="obj-mois"></div>
+  <div class="fg"><label>Catégorie</label><select id="obj-cat"><option>Production béton</option><option>Tournées</option><option>Disponibilité flotte</option><option>Chiffre d&#39;affaires</option><option>Km parcourus</option><option>Autre</option></select></div>
+  <div class="fg"><label>Objectif cible</label><input type="number" id="obj-val" placeholder="0"></div>
+  <div class="fg"><label>Unité</label><input type="text" id="obj-unit" placeholder="m³, %, FCFA..."></div>
+  <div class="fg"><label>Notes</label><textarea id="obj-notes" rows="2"></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-obj')">Annuler</button><button class="btn bm" onclick="savObjectif()">Enregistrer</button></div>
+</div></div>
+
+<div class="mo" id="m-conge"><div class="md">
+  <div class="mh"><div class="mt">Demande congé / absence</div><button class="mc" onclick="closeM('m-conge')">✕</button></div>
+  <div class="fg"><label>Employé</label><input type="text" id="cng-emp"></div>
+  <div class="fg"><label>Département</label><select id="cng-dept"><option>Direction</option><option>Centrale à Béton</option><option>Flotte Camions</option><option>Comptabilité</option><option>RH</option><option>Commercial</option><option>Autre</option></select></div>
+  <div class="fg"><label>Du</label><input type="date" id="cng-deb"></div>
+  <div class="fg"><label>Au</label><input type="date" id="cng-fin"></div>
+  <div class="fg"><label>Type</label><select id="cng-type"><option>Congé annuel</option><option>Congé maladie</option><option>Absence justifiée</option><option>Absence injustifiée</option><option>Congé exceptionnel</option></select></div>
+  <div class="fg"><label>Motif</label><textarea id="cng-motif" rows="2"></textarea></div>
+  <div class="fg"><label>Statut</label><select id="cng-status"><option>En attente</option><option>Approuvé</option><option>Refusé</option></select></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-conge')">Annuler</button><button class="btn bm" onclick="savConge()">Enregistrer</button></div>
+</div></div>
+
+<div class="mo" id="m-check"><div class="md">
+  <div class="mh"><div class="mt">Contrôle préventif</div><button class="mc" onclick="closeM('m-check')">✕</button></div>
+  <div class="fg"><label>Date</label><input type="date" id="chk-d"></div>
+  <div class="fg"><label>Camion</label><select id="chk-truck"></select></div>
+  <div class="fg"><label>Type de contrôle</label><select id="chk-type"><option>Vidange</option><option>Contrôle technique</option><option>Révision freins</option><option>Vérification pneus</option><option>Contrôle moteur</option><option>Contrôle bétonnière</option><option>Autre</option></select></div>
+  <div class="fg"><label>Résultat</label><select id="chk-res"><option>Conforme</option><option>À surveiller</option><option>Non conforme</option></select></div>
+  <div class="fg"><label>Prochain contrôle prévu</label><input type="date" id="chk-next"></div>
+  <div class="fg"><label>Effectué par</label><input type="text" id="chk-par"></div>
+  <div class="fg"><label>Notes</label><textarea id="chk-notes" rows="2"></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-check')">Annuler</button><button class="btn bm" onclick="savChecklist()">Enregistrer</button></div>
+</div></div>
+
+<div class="mo" id="m-partenariat"><div class="md">
+  <div class="mh"><div class="mt">Nouveau partenariat</div><button class="mc" onclick="closeM('m-partenariat')">✕</button></div>
+  <div class="fg"><label>Nom partenaire</label><input type="text" id="prt-nom"></div>
+  <div class="fg"><label>Type</label><select id="prt-type"><option>Fournisseur stratégique</option><option>Client régulier</option><option>Sous-traitant</option><option>Institution financière</option><option>Organisme public</option><option>Autre</option></select></div>
+  <div class="fg"><label>Contact principal</label><input type="text" id="prt-contact"></div>
+  <div class="fg"><label>Téléphone</label><input type="tel" id="prt-tel"></div>
+  <div class="fg"><label>Email</label><input type="email" id="prt-email"></div>
+  <div class="fg"><label>Valeur contrat (FCFA)</label><input type="number" id="prt-valeur" placeholder="0"></div>
+  <div class="fg"><label>Date début</label><input type="date" id="prt-deb"></div>
+  <div class="fg"><label>Date fin</label><input type="date" id="prt-fin"></div>
+  <div class="fg"><label>Description</label><textarea id="prt-desc" rows="2"></textarea></div>
+  <div class="fg"><label>Statut</label><select id="prt-status"><option>Actif</option><option>En négociation</option><option>Suspendu</option><option>Terminé</option></select></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-partenariat')">Annuler</button><button class="btn bm" onclick="savPartenariat()">Enregistrer</button></div>
+</div></div>
+
+
+<!-- Modal modifier camion -->
+<div class="mo" id="m-edit-truck"><div class="md">
+  <div class="mh"><div class="mt">Modifier le camion</div><button class="mc" onclick="closeM('m-edit-truck')">✕</button></div>
+  <input type="hidden" id="etk-id-orig">
+  <div class="fg"><label>ID / Immatriculation</label><input type="text" id="etk-id" placeholder="SN-001-DK"></div>
+  <div class="fg"><label>Type</label><select id="etk-type">
+    <option>Toupie 8m³</option><option>Toupie 6m³</option><option>Benne 10T</option>
+    <option>Plateau</option><option>Citerne</option><option>Camion malaxeur</option>
+    <option>Camionnette</option><option>Autre</option>
+  </select></div>
+  <div class="fg"><label>Type personnalisé</label><input type="text" id="etk-type-custom" placeholder="Laisser vide si choix ci-dessus"></div>
+  <div class="fg"><label>Km au compteur</label><input type="number" id="etk-km" placeholder="0"></div>
+  <div class="fg"><label>Statut</label><select id="etk-status">
+    <option value="operational">✅ Opérationnel</option>
+    <option value="maintenance">🟡 Maintenance</option>
+    <option value="breakdown">🔴 Panne</option>
+  </select></div>
+  <div class="fg"><label>Description / Notes</label><input type="text" id="etk-desc"></div>
+  <div class="mf" style="justify-content:space-between">
+    <button class="btn" style="background:var(--rd2);color:#fff" onclick="deleteTruck()">🗑 Supprimer</button>
+    <div style="display:flex;gap:8px">
+      <button class="btn bg2" onclick="closeM('m-edit-truck')">Annuler</button>
+      <button class="btn bm" onclick="saveEditTruck()">Enregistrer</button>
+    </div>
+  </div>
+</div></div>
+
+<!-- PANNEAU NOTIFICATIONS -->
+<div id="notif-panel" style="position:fixed;top:0;right:-380px;width:360px;height:100vh;background:var(--sf);border-left:1px solid var(--bd2);z-index:500;transition:right .3s ease;display:flex;flex-direction:column;box-shadow:-4px 0 30px rgba(0,0,0,.3)">
+  <div style="padding:16px;border-bottom:1px solid var(--bd2);display:flex;justify-content:space-between;align-items:center">
+    <div style="font-family:var(--fh);font-weight:800;font-size:16px;color:var(--tx)">🔔 Notifications</div>
+    <button onclick="closeNotifPanel()" style="background:none;border:none;color:var(--tx3);font-size:20px;cursor:pointer">✕</button>
+  </div>
+  <div id="notif-list" style="flex:1;overflow-y:auto;padding:12px"></div>
+</div>
+<style>#notif-panel.open{right:0}</style>
+
+<!-- MODAL PAIEMENT -->
+<div class="mo" id="m-paiement"><div class="md">
+  <div class="mh"><div class="mt">💳 Mettre à jour paiement</div><button class="mc" onclick="closeM('m-paiement')">✕</button></div>
+  <input type="hidden" id="pay-id">
+  <div style="background:var(--sf2);border-radius:8px;padding:10px;margin-bottom:12px">
+    <div style="font-size:11px;color:var(--tx3)">Commande</div>
+    <div style="font-weight:700" id="pay-article">—</div>
+    <div style="font-size:11px;color:var(--tx3)" id="pay-fournisseur">—</div>
+  </div>
+  <div class="fg"><label>Montant total (FCFA)</label><input type="number" id="pay-montant" placeholder="0"></div>
+  <div class="fg"><label>Mode de paiement</label><select id="pay-mode">
+    <option value="">— Non défini —</option>
+    <option>📱 Wave</option><option>📱 Orange Money</option><option>📱 Free Money</option>
+    <option>🏦 Transfert bancaire</option><option>📝 Chèque</option>
+    <option>💵 Espèces</option><option>⏳ À crédit</option>
+  </select></div>
+  <div class="fg"><label>Montant reçu (FCFA)</label><input type="number" id="pay-recu" placeholder="0"></div>
+  <div class="fg"><label>Statut paiement</label><select id="pay-status">
+    <option value="En attente">⏳ En attente</option>
+    <option value="Partiel">🔄 Partiel</option>
+    <option value="Payé">✅ Payé</option>
+  </select></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-paiement')">Annuler</button><button class="btn bm" onclick="savPaiement()">Enregistrer</button></div>
+</div></div>
+
+<!-- MODAL ASSURANCE -->
+<div class="mo" id="m-assurance"><div class="md">
+  <div class="mh"><div class="mt">🛡️ Assurance</div><button class="mc" onclick="closeM('m-assurance')">✕</button></div>
+  <div class="fg"><label>Camion</label><select id="ass-truck"></select></div>
+  <div class="fg"><label>Compagnie d'assurance</label><input type="text" id="ass-comp" placeholder="Ex: NSIA, Allianz..."></div>
+  <div class="fg"><label>N° Police</label><input type="text" id="ass-pol"></div>
+  <div class="fg"><label>Date début</label><input type="date" id="ass-deb"></div>
+  <div class="fg"><label>Date expiration</label><input type="date" id="ass-exp"></div>
+  <div class="fg"><label>Montant (FCFA)</label><input type="number" id="ass-mont" placeholder="0"></div>
+  <div class="fg"><label>Notes</label><textarea id="ass-notes" rows="2"></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-assurance')">Annuler</button><button class="btn bm" onclick="savAssurance()">Enregistrer</button></div>
+</div></div>
+
+<!-- MODAL VISITE TECHNIQUE -->
+<div class="mo" id="m-visite"><div class="md">
+  <div class="mh"><div class="mt">🔍 Visite technique</div><button class="mc" onclick="closeM('m-visite')">✕</button></div>
+  <div class="fg"><label>Camion</label><select id="vt-truck"></select></div>
+  <div class="fg"><label>Date de la visite</label><input type="date" id="vt-date"></div>
+  <div class="fg"><label>Résultat</label><select id="vt-res"><option>Favorable</option><option>Favorable avec réserves</option><option>Défavorable</option></select></div>
+  <div class="fg"><label>Prochaine visite</label><input type="date" id="vt-next"></div>
+  <div class="fg"><label>Centre de contrôle</label><input type="text" id="vt-centre"></div>
+  <div class="fg"><label>Coût (FCFA)</label><input type="number" id="vt-cout" placeholder="0"></div>
+  <div class="fg"><label>Notes</label><textarea id="vt-notes" rows="2"></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-visite')">Annuler</button><button class="btn bm" onclick="savVisite()">Enregistrer</button></div>
+</div></div>
+
+<!-- MODAL ENTRETIEN -->
+<div class="mo" id="m-entretien"><div class="md">
+  <div class="mh"><div class="mt">🔧 Entretien</div><button class="mc" onclick="closeM('m-entretien')">✕</button></div>
+  <div class="fg"><label>Camion</label><select id="ent-truck"></select></div>
+  <div class="fg"><label>Type d'entretien</label><select id="ent-type">
+    <option>Vidange</option><option>Révision complète</option><option>Freins</option>
+    <option>Pneus</option><option>Filtres</option><option>Courroies</option>
+    <option>Bougies</option><option>Bétonnière</option><option>Autre</option>
+  </select></div>
+  <div class="fg"><label>Date</label><input type="date" id="ent-date"></div>
+  <div class="fg"><label>Km au moment de l'entretien</label><input type="number" id="ent-km" placeholder="0"></div>
+  <div class="fg"><label>Prochain entretien (km)</label><input type="number" id="ent-next-km" placeholder="0"></div>
+  <div class="fg"><label>Coût (FCFA)</label><input type="number" id="ent-cout" placeholder="0"></div>
+  <div class="fg"><label>Garage / Prestataire</label><input type="text" id="ent-garage"></div>
+  <div class="fg"><label>Statut</label><select id="ent-status"><option>Planifié</option><option>En cours</option><option>Terminé</option></select></div>
+  <div class="fg"><label>Notes</label><textarea id="ent-notes" rows="2"></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-entretien')">Annuler</button><button class="btn bm" onclick="savEntretien()">Enregistrer</button></div>
+</div></div>
+
+<!-- MODAL DOCUMENT FLOTTE -->
+<div class="mo" id="m-doc-flotte"><div class="md">
+  <div class="mh"><div class="mt">📄 Document</div><button class="mc" onclick="closeM('m-doc-flotte')">✕</button></div>
+  <div class="fg"><label>Camion</label><select id="doc-truck"></select></div>
+  <div class="fg"><label>Type de document</label><select id="doc-type">
+    <option>Carte grise</option><option>Vignette</option><option>Autorisation transport</option>
+    <option>Certificat de conformité</option><option>Permis circulation</option><option>Autre</option>
+  </select></div>
+  <div class="fg"><label>Numéro</label><input type="text" id="doc-num"></div>
+  <div class="fg"><label>Date d'émission</label><input type="date" id="doc-em"></div>
+  <div class="fg"><label>Date d'expiration</label><input type="date" id="doc-exp"></div>
+  <div class="fg"><label>Notes</label><textarea id="doc-notes" rows="2"></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-doc-flotte')">Annuler</button><button class="btn bm" onclick="savDocFlotte()">Enregistrer</button></div>
+</div></div>
+
+<!-- MODAL LIVRAISON -->
+<div class="mo" id="m-liv"><div class="md" style="max-width:580px">
+  <div class="mh"><div class="mt">🚚 Nouvelle livraison</div><button class="mc" onclick="closeM('m-liv')">✕</button></div>
+  <div class="fr">
+    <div class="fg"><label>Date</label><input type="date" id="liv-date"></div>
+    <div class="fg"><label>Type de mission</label><select id="liv-type">
+      <option>Livraison béton (toupie)</option><option>Livraison de ciment (sacs)</option><option>Livraison de ciment vrac (tonne)</option><option>Livraison briques</option>
+      <option>Livraison fer</option><option>Livraison engrais</option>
+      <option>Livraison matériaux</option><option>Transport A→B</option>
+      <option>Collecte fournisseur</option><option>Transfert interne</option>
+      <option>Autre</option>
+    </select></div>
+  </div>
+  <div class="fg"><label>Produit / Matériau transporté</label><input type="text" id="liv-produit" placeholder="Ex: Briques, Fer à béton, Engrais NPK..."></div>
+  <div class="fr">
+    <div class="fg"><label>Quantité</label><input type="number" id="liv-qty" placeholder="0"></div>
+    <div class="fg"><label>Unité</label><select id="liv-unite"><option>T</option><option>kg</option><option>m³</option><option>sac</option><option>u</option><option>L</option></select></div>
+    <div class="fg"><label>Poids total (kg)</label><input type="number" id="liv-poids" placeholder="0"></div>
+  </div>
+  <div class="fr">
+    <div class="fg"><label>Point de départ (A)</label><input type="text" id="liv-from" placeholder="Dépôt, usine..."></div>
+    <div class="fg"><label>Destination (B)</label><input type="text" id="liv-to" placeholder="Chantier, client..."></div>
+  </div>
+  <div class="fr">
+    <div class="fg"><label>Camion</label><select id="liv-truck"></select></div>
+    <div class="fg"><label>Chauffeur</label><input type="text" id="liv-ch"></div>
+  </div>
+  <div class="fr">
+    <div class="fg"><label>Heure départ prévue</label><input type="time" id="liv-hdp"></div>
+    <div class="fg"><label>Heure départ réelle</label><input type="time" id="liv-hdr"></div>
+    <div class="fg"><label>Heure retour réelle</label><input type="time" id="liv-hrr"></div>
+  </div>
+  <div class="fr">
+    <div class="fg"><label>Km estimé</label><input type="number" id="liv-km-est" placeholder="0"></div>
+    <div class="fg"><label>Km réel</label><input type="number" id="liv-km-reel" placeholder="0"></div>
+    <div class="fg"><label>Coût estimé (FCFA)</label><input type="number" id="liv-cout" placeholder="0"></div>
+  </div>
+  <div class="fr">
+    <div class="fg"><label>Client / Demandeur</label><input type="text" id="liv-client"></div>
+    <div class="fg"><label>Contact sur place</label><input type="text" id="liv-contact"></div>
+    <div class="fg"><label>Téléphone</label><input type="tel" id="liv-tel"></div>
+  </div>
+  <div class="fg"><label>Statut</label><select id="liv-status">
+    <option>Planifiée</option><option>En cours</option><option>Terminée</option><option>Annulée</option>
+  </select></div>
+  <div class="fg"><label>Notes</label><textarea id="liv-notes" rows="2"></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-liv')">Annuler</button><button class="btn bm" onclick="savLivraison()">Enregistrer</button></div>
+</div></div>
+
+<!-- MODAL FACTURE -->
+<div class="mo" id="m-facture"><div class="md" style="max-width:620px">
+  <div class="mh"><div class="mt">🧾 Saisir une facture</div><button class="mc" onclick="closeM('m-facture')">✕</button></div>
+  <input type="hidden" id="fac-source">
+  <input type="hidden" id="fac-source-id">
+  <div class="fr">
+    <div class="fg"><label>N° Facture</label><input type="text" id="fac-numero" placeholder="Ex: FAC-2026-001"></div>
+    <div class="fg"><label>Type</label><select id="fac-type">
+      <option>Achat matières premières</option>
+      <option>Vente / Livraison client</option>
+      <option>Maintenance et Réparation</option>
+      <option>Salaires & RH</option>
+      <option>Carburant</option>
+      <option>Loyer & Charges fixes</option>
+      <option>Facture fournisseur</option>
+      <option>Avoir</option>
+      <option>Proforma</option>
+      <option>Autre</option>
+    </select></div>
+  </div>
+  <div class="fr">
+    <div class="fg"><label>Sens</label><select id="fac-sens">
+      <option value="depense">💸 Dépense (sortie)</option>
+      <option value="recette">💰 Recette (entrée)</option>
+    </select></div>
+    <div class="fg"><label>Département concerné</label><select id="fac-dept">
+      <option>Direction</option><option>Centrale à Béton</option><option>Flotte Camions</option>
+      <option>Comptabilité</option><option>RH</option><option>Commercial</option>
+      <option>Agence Immobilière</option><option>Général</option>
+    </select></div>
+  </div>
+  <div class="fr">
+    <div class="fg"><label>Nom fournisseur / client</label><input type="text" id="fac-nom"></div>
+    <div class="fg"><label>Date facture</label><input type="date" id="fac-date"></div>
+    <div class="fg"><label>Date échéance</label><input type="date" id="fac-echeance"></div>
+  </div>
+  <!-- LIGNES ARTICLES -->
+  <div style="margin:12px 0 6px;font-weight:700;font-size:12px;color:var(--tx2)">📦 Articles / Produits</div>
+  <div id="fac-lignes">
+    <div class="fac-ligne fr" style="gap:6px;align-items:flex-end;margin-bottom:8px">
+      <div class="fg" style="flex:3"><label>Article / Produit</label><input type="text" id="fac-ligne-1-desc" placeholder="Description..."></div>
+      <div class="fg" style="flex:1"><label>Qté</label><input type="number" id="fac-ligne-1-qty" value="1" oninput="updateFactureTotal()"></div>
+      <div class="fg" style="flex:2"><label>Prix unitaire (FCFA)</label><input type="number" id="fac-ligne-1-pu" value="0" oninput="updateFactureTotal()"></div>
+      <div class="fg" style="flex:2"><label>Total</label><input type="text" id="fac-ligne-1-tot" readonly style="background:var(--sf2);color:var(--must2);font-weight:700"></div>
+    </div>
+  </div>
+  <button onclick="addFactureLigne()" class="btn bg2" style="font-size:11px;margin-bottom:12px">+ Ajouter une ligne</button>
+  <!-- TOTAUX -->
+  <div class="fr">
+    <div class="fg"><label>Remise (%)</label><input type="number" id="fac-remise" value="0" min="0" max="100" oninput="updateFactureTotal()"></div>
+    <div class="fg"><label>TVA (%)</label><input type="number" id="fac-tva" value="0" min="0" oninput="updateFactureTotal()"></div>
+    <div class="fg"><label>Montant total (FCFA)</label><input type="number" id="fac-montant" readonly style="background:var(--sf2);color:var(--must2);font-weight:800;font-size:14px"></div>
+  </div>
+  <div id="fac-total-display" style="background:var(--sf2);border-radius:8px;padding:12px;margin-bottom:12px;font-size:12px;display:flex;flex-direction:column;gap:4px"></div>
+  <div class="fr">
+    <div class="fg"><label>Mode de paiement</label><select id="fac-mode">
+      <option value="">— Non défini —</option>
+      <option>📱 Wave</option><option>📱 Orange Money</option><option>📱 Free Money</option>
+      <option>🏦 Transfert bancaire</option><option>📝 Chèque</option>
+      <option>💵 Espèces</option><option>⏳ À crédit</option>
+    </select></div>
+    <div class="fg"><label>Statut</label><select id="fac-statut">
+      <option>En attente</option><option>Payée</option><option>En retard</option><option>Annulée</option>
+    </select></div>
+  </div>
+  <div class="fg"><label>Notes</label><textarea id="fac-notes" rows="2" placeholder="Observations, conditions de paiement..."></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-facture')">Annuler</button><button class="btn bm" onclick="savFacture()">Enregistrer</button></div>
+</div></div>
+
+<!-- MODAL POINTAGE BATCH -->
+<div class="mo" id="m-pointage"><div class="md" style="max-width:700px">
+  <div class="mh">
+    <div><div class="mt">⏰ Pointage du <span id="pt-batch-date"></span></div></div>
+    <button class="mc" onclick="closeM('m-pointage')">✕</button>
+  </div>
+  <div id="pt-batch-list" style="max-height:60vh;overflow-y:auto"></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-pointage')">Annuler</button><button class="btn bm" onclick="savPointageBatch()">💾 Enregistrer tout</button></div>
+</div></div>
+
+<!-- MODAL SHIFT ITEM -->
+<div class="mo" id="m-shift-item"><div class="md">
+  <div class="mh"><div class="mt">➕ Ajouter un point</div><button class="mc" onclick="closeM('m-shift-item')">✕</button></div>
+  <input type="hidden" id="shift-item-type">
+  <input type="hidden" id="shift-item-dept">
+  <div style="background:var(--sf2);border-radius:6px;padding:8px;margin-bottom:12px;font-size:12px;color:var(--tx2)">
+    Département : <strong id="shift-item-dept-label"></strong>
+  </div>
+  <div class="fg"><label>Titre du point</label><input type="text" id="shift-item-titre" placeholder="Ex: Nettoyage malaxeur effectué"></div>
+  <div class="fg"><label>Description (optionnel)</label><textarea id="shift-item-desc" rows="2" placeholder="Instructions détaillées..."></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-shift-item')">Annuler</button><button class="btn bm" onclick="savShiftItem()">Ajouter</button></div>
+</div></div>
+
+<!-- MODAL BIEN -->
+<div class="mo" id="m-bien"><div class="md">
+  <div class="mh"><div class="mt">🏠 Ajouter un bien</div><button class="mc" onclick="closeM('m-bien')">✕</button></div>
+  <div class="fg"><label>Nom / Référence</label><input type="text" id="bien-nom" placeholder="Ex: Villa Almadies B2"></div>
+  <div class="fr">
+    <div class="fg"><label>Type de bien</label><select id="bien-type">
+      <option>Appartement</option><option>Villa</option><option>Bureau</option>
+      <option>Local commercial</option><option>Terrain</option><option>Immeuble</option><option>Autre</option>
+    </select></div>
+    <div class="fg"><label>Superficie (m²)</label><input type="number" id="bien-surf" placeholder="0"></div>
+  </div>
+  <div class="fg"><label>Adresse / Localisation</label><input type="text" id="bien-adresse" placeholder="Adresse complète"></div>
+  <div class="fg"><label>Statut</label><select id="bien-statut">
+    <option>Libre</option><option>Occupé</option><option>En rénovation</option><option>À vendre</option>
+  </select></div>
+  <div class="fr">
+    <div class="fg"><label>Locataire actuel</label><input type="text" id="bien-locataire"></div>
+    <div class="fg"><label>Loyer mensuel (FCFA)</label><input type="number" id="bien-loyer" placeholder="0"></div>
+  </div>
+  <div class="fr">
+    <div class="fg"><label>Valeur estimée (FCFA)</label><input type="number" id="bien-valeur" placeholder="0"></div>
+    <div class="fg"><label>Date acquisition</label><input type="date" id="bien-date-acq"></div>
+  </div>
+  <div class="fg"><label>Notes</label><textarea id="bien-notes" rows="2"></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-bien')">Annuler</button><button class="btn bm" onclick="savBien()">Enregistrer</button></div>
+</div></div>
+
+<!-- MODAL VISITE IMMO -->
+<div class="mo" id="m-visite-immo"><div class="md">
+  <div class="mh"><div class="mt">👥 Nouvelle visite</div><button class="mc" onclick="closeM('m-visite-immo')">✕</button></div>
+  <div class="fr">
+    <div class="fg"><label>Date visite</label><input type="date" id="vi-date"></div>
+    <div class="fg"><label>Type opération</label><select id="vi-type">
+      <option>Location</option><option>Vente</option><option>Achat</option>
+    </select></div>
+  </div>
+  <div class="fr">
+    <div class="fg"><label>Nom prospect</label><input type="text" id="vi-nom"></div>
+    <div class="fg"><label>Téléphone</label><input type="tel" id="vi-tel"></div>
+    <div class="fg"><label>Email</label><input type="email" id="vi-email"></div>
+  </div>
+  <div class="fg"><label>Bien visité</label><input type="text" id="vi-bien" placeholder="Nom ou référence du bien"></div>
+  <div class="fr">
+    <div class="fg"><label>Intérêt</label><select id="vi-interet">
+      <option>Très intéressé</option><option>Intéressé</option><option>Neutre</option><option>Pas intéressé</option>
+    </select></div>
+    <div class="fg"><label>Budget (FCFA)</label><input type="number" id="vi-budget" placeholder="0"></div>
+  </div>
+  <div class="fg"><label>Suivi / Prochaine étape</label><input type="text" id="vi-suivi" placeholder="Ex: Rappel dans 3 jours"></div>
+  <div class="fg"><label>Agent responsable</label><input type="text" id="vi-agent"></div>
+  <div class="fg"><label>Notes</label><textarea id="vi-notes" rows="2"></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-visite-immo')">Annuler</button><button class="btn bm" onclick="savVisiteImmo()">Enregistrer</button></div>
+</div></div>
+
+<!-- MODAL CONTRAT IMMO -->
+<div class="mo" id="m-contrat-immo"><div class="md">
+  <div class="mh"><div class="mt">📄 Nouveau contrat</div><button class="mc" onclick="closeM('m-contrat-immo')">✕</button></div>
+  <div class="fr">
+    <div class="fg"><label>N° Contrat</label><input type="text" id="ci-numero" readonly style="background:var(--sf2);color:var(--must2);font-weight:700"></div>
+    <div class="fg"><label>Type</label><select id="ci-type">
+      <option>Bail location</option><option>Promesse de vente</option><option>Acte de vente</option>
+      <option>Location commerciale</option><option>Autre</option>
+    </select></div>
+  </div>
+  <div class="fg"><label>Bien concerné</label><input type="text" id="ci-bien"></div>
+  <div class="fr">
+    <div class="fg"><label>Nom client</label><input type="text" id="ci-client"></div>
+    <div class="fg"><label>Téléphone</label><input type="tel" id="ci-tel"></div>
+    <div class="fg"><label>Email</label><input type="email" id="ci-email"></div>
+  </div>
+  <div class="fr">
+    <div class="fg"><label>Date début</label><input type="date" id="ci-date-debut"></div>
+    <div class="fg"><label>Date fin</label><input type="date" id="ci-date-fin"></div>
+    <div class="fg"><label>Montant (FCFA)</label><input type="number" id="ci-montant" placeholder="0"></div>
+  </div>
+  <div class="fg"><label>Conditions particulières</label><textarea id="ci-conditions" rows="3"></textarea></div>
+  <div class="fg"><label>Statut</label><select id="ci-statut"><option>Actif</option><option>En cours</option><option>Terminé</option><option>Annulé</option></select></div>
+  <div class="fg"><label>Notes</label><textarea id="ci-notes" rows="2"></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-contrat-immo')">Annuler</button><button class="btn bm" onclick="savContratImmo()">Enregistrer</button></div>
+</div></div>
+
+<!-- MODAL ETAT DES LIEUX -->
+<div class="mo" id="m-etat-lieux"><div class="md">
+  <div class="mh"><div class="mt">📋 État des lieux</div><button class="mc" onclick="closeM('m-etat-lieux')">✕</button></div>
+  <div class="fr">
+    <div class="fg"><label>Date</label><input type="date" id="el-date"></div>
+    <div class="fg"><label>Type</label><select id="el-type"><option>Entrée</option><option>Sortie</option></select></div>
+  </div>
+  <div class="fr">
+    <div class="fg"><label>Bien</label><input type="text" id="el-bien"></div>
+    <div class="fg"><label>Locataire</label><input type="text" id="el-locataire"></div>
+  </div>
+  <div class="fg"><label>État général</label><select id="el-etat"><option>Bon</option><option>Moyen</option><option>Mauvais</option></select></div>
+  <div class="fg"><label>Pièces (détail par pièce)</label><textarea id="el-pieces" rows="3" placeholder="Salon : bon état&#10;Chambre 1 : traces humidité..."></textarea></div>
+  <div class="fg"><label>Équipements</label><textarea id="el-equip" rows="2" placeholder="Climatiseur : OK&#10;Chauffe-eau : défaillant..."></textarea></div>
+  <div class="fg"><label>Observations générales</label><textarea id="el-obs" rows="2"></textarea></div>
+  <div class="fg"><label>Agent</label><input type="text" id="el-agent"></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-etat-lieux')">Annuler</button><button class="btn bm" onclick="savEtatLieux()">Enregistrer</button></div>
+</div></div>
+
+<!-- MODAL LOYER -->
+<div class="mo" id="m-loyer"><div class="md">
+  <div class="mh"><div class="mt">💰 Saisir un loyer</div><button class="mc" onclick="closeM('m-loyer')">✕</button></div>
+  <div class="fr">
+    <div class="fg"><label>Bien</label><input type="text" id="loy-bien" placeholder="Nom du bien"></div>
+    <div class="fg"><label>Locataire</label><input type="text" id="loy-locataire"></div>
+  </div>
+  <div class="fr">
+    <div class="fg"><label>Mois</label><input type="month" id="loy-mois"></div>
+    <div class="fg"><label>Montant (FCFA)</label><input type="number" id="loy-montant" placeholder="0"></div>
+  </div>
+  <div class="fr">
+    <div class="fg"><label>Date échéance</label><input type="date" id="loy-echeance"></div>
+    <div class="fg"><label>Date paiement</label><input type="date" id="loy-paiement"></div>
+  </div>
+  <div class="fr">
+    <div class="fg"><label>Mode paiement</label><select id="loy-mode">
+      <option value="">— Non défini —</option>
+      <option>📱 Wave</option><option>📱 Orange Money</option>
+      <option>🏦 Transfert bancaire</option><option>📝 Chèque</option><option>💵 Espèces</option>
+    </select></div>
+    <div class="fg"><label>Statut</label><select id="loy-statut">
+      <option>En attente</option><option>Payé</option><option>En retard</option>
+    </select></div>
+  </div>
+  <div class="fg"><label>Notes</label><textarea id="loy-notes" rows="2"></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-loyer')">Annuler</button><button class="btn bm" onclick="savLoyer()">Enregistrer</button></div>
+</div></div>
+
+<!-- MODAL MODIFIER CODES -->
+<div class="mo" id="m-change-code"><div class="md" style="max-width:680px">
+  <div class="mh">
+    <div><div class="mt">🔑 Modifier codes & titres</div><div style="font-size:11px;color:var(--tx3)">Codes alphanumériques 6-8 caractères — actifs immédiatement</div></div>
+    <button class="mc" onclick="closeM('m-change-code')">✕</button>
+  </div>
+  <div style="max-height:60vh;overflow-y:auto">
+    <table style="width:100%;border-collapse:collapse">
+      <thead><tr style="background:var(--sf2)">
+        <th style="padding:8px 6px;font-size:10px;text-align:left;color:var(--tx3)">Rôle système</th>
+        <th style="padding:8px 6px;font-size:10px;text-align:left;color:var(--tx)">Titre / Nom du poste</th>
+        <th style="padding:8px 6px;font-size:10px;text-align:left;color:var(--tx)">Code d'accès</th>
+        <th style="padding:8px 6px;font-size:10px"></th>
+      </tr></thead>
+      <tbody id="cc-table-body"></tbody>
+    </table>
+  </div>
+  <div class="al al-m" style="margin:10px 0 6px">
+    🎲 = Générer un code aléatoire — Le code doit être unique et contenir 6-8 caractères (A-Z, 0-9)
+  </div>
+  <div class="mf">
+    <button class="btn bg2" onclick="closeM('m-change-code')">Annuler</button>
+    <button class="btn bm" onclick="saveAllCodes()">💾 Enregistrer tous les changements</button>
+  </div>
+</div></div>
+<!-- MODAL BANQUE -->
+<div class="mo" id="m-banque"><div class="md">
+  <div class="mh"><div class="mt">🏦 Ajouter un compte bancaire</div><button class="mc" onclick="closeM('m-banque')">✕</button></div>
+  <div class="fr">
+    <div class="fg"><label>Nom de la banque</label><input type="text" id="bq-nom" placeholder="Ex: CBAO, Ecobank, BHS..."></div>
+    <div class="fg"><label>Nom du compte</label><input type="text" id="bq-compte" placeholder="Ex: Compte courant Béton"></div>
+  </div>
+  <div class="fg"><label>Filière</label><select id="bq-filiere">
+    <option>Sarpa Béton</option><option>Sarpa Logistics</option><option>Sarpa Immobilier</option><option>Général</option>
+  </select></div>
+  <div class="fr">
+    <div class="fg"><label>Numéro de compte</label><input type="text" id="bq-numero" placeholder="Ex: SN0001234567..."></div>
+    <div class="fg"><label>RIB / IBAN</label><input type="text" id="bq-rib"></div>
+  </div>
+  <div class="fr">
+    <div class="fg"><label>Agence</label><input type="text" id="bq-agence" placeholder="Ex: Plateau, Almadies..."></div>
+    <div class="fg"><label>Solde initial (FCFA)</label><input type="number" id="bq-solde" value="0"></div>
+    <div class="fg"><label>Devise</label><select id="bq-devise"><option>FCFA</option><option>EUR</option><option>USD</option></select></div>
+  </div>
+  <div class="fg"><label>Notes</label><textarea id="bq-notes" rows="2"></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-banque')">Annuler</button><button class="btn bm" onclick="savBanque()">Enregistrer</button></div>
+</div></div>
+
+<!-- MODAL RELEVÉ -->
+<div class="mo" id="m-releve"><div class="md">
+  <div class="mh"><div class="mt">📋 Nouveau mouvement bancaire</div><button class="mc" onclick="closeM('m-releve')">✕</button></div>
+  <div class="fr">
+    <div class="fg"><label>Date</label><input type="date" id="relev-date"></div>
+    <div class="fg"><label>Type</label><select id="relev-type">
+      <option>Entrée</option><option>Sortie</option>
+    </select></div>
+  </div>
+  <div class="fg"><label>Banque / Compte</label><select id="relev-banque" style="width:100%">
+    <option value="">— Sélectionner —</option>
+  </select></div>
+  <div class="fg"><label>Libellé</label><input type="text" id="relev-libelle" placeholder="Ex: Virement client XYZ, Paiement fournisseur..."></div>
+  <div class="fr">
+    <div class="fg"><label>Référence</label><input type="text" id="relev-ref" placeholder="N° virement, chèque..."></div>
+    <div class="fg"><label>Montant (FCFA)</label><input type="number" id="relev-montant" placeholder="0"></div>
+  </div>
+  <div class="fg"><label>Notes</label><textarea id="relev-notes" rows="2"></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-releve')">Annuler</button><button class="btn bm" onclick="savReleve()">Enregistrer</button></div>
+</div></div>
+
+<!-- MODAL CHÈQUE -->
+<div class="mo" id="m-cheque"><div class="md">
+  <div class="mh">
+    <div><div class="mt">📝 Nouveau chèque</div><div id="chq-type-label" style="font-size:11px;color:var(--tx3)"></div></div>
+    <button class="mc" onclick="closeM('m-cheque')">✕</button>
+  </div>
+  <input type="hidden" id="chq-type">
+  <div class="fr">
+    <div class="fg"><label>N° Chèque</label><input type="text" id="chq-numero" placeholder="Ex: 0012345"></div>
+    <div class="fg"><label>Banque / Compte</label><select id="chq-banque" style="width:100%">
+      <option value="">— Sélectionner —</option>
+    </select></div>
+  </div>
+  <div class="fg"><label>Bénéficiaire / Émetteur</label><input type="text" id="chq-beneficiaire" placeholder="Nom de la personne ou entreprise"></div>
+  <div class="fr">
+    <div class="fg"><label>Date d'émission</label><input type="date" id="chq-date"></div>
+    <div class="fg"><label>Date d'échéance</label><input type="date" id="chq-echeance"></div>
+    <div class="fg"><label>Montant (FCFA)</label><input type="number" id="chq-montant" placeholder="0"></div>
+  </div>
+  <div class="fg"><label>Statut</label><select id="chq-statut">
+    <option>En attente</option><option>Encaissé</option><option>Payé</option><option>Rejeté</option><option>Annulé</option>
+  </select></div>
+  <div class="fg"><label>Notes</label><textarea id="chq-notes" rows="2"></textarea></div>
+  <div class="mf"><button class="btn bg2" onclick="closeM('m-cheque')">Annuler</button><button class="btn bm" onclick="savCheque()">Enregistrer</button></div>
+</div></div>
 
 <!-- MODAL COMMUNIQUE -->
 <div class="mo" id="m-communique"><div class="md" style="max-width:600px">
@@ -710,40 +1548,7 @@ tr:hover td{background:var(--sf2)}
     <button class="btn bg2" onclick="closeM('m-signature')">Annuler</button>
     <button class="btn bm" onclick="saveSignature()">✅ Confirmer</button>
   </div>
-</div></div>
-    </div><!-- /main -->
-  </div><!-- /app-body -->
-</div><!-- /app -->
-
-<!-- SEARCH PANEL -->
-<div id="search-panel">
-  <div class="search-box">
-    <div class="search-input-row">
-      <span style="font-size:18px">🔍</span>
-      <input id="search-topbar-input" placeholder="Rechercher dans toute l application..." oninput="doTopbarSearch(this.value)" autocomplete="off">
-      <button onclick="closeSearchPanel()" style="background:none;border:none;cursor:pointer;color:var(--tx3);font-size:18px">✕</button>
-    </div>
-    <div id="search-results">
-      <div style="padding:24px;text-align:center;color:var(--tx3)">Tapez pour rechercher...</div>
-    </div>
-  </div>
-</div>
-
-<!-- NOTIF PANEL -->
-<div id="notif-panel">
-  <div style="padding:16px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center">
-    <strong>🔔 Notifications</strong>
-    <button onclick="document.getElementById('notif-panel').classList.remove('open')" style="background:none;border:none;cursor:pointer;color:var(--tx3)">✕</button>
-  </div>
-  <div id="notif-list" style="padding:16px"></div>
-</div>
-
-<!-- TOAST -->
-<div id="toast"></div>
-
-
-<script>
-
+</div></div><script>
 
 
 
@@ -7653,745 +8458,74 @@ async function renderRecherche() {
   if(pg) { const d=document.createElement('div'); d.className='al al-m'; d.textContent='Utilisez la loupe dans la barre du haut pour rechercher.'; pg.appendChild(d); }
 }
 
-
-
-const DEPARTMENTS = [
-  {
-    id: 'transport',
-    name: 'Transport et Logistique',
-    icon: '🚛',
-    desc: 'Flotte, livraisons, maintenance',
-    color: '#10b981',
-    roles: ['manager_logistics','responsable_flotte'],
-    pages: ['fleet','livraisons','maintenance','planning','carburant','checklist','accidents'],
-    sections: [
-      { s: 'Flotte' },
-      { id:'fleet',        ic:'🚛', lb:'Flotte de camions' },
-      { id:'maintenance',  ic:'⚙',  lb:'Maintenance' },
-      { id:'carburant',    ic:'⛽', lb:'Carburant' },
-      { id:'checklist',    ic:'🔧', lb:'Checklist préventive' },
-      { s: 'Opérations' },
-      { id:'livraisons',   ic:'🚚', lb:'Livraisons' },
-      { id:'planning',     ic:'📅', lb:'Planning' },
-      { id:'accidents',    ic:'🚨', lb:'Accidents' },
-    ]
-  },
-  {
-    id: 'beton',
-    name: 'Centrale à Béton',
-    icon: '🏗',
-    desc: 'Production, stocks, qualité',
-    color: '#f59e0b',
-    roles: ['manager_beton','responsable_centrale','resp_production','resp_qualite'],
-    pages: ['production','stocks','quality','opening','closing','commandes'],
-    sections: [
-      { s: 'Production' },
-      { id:'production',   ic:'🏗', lb:'Production' },
-      { id:'quality',      ic:'✦',  lb:'Contrôle qualité' },
-      { id:'stocks',       ic:'📦', lb:'Stocks et Appro' },
-      { s: 'Opérations' },
-      { id:'opening',      ic:'🌅', lb:'Opening - Ouverture' },
-      { id:'closing',      ic:'🌙', lb:'Closing - Fermeture' },
-    ]
-  },
-  {
-    id: 'immo',
-    name: 'Agence Immobilière',
-    icon: '🏠',
-    desc: 'Biens, locations, contrats',
-    color: '#38bdf8',
-    roles: ['manager_immo','immobilier'],
-    pages: ['biens','visites','contrats_immo','etats_lieux','loyers','projets'],
-    sections: [
-      { s: 'Portefeuille' },
-      { id:'biens',         ic:'🏠', lb:'Biens immobiliers' },
-      { id:'visites',       ic:'👥', lb:'Visites et prospects' },
-      { s: 'Gestion' },
-      { id:'contrats_immo', ic:'📄', lb:'Contrats' },
-      { id:'etats_lieux',   ic:'📋', lb:'États des lieux' },
-      { id:'loyers',        ic:'💰', lb:'Suivi loyers' },
-      { id:'projets',       ic:'📋', lb:'Projets et chantiers' },
-    ]
-  },
-  {
-    id: 'rh',
-    name: 'Ressources Humaines',
-    icon: '👥',
-    desc: 'Équipes, pointage, congés',
-    color: '#c084fc',
-    roles: ['rh'],
-    pages: ['rh','pointage','conges','formation','evaluations','messages'],
-    sections: [
-      { s: 'Équipe' },
-      { id:'rh',           ic:'👤', lb:'Employés' },
-      { id:'pointage',     ic:'⏰', lb:'Pointage' },
-      { id:'conges',       ic:'🗓', lb:'Congés et absences' },
-      { s: 'Développement' },
-      { id:'formation',    ic:'🎓', lb:'Formations' },
-      { id:'evaluations',  ic:'📊', lb:'Évaluations' },
-      { id:'messages',     ic:'💬', lb:'Messages internes' },
-    ]
-  },
-  {
-    id: 'finance',
-    name: 'Finance et Comptabilité',
-    icon: '💰',
-    desc: 'Comptes, factures, chèques',
-    color: '#4ade80',
-    roles: ['comptabilite','comptable_beton','comptable_immo','comptable_logistics'],
-    pages: ['factures','banques','releves','rapprochement','cheques','etats_fin','fin_beton','fin_logistics','fin_immo','fournisseurs'],
-    sections: [
-      { s: 'Par filière' },
-      { id:'fin_beton',     ic:'🏗', lb:'Finance Béton' },
-      { id:'fin_logistics', ic:'🚛', lb:'Finance Logistics' },
-      { id:'fin_immo',      ic:'🏠', lb:'Finance Immobilier' },
-      { s: 'Bancaire' },
-      { id:'banques',       ic:'🏦', lb:'Comptes bancaires' },
-      { id:'releves',       ic:'📋', lb:'Relevés théoriques' },
-      { id:'rapprochement', ic:'🔄', lb:'Rapprochement' },
-      { id:'cheques',       ic:'📝', lb:'Chèques' },
-      { id:'etats_fin',     ic:'📊', lb:'États financiers' },
-      { s: 'Documents' },
-      { id:'factures',      ic:'🧾', lb:'Factures' },
-      { id:'fournisseurs',  ic:'🏭', lb:'Fournisseurs' },
-    ]
-  },
-  {
-    id: 'direction',
-    name: 'Direction',
-    icon: '👑',
-    desc: 'Vue globale, objectifs, décisions',
-    color: '#818cf8',
-    roles: ['dg','directeur','coordinatrice'],
-    pages: ['dashboard','communiques','rapports','objectifs','projets','partenaires','partenariats','annuaire','graphiques','finances'],
-    sections: [
-      { s: 'Vue globale' },
-      { id:'dashboard',    ic:'◈',  lb:'Tableau de bord' },
-      { id:'communiques',  ic:'📢', lb:'Communiqués' },
-      { id:'graphiques',   ic:'📈', lb:'Graphiques et analyses' },
-      { id:'rapports',     ic:'▣',  lb:'Rapports consolidés' },
-      { s: 'Stratégie' },
-      { id:'objectifs',    ic:'🎯', lb:'Objectifs' },
-      { id:'projets',      ic:'📋', lb:'Projets et chantiers' },
-      { id:'partenaires',  ic:'🤝', lb:'Partenaires' },
-      { id:'partenariats', ic:'🤝', lb:'Partenariats' },
-      { s: 'Commercial' },
-      { id:'annuaire',     ic:'📒', lb:'Annuaire clients' },
-      { id:'finances',     ic:'💰', lb:'Finances consolidées' },
-    ]
-  },
-  {
-    id: 'admin',
-    name: 'Administration',
-    icon: '📊',
-    desc: 'Statistiques, analyses, aperçu',
-    color: '#fb923c',
-    roles: ['dg','directeur'],
-    pages: ['dashboard','graphiques','rapports','journal','objectifs','evaluations','communiques','projets','partenaires','partenariats','annuaire'],
-    sections: [
-      { s: 'Tableaux de bord' },
-      { id:'dashboard',    ic:'◈',  lb:'Vue générale' },
-      { id:'graphiques',   ic:'📈', lb:'Graphiques' },
-      { id:'rapports',     ic:'▣',  lb:'Rapports' },
-      { s: 'Suivi' },
-      { id:'journal',      ic:'🔍', lb:'Journal modifications' },
-      { id:'evaluations',  ic:'📊', lb:'Évaluations' },
-      { id:'objectifs',    ic:'🎯', lb:'Objectifs' },
-      { s: 'Communications' },
-      { id:'communiques',  ic:'📢', lb:'Communiqués' },
-    ]
-  },
-  {
-    id: 'informatique',
-    name: 'Informatique',
-    icon: '💻',
-    desc: 'Paramètres, accès, configuration',
-    color: '#7dd3fc',
-    roles: ['resp_info'],
-    pages: ['parametres','users','acces_mgr','journal'],
-    sections: [
-      { s: 'Configuration' },
-      { id:'parametres',   ic:'⚙',  lb:'Paramètres app' },
-      { id:'users',        ic:'👥', lb:'Utilisateurs' },
-      { id:'acces_mgr',    ic:'🔐', lb:'Gestion des accès' },
-      { id:'journal',      ic:'🔍', lb:'Journal' },
-    ]
-  },
-];
-
-// ── GLOBALS ──
-userRole = '', userName = '', userDept = null;
-CACHE_TTL = 30000;
-_cache = {}, _cacheTime = {};
-
-// ── PORTAL INIT ──
-function buildPortal() {
-  const grid = document.getElementById('portal-grid');
-  if(!grid) return;
-  grid.innerHTML = '';
-  DEPARTMENTS.forEach(dept => {
-    card = document.createElement('div');
-    card.className = 'dept-card';
-    card.style.setProperty('--card-color', dept.color);
-    card.innerHTML = '<span class="dept-icon">'+dept.icon+'</span>'
-      + '<div class="dept-name">'+dept.name+'</div>'
-      + '<div class="dept-desc">'+dept.desc+'</div>';
-    card.onclick = () => openLogin(dept);
-    grid.appendChild(card);
-  });
-}
-
-function openLogin(dept) {
-  document.getElementById('login-icon').textContent = dept.icon;
-  document.getElementById('login-dept-name').textContent = dept.name;
-  document.getElementById('login-dept-desc').textContent = 'Code requis';
-  document.getElementById('l-code').value = '';
-  document.getElementById('login-error').textContent = '';
-  document.getElementById('login-overlay').classList.add('show');
-  document.getElementById('login-overlay').dataset.deptId = dept.id;
-  setTimeout(() => document.getElementById('l-code')?.focus(), 200);
-}
-
-function closeLogin() {
-  document.getElementById('login-overlay').classList.remove('show');
-}
-
-function doLogin() {
-  code = document.getElementById('l-code').value.trim().toUpperCase();
-  const deptId = document.getElementById('login-overlay').dataset.deptId;
-  dept = DEPARTMENTS.find(d => d.id === deptId);
-  if(!dept) return;
-
-  // Find user with this code
-  user = ROLE_CODES[code];
-  if(!user) {
-    document.getElementById('login-error').textContent = 'Code incorrect';
-    document.getElementById('l-code').value = '';
-    return;
-  }
-
-  // Check if this role has access to this dept
-  // DG and directeur can access everything
-  const isSuper = user.role === 'dg' || user.role === 'directeur';
-  const hasAccess = isSuper || dept.roles.includes(user.role) || dept.roles.length === 0;
-
-  if(!hasAccess) {
-    document.getElementById('login-error').textContent = 'Accès non autorisé pour cet espace';
-    return;
-  }
-
-  closeLogin();
-  localStorage.setItem('sarpa_s', JSON.stringify({
-    role: user.role, name: user.name, deptId: dept.id, ts: Date.now()
-  }));
-  startApp(user.role, user.name, dept);
-}
-
-function goPortal() {
-  document.getElementById('app').style.display = 'none';
-  document.getElementById('portal').style.display = 'flex';
-  userRole = ''; userName = ''; userDept = null;
-}
-
-async function startApp(role, name, dept) {
-  userRole = role; userName = name; userDept = dept;
-
-  document.getElementById('portal').style.display = 'none';
-  document.getElementById('app').style.display = 'flex';
-  document.getElementById('dept-tag').textContent = dept.icon + ' ' + dept.name.split(' ')[0];
-  document.getElementById('sb-username').textContent = name;
-  document.getElementById('sb-username2').textContent = name;
-  document.getElementById('sb-dept-label').textContent = dept.name;
-  rb = document.getElementById('role-badge');
-  rb.textContent = ROLES[role]?.label || role;
-  rb.className = 'role-badge ' + (ROLES[role]?.badge || 'rb-coord');
-  if(window.innerWidth < 900) document.getElementById('mbtn').style.display = 'flex';
-
-  buildNav(dept);
-  applyAppearance();
-  await go(dept.sections.find(s=>s.id)?.id || 'dashboard');
-  startNotifPolling();
-  setTimeout(() => { initGoogleSheets(); seedData(); }, 1000);
-  document.getElementById('rt-status').textContent = 'Connecté';
-}
-
-function doLogout() {
-  localStorage.removeItem('sarpa_s');
-  goPortal();
-}
-
-function buildNav(dept) {
-  const nav = document.getElementById('sidebar-nav');
-  if(!nav) return;
-  h = '';
-  (dept.sections||[]).forEach(item => {
-    if(item.s) { h += '<div class="ns">'+item.s+'</div>'; return; }
-    h += '<div class="ni" id="nav-'+item.id+'" onclick="go(\"'+item.id+'\")"><span class="ic">'+item.ic+'</span> '+item.lb+'</div>';
-  });
-  nav.innerHTML = h;
-}
-
-async function go(page) {
-  if(!page) return;
-  document.querySelectorAll('.pg').forEach(x => x.classList.remove('active'));
-  document.querySelectorAll('.ni').forEach(x => x.classList.remove('active'));
-  pg = document.getElementById('pg-'+page);
-  if(pg) pg.classList.add('active');
-  ni = document.getElementById('nav-'+page);
-  if(ni) ni.classList.add('active');
-  document.getElementById('ptitle').textContent = TITLES[page] || page;
-  if(window.innerWidth < 900) document.getElementById('sb')?.classList.remove('open');
-  await render(page);
-}
-
-function toggleSB() {
-  document.getElementById('sb')?.classList.toggle('open');
-}
-
-// ── RENDER DISPATCH ──
-async function render(p) {
-  map = {
-    dashboard:renderDash, production:renderProd, stocks:renderStocks, quality:renderQual,
-    fleet:renderFleet, maintenance:renderMaint, accidents:renderAccidents,
-    fournisseurs:renderFournisseurs, projets:renderProjets, partenaires:renderPartenaires,
-    finances:renderFinances, evaluations:renderEvals, rapports:renderRapports,
-    parametres:renderParams, users:renderUsers, acces_mgr:renderAccesMgr,
-    rh:renderRH, formation:renderFormation, planning:renderPlanning,
-    annuaire:renderAnnuaire, messages:renderMessages, carburant:renderCarburant,
-    objectifs:renderObjectifs, conges:renderConges, checklist:renderChecklist,
-    partenariats:renderPartenariats, graphiques:renderGraphiques, journal:renderJournal,
-    livraisons:renderLivraisons, factures:renderFactures, pointage:renderPointage,
-    opening:renderOpening, closing:renderClosing,
-    biens:renderBiens, visites:renderVisites, contrats_immo:renderContratsImmo,
-    etats_lieux:renderEtatsLieux, loyers:renderLoyers,
-    banques:renderBanques, releves:renderReleves, rapprochement:renderRapprochement,
-    cheques:renderCheques, etats_fin:renderEtatsFin,
-    fin_beton:renderFinBeton, fin_logistics:renderFinLogistics, fin_immo:renderFinImmo,
-    communiques:renderCommuniques, recherche:renderRecherche,
-  };
-  try {
-    if(map[p]) await map[p]();
-  } catch(e) {
-    console.error('render error for', p, e);
-    const pg = document.getElementById('pg-'+p+'-content') || document.getElementById(p+'-content');
-    if(pg) pg.innerHTML = '<div class="al al-r">Erreur de chargement — '+e.message+'</div>';
-  }
-}
-
-// ── SEARCH ──
-function openSearchPanel() {
-  document.getElementById('search-panel').classList.add('open');
-  document.getElementById('search-topbar-input').value = '';
-  document.getElementById('search-topbar-input').focus();
-  document.getElementById('search-results').innerHTML = '<div style="padding:24px;text-align:center;color:var(--tx3)">Tapez pour rechercher...</div>';
-}
-function closeSearchPanel() {
-  document.getElementById('search-panel').classList.remove('open');
-}
-document.addEventListener('click', e => {
-  const sp = document.getElementById('search-panel');
-  if(sp && sp.classList.contains('open') && e.target === sp) closeSearchPanel();
-});
-
-let _sbTimer = null;
-function doTopbarSearch(q) {
-  clearTimeout(_sbTimer);
-  const res = document.getElementById('search-results');
-  if(!res) return;
-  if(q.length < 2) { res.innerHTML='<div style="padding:24px;text-align:center;color:var(--tx3)">Tapez au moins 2 caractères...</div>'; return; }
-  res.innerHTML='<div style="padding:16px;text-align:center;color:var(--tx3)">⏳ Recherche...</div>';
-  _sbTimer = setTimeout(() => execSearch(q), 300);
-}
-
-async function execSearch(q) {
-  const res = document.getElementById('search-results');
-  if(!res) return;
-  qL = q.toLowerCase();
-  if(!window._src || (Date.now()-window._srcTime) > 30000) {
-    window._srcTime = Date.now(); window._src = {};
-    tbl = {employes:'rh',trucks:'fleet',factures:'factures',livraisons:'livraisons',
-      projets:'projets',fournisseurs:'fournisseurs',annuaire:'annuaire',biens:'biens',
-      accidents:'accidents',partenaires:'partenaires',cheques:'cheques',banques:'banques',
-      contrats_immo:'contrats_immo',loyers:'loyers',formations:'formation',
-      communiques:'communiques',productions:'production',maintenances:'maintenance'};
-    await Promise.all(Object.entries(tbl).map(async([t,nav])=>{
-      try{ window._src[t]={data:await db(t),nav}; }catch(e){}
-    }));
-  }
-  ICO = {employes:'👤',trucks:'🚛',factures:'🧾',livraisons:'🚚',projets:'📋',
-    fournisseurs:'🏭',annuaire:'📒',biens:'🏠',accidents:'🚨',partenaires:'🤝',
-    cheques:'📝',banques:'🏦',contrats_immo:'📄',loyers:'💰',formations:'🎓',
-    communiques:'📢',productions:'🏗',maintenances:'🔧'};
-  results = [];
-  for(const [t,cache] of Object.entries(window._src)){
-    (cache.data||[]).forEach(item=>{
-      if(Object.values(item).join(' ').toLowerCase().includes(qL))
-        results.push({t,item,main:getMainFields(t,item),ico:ICO[t]||'📌',nav:cache.nav||t});
-    });
-  }
-  if(!results.length){ res.innerHTML='<div style="padding:24px;text-align:center;color:var(--tx3)">😕 Aucun résultat</div>'; return; }
-  let h='<div style="padding:8px 14px;font-size:11px;color:var(--tx3)">'+results.length+' résultat(s)</div>';
-  results.slice(0,25).forEach(r=>{
-    txt = (r.main.text||'').replace(new RegExp(escapeRegex(q),'gi'),'<mark style="background:var(--must)40;border-radius:2px;padding:0 2px">$&</mark>');
-    h+='<div class="src-item" data-nav="'+r.nav+'">'
-      +'<span style="font-size:20px">'+r.ico+'</span>'
-      +'<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+txt+'</div>'
-      +'<div style="font-size:11px;color:var(--tx3)">'+(r.main.sub||'')+'</div></div>'
-      +'<span style="font-size:10px;color:var(--tx3)">'+(r.main.badge||'')+'</span></div>';
-  });
-  res.innerHTML = h;
-  res.querySelectorAll('.src-item').forEach(el=>{
-    el.onclick=()=>{ closeSearchPanel(); go(el.dataset.nav); };
-  });
-}
-
-function escapeRegex(s){return s.replace(/[-\/\^$*+?.()|[\]{}]/g,'\$&');}
-
-// ── NOTIFICATIONS ──
-function openNotifCenter() {
-  document.getElementById('notif-panel').classList.toggle('open');
-}
-function startNotifPolling() {
-  checkNotifs();
-  setInterval(checkNotifs, 30000);
-}
-async function checkNotifs() {
-  // Check stocks, loyers, assurances expiry etc.
-  today = new Date().toISOString().slice(0,10);
-  alerts = [];
-  try {
-    const [stocks, loyers, assurances] = await Promise.all([
-      db('stocks'), db('loyers'), db('assurances')
-    ]);
-    (stocks||[]).filter(s=>+s.current_qty<=+s.critical_qty).forEach(s=>{
-      alerts.push({ic:'📦',txt:'Stock critique: '+s.product_name+' ('+s.current_qty+' '+s.unit+')'});
-    });
-    (loyers||[]).filter(l=>l.statut==='En retard').forEach(l=>{
-      alerts.push({ic:'💰',txt:'Loyer en retard: '+l.bien+' — '+l.locataire});
-    });
-    soon = new Date(); soon.setDate(soon.getDate()+30);
-    const soonStr = soon.toISOString().slice(0,10);
-    (assurances||[]).filter(a=>a.date_fin&&a.date_fin<=soonStr&&a.date_fin>=today).forEach(a=>{
-      alerts.push({ic:'🛡',txt:'Assurance expire bientôt: '+a.camion});
-    });
-  } catch(e) {}
-  list = document.getElementById('notif-list');
-  badge = document.getElementById('nb-badge');
-  if(list) list.innerHTML = alerts.length
-    ? alerts.map(a=>'<div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--bd)"><span style="font-size:18px">'+a.ic+'</span><div style="font-size:12px;color:var(--tx2)">'+a.txt+'</div></div>').join('')
-    : '<div style="color:var(--tx3);font-size:13px">Aucune alerte</div>';
-  if(badge) badge.style.display = alerts.length ? 'block' : 'none';
-}
-
-// ── TOAST ──
-let _toastTimer;
-function toast(msg, type='') {
-  el = document.getElementById('toast');
-  if(!el) return;
-  el.textContent = msg;
-  el.className = 'show';
-  clearTimeout(_toastTimer);
-  _toastTimer = setTimeout(() => el.className = '', 3000);
-}
-
-// ── MODAL HELPERS ──
-function openM(id) {
-  const el = document.getElementById(id);
-  if(el) el.classList.add('open');
-  // Load banques for cheque modals
-  if(id==='m-cheque') {
-    if(!window._bsnList){window._bsnList=['CBAO Groupe Attijariwafa','Ecobank Sénégal','Banque Atlantique Sénégal','BHS Banque Habitat','SGBS Société Générale','BICIS BNP Paribas','UBA Sénégal','Bank of Africa Sénégal','Citibank Sénégal','Banque Islamique du Sénégal','Credit du Sénégal','BSIC Sénégal','Wave Sénégal','Orange Money Sénégal','Autre banque SN'];}
-    const typeC = document.getElementById('chq-type')?.value;
-    sel = document.getElementById('chq-banque');
-    if(sel && typeC==='Reçu') {
-      sel.innerHTML='<option value="">Banque émettrice</option>'+window._bsnList.map(b=>'<option>'+b+'</option>').join('');
-    } else if(sel) {
-      db('banques').then(bs=>{ sel.innerHTML='<option value="">Compte entreprise</option>'+(bs||[]).map(b=>'<option value="'+b.id+'">'+b.nom_banque+' — '+(b.nom_compte||b.filiere)+'</option>').join(''); });
-    }
-    document.getElementById('chq-date').value = new Date().toISOString().slice(0,10);
-  }
-  if(id==='m-releve') {
-    document.getElementById('relev-date').value = new Date().toISOString().slice(0,10);
-    db('banques').then(bs=>{ const sel=document.getElementById('relev-banque'); if(sel) sel.innerHTML='<option value="">Sélectionner</option>'+(bs||[]).map(b=>'<option value="'+b.id+'">'+b.nom_banque+' — '+(b.nom_compte||b.filiere)+'</option>').join(''); });
-  }
-  if(id==='m-liv') { loadTrucks(document.getElementById('liv-truck'), false); document.getElementById('liv-date').value = new Date().toISOString().slice(0,10); }
-  if(id==='m-plan') { loadTrucks(document.getElementById('plan-truck'), true); document.getElementById('plan-date').value = new Date().toISOString().slice(0,10); }
-  if(id==='mp') { document.getElementById('p-date').value = new Date().toISOString().slice(0,10); }
-  if(id==='m-carb') { loadTrucks(document.getElementById('carb-truck'), false); document.getElementById('carb-date').value = new Date().toISOString().slice(0,10); }
-  if(id==='m-check') { loadTrucks(document.getElementById('check-truck'), false); document.getElementById('check-date').value = new Date().toISOString().slice(0,10); }
-  if(id==='mm') { loadTrucks(document.getElementById('maint-truck'), false); document.getElementById('maint-date').value = new Date().toISOString().slice(0,10); }
-  if(id==='m-acc') { document.getElementById('acc-date').value = new Date().toISOString().slice(0,10); }
-  if(id==='m-bien') { document.getElementById('bien-date-acq').value = new Date().toISOString().slice(0,10); }
-  if(id==='m-visite-immo') { document.getElementById('vi-date').value = new Date().toISOString().slice(0,10); }
-  if(id==='m-etat-lieux') { document.getElementById('el-date').value = new Date().toISOString().slice(0,10); }
-  if(id==='m-loyer') { document.getElementById('loy-mois').value = new Date().toISOString().slice(0,7); }
-  if(id==='m-contrat-immo') { document.getElementById('ci-date-debut').value = new Date().toISOString().slice(0,10); }
-}
-
-function closeM(id) {
-  const el = document.getElementById(id);
-  if(el) el.classList.remove('open');
-}
-
-// Close modals on backdrop click
-document.addEventListener('click', e => {
-  if(e.target.classList.contains('mo')) e.target.classList.remove('open');
-});
-
-// ── CANEDIT — all roles can edit in their own dept ──
-
-
-// ── DBSAVE HELPER ──
-async function dbSave(table, data, modalId, page, msg) {
-  window._src = null;
-  _cache[table] = null;
-  try {
-    await db(table, 'POST', data);
-    if(modalId) closeM(modalId);
-    if(page) await render(page);
-    if(msg) toast(msg);
-    logAction('create', table, {par:userName});
-  } catch(e) {
-    toast('Erreur: ' + e.message);
-    console.error('dbSave error:', table, e);
-  }
-}
-
-// ── EDIT ROW ──
-async function editRow(table, id, page) {
-  data = await db(table);
-  row = (data||[]).find(r=>String(r.id)===String(id));
-  if(!row) return;
-  modalMap = {
-    trucks:'mf', productions:'mp', maintenances:'mm', stocks:'mc',
-    quality:'mq2', accidents:'m-acc', fournisseurs:'m-four',
-    projets:'m-proj', partenaires:'m-part', finances:'m-budget',
-    evaluations:'m-eval', employes:'m-emp', formations:'m-form',
-    livraisons:'m-liv', factures:'m-facture', planning:'m-plan',
-    annuaire:'m-contact', messages:'m-msg', carburant:'m-carb',
-    conges:'m-conge', checklist:'m-check', partenariats:'m-partenariat',
-    objectifs:'m-obj', biens:'m-bien', visites_immo:'m-visite-immo',
-    contrats_immo:'m-contrat-immo', etats_lieux:'m-etat-lieux',
-    loyers:'m-loyer', banques:'m-banque', releves:'m-releve', cheques:'m-cheque',
-    commandes:'mc',
-  };
-  modal = modalMap[table];
-  if(!modal) return;
-  prefillModal(table, row);
-  if(row.id) {
-    const modal_el = document.getElementById(modal);
-    if(modal_el) modal_el.dataset.editId = row.id;
-  }
-  openM(modal);
-}
-
-// ── PREFILL MODAL ──
-function prefillModal(table, row) {
-  set = (id, val) => { const el=document.getElementById(id); if(el) el.value=(val===null||val===undefined)?'':val; };
-  if(table==='trucks'){set('ntr-id',row.id);set('ntr-marque',row.marque);set('ntr-modele',row.modele);set('ntr-type',row.type);set('ntr-annee',row.annee);set('ntr-immat',row.immatriculation);set('ntr-chauffeur',row.chauffeur);set('ntr-capacite',row.capacite);set('ntr-notes',row.notes);}
-  else if(table==='productions'){set('p-date',row.date);set('p-form',row.formulation);set('p-vol',row.volume);set('p-op',row.operateur);set('p-nc',row.non_conformites);set('p-rem',row.remarques);}
-  else if(table==='maintenances'){set('maint-truck',row.camion);set('maint-type',row.type);set('maint-date',row.date);set('maint-desc',row.description);set('maint-cout',row.cout);set('maint-statut',row.statut);set('maint-notes',row.notes);}
-  else if(table==='quality'){set('q-date',row.date);set('q-form',row.formulation);set('q-type',row.type_controle);set('q-op',row.operateur);set('q-res',row.resultat);set('q-obs',row.observations);set('q-st',row.statut);}
-  else if(table==='accidents'){set('acc-date',row.date);set('acc-type',row.type_accident);set('acc-grav',row.gravite);set('acc-emp',row.employe);set('acc-truck',row.camion);set('acc-desc',row.description);set('acc-statut',row.statut);}
-  else if(table==='employes'){set('emp-nom',row.nom);set('emp-prenom',row.prenom);set('emp-poste',row.poste);set('emp-dept',row.departement);set('emp-contrat',row.type_contrat);set('emp-date',row.date_entree);set('emp-tel',row.telephone);set('emp-salaire',row.salaire);set('emp-statut',row.statut);}
-  else if(table==='formations'){set('form-titre',row.titre);set('form-emp',row.employe);set('form-org',row.organisme);set('form-dd',row.date_debut);set('form-df',row.date_fin);set('form-cout',row.cout);set('form-statut',row.statut);}
-  else if(table==='livraisons'){set('liv-truck',row.camion);set('liv-chauf',row.chauffeur);set('liv-date',row.date_depart);set('liv-dest',row.destination);set('liv-type',row.type_mission);set('liv-vol',row.volume);set('liv-client',row.client);}
-  else if(table==='factures'){set('fac-numero',row.numero_facture);set('fac-type',row.type_facture);set('fac-sens',row.sens);set('fac-dept',row.departement);set('fac-nom',row.nom);set('fac-date',row.date_facture);set('fac-echeance',row.date_echeance);set('fac-mode',row.mode_paiement);set('fac-montant',row.montant_total);set('fac-statut',row.statut);}
-  else if(table==='biens'){set('bien-nom',row.nom);set('bien-type',row.type_bien);set('bien-adresse',row.adresse);set('bien-surf',row.superficie);set('bien-statut',row.statut);set('bien-locataire',row.locataire);set('bien-loyer',row.loyer_mensuel);set('bien-valeur',row.valeur);set('bien-date-acq',row.date_acquisition);}
-  else if(table==='loyers'){set('loy-bien',row.bien);set('loy-locataire',row.locataire);set('loy-mois',row.mois);set('loy-montant',row.montant);set('loy-echeance',row.date_echeance);set('loy-paiement',row.date_paiement);set('loy-mode',row.mode_paiement);set('loy-statut',row.statut);}
-  else if(table==='banques'){set('bq-nom',row.nom_banque);set('bq-compte',row.nom_compte);set('bq-filiere',row.filiere);set('bq-numero',row.numero_compte);set('bq-rib',row.rib);set('bq-agence',row.agence);set('bq-solde',row.solde_initial);}
-  else if(table==='releves'){set('relev-date',row.date);set('relev-type',row.type_mouvement);set('relev-libelle',row.libelle);set('relev-ref',row.reference);set('relev-montant',row.montant);}
-  else if(table==='cheques'){set('chq-numero',row.numero_cheque);set('chq-type',row.type_cheque);set('chq-beneficiaire',row.beneficiaire);set('chq-date',row.date_emission);set('chq-echeance',row.date_echeance);set('chq-montant',row.montant);set('chq-statut',row.statut);}
-}
-
-// ── STATUS BADGE ──
-function stBadge(st) {
-  m = {'operational':'bg-g','maintenance':'bg-o','breakdown':'bg-r',
-    'Terminée':'bg-g','En cours':'bg-b','En attente':'bg-o','Annulée':'bg-r',
-    'Conforme':'bg-g','Non conforme':'bg-r','Payée':'bg-g','Partielle':'bg-o',
-    'Impayée':'bg-r','En retard':'bg-r','Actif':'bg-g','Inactif':'bg-x',
-    'Ouvert':'bg-r','Fermé':'bg-g','Brouillon':'bg-o',
-    'Livré':'bg-g','Planifié':'bg-b','Livrée':'bg-g','Planifiée':'bg-b'};
-  const cls=m[st]||'bg-2';
-  return '<span class="b '+cls+'">'+( st||'—')+'</span>';
-}
-
-// ── LOAD TRUCKS ──
-async function loadTrucks(sel, all=false) {
-  if(!sel) return;
-  trucks = await db('trucks');
-  const list = all ? trucks : (trucks||[]).filter(t=>t.status==='operational');
-  sel.innerHTML = '<option value="">— Sélectionner —</option>'
-    + (list||[]).map(t=>'<option value="'+t.id+'">'+t.id+(t.chauffeur?' — '+t.chauffeur:'')+'</option>').join('');
-}
-
-// ── QUICK EDIT MAX (stocks) ──
-function quickEditMax(id, curMax, unit) {
-  v = prompt('Nouveau maximum ('+unit+'):', curMax);
-  if(v===null) return;
-  n = parseFloat(v);
-  if(isNaN(n)||n<=0){toast('Valeur invalide');return;}
-  db('stocks','PATCH',{max_qty:n},{id}).then(()=>{ window._src=null; _cache['stocks']=null; toast('Max: '+n+' '+unit); render('stocks'); });
-}
-
-// ── LOG ACTION ──
-async function logAction(action, table, details={}) {
-  try {
-    await db('journal','POST',{action,table_name:table,user_name:userName,user_role:userRole,details:JSON.stringify(details)});
-  } catch(e){}
-}
-
-// ── APPEARANCE ──
-function applyAppearance() {
-  try {
-    cfg = JSON.parse(localStorage.getItem('sarpa_cfg')||'{}');
-    if(cfg.accentColor) document.documentElement.style.setProperty('--must',cfg.accentColor);
-    if(cfg.darkMode===false) document.body.classList.add('light-mode');
-  } catch(e){}
-}
-
-function getConfig() {
-  try{ return JSON.parse(localStorage.getItem('sarpa_cfg')||'{}'); }catch(e){ return {}; }
-}
-
-// ── TITLES ──
-TITLES = {
-  dashboard:'Tableau de bord', production:'Production Béton', stocks:'Stocks et Appro',
-  quality:'Contrôle Qualité', fleet:'Flotte de Camions', maintenance:'Maintenance',
-  accidents:'Accidents et Sécurité', fournisseurs:'Fournisseurs', projets:'Projets',
-  partenaires:'Partenaires', finances:'Finances consolidées', evaluations:'Évaluations',
-  rapports:'Rapports', parametres:'Paramètres app', users:'Utilisateurs',
-  acces_mgr:'Gestion des accès', rh:'Employés', formation:'Formations',
-  planning:'Planning', annuaire:'Annuaire clients', messages:'Messages',
-  carburant:'Carburant', objectifs:'Objectifs', conges:'Congés',
-  checklist:'Checklist', partenariats:'Partenariats', graphiques:'Graphiques',
-  journal:'Journal', livraisons:'Livraisons', factures:'Factures',
-  pointage:'Pointage', opening:'Opening', closing:'Closing',
-  biens:'Biens immobiliers', visites:'Visites', contrats_immo:'Contrats',
-  etats_lieux:'États des lieux', loyers:'Loyers', banques:'Comptes bancaires',
-  releves:'Relevés', rapprochement:'Rapprochement', cheques:'Chèques',
-  etats_fin:'États financiers', fin_beton:'Finance Béton',
-  fin_logistics:'Finance Logistics', fin_immo:'Finance Immo',
-  communiques:'Communiqués', recherche:'Recherche',
-};
-
-// ── GETMAINFIELDS (search helper) ──
-function getMainFields(table, item) {
-  maps = {
-    employes:{text:(item.nom||'')+(item.prenom?' '+item.prenom:''),sub:(item.poste||'')+(item.departement?' — '+item.departement:''),badge:item.statut},
-    trucks:{text:item.id||'',sub:(item.type||'')+(item.chauffeur?' — '+item.chauffeur:''),badge:item.status},
-    factures:{text:(item.numero_facture||'')+(item.nom?' — '+item.nom:''),sub:item.type_facture||'',badge:item.montant_total?fmt(item.montant_total)+' FCFA':''},
-    livraisons:{text:(item.client||item.chauffeur||''),sub:(item.type_mission||'')+(item.destination?' → '+item.destination:''),badge:item.statut},
-    projets:{text:item.nom||'',sub:(item.client||'')+(item.localisation?' — '+item.localisation:''),badge:item.statut},
-    fournisseurs:{text:item.fournisseur||'',sub:item.produit||'',badge:item.statut_cmd},
-    annuaire:{text:item.nom||'',sub:(item.poste||'')+(item.departement?' — '+item.departement:''),badge:item.telephone},
-    biens:{text:item.nom||item.adresse||'',sub:(item.type_bien||'')+(item.adresse?' — '+item.adresse:''),badge:item.statut},
-    accidents:{text:item.description||'',sub:item.type_accident||'',badge:item.statut},
-    partenaires:{text:item.nom||'',sub:item.type||'',badge:item.statut},
-    formations:{text:item.titre||'',sub:item.employe||'',badge:item.statut},
-    cheques:{text:(item.numero_cheque||'')+(item.beneficiaire?' — '+item.beneficiaire:''),sub:item.type_cheque||'',badge:item.montant?fmt(item.montant)+' FCFA':''},
-    banques:{text:item.nom_banque||'',sub:(item.nom_compte||'')+(item.filiere?' — '+item.filiere:''),badge:item.devise},
-    contrats_immo:{text:(item.numero_contrat||'')+(item.nom_client?' — '+item.nom_client:''),sub:item.bien||'',badge:item.statut},
-    loyers:{text:(item.bien||'')+(item.locataire?' — '+item.locataire:''),sub:item.mois||'',badge:item.statut},
-    communiques:{text:item.titre||'',sub:item.auteur||'',badge:item.priorite},
-    productions:{text:(item.formulation||'')+(item.volume?' — '+item.volume+'m³':''),sub:item.date||'',badge:item.statut},
-    maintenances:{text:(item.camion||'')+(item.type?' — '+item.type:''),sub:item.date||'',badge:item.statut},
-  };
-  return maps[table] || {text:JSON.stringify(item).slice(0,50),sub:'',badge:''};
-}
-
-// ── INIT ON LOAD ──
 document.addEventListener('DOMContentLoaded', async function() {
-  buildPortal();
-  document.getElementById('l-code').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+  const loginBtn = document.getElementById('login-btn');
+  const codeInp = document.getElementById('l-code');
+  if(loginBtn) loginBtn.addEventListener('click', doLogin);
+  if(codeInp) codeInp.addEventListener('keydown', function(e){ if(e.key==='Enter') doLogin(); });
 
-  // Check saved session
-  try {
-    s = JSON.parse(localStorage.getItem('sarpa_s')||'null');
-    if(s && s.role && s.deptId && (Date.now()-s.ts < 7*24*60*60*1000)) {
-      const dept = DEPARTMENTS.find(d=>d.id===s.deptId);
-      if(dept) {
-        await startApp(s.role, s.name, dept);
-        return;
-      }
-    }
-  } catch(e) {}
-  document.getElementById('portal').style.display = 'flex';
+  const s = JSON.parse(localStorage.getItem('sarpa_s')||'null');
+  if (s && s.role && (Date.now()-s.ts < 7*24*60*60*1000)) {
+    await startApp(s.role, s.name);
+  } else {
+    const ls = document.getElementById('login-screen');
+    if(ls) ls.style.display = 'flex';
+  }
 });
-
-async function renderCommuniques() {
-  comms = await db('communiques');
-  canP = ['dg','directeur','coordinatrice','manager_beton','manager_logistics','manager_immo','rh','resp_info','commercial'].includes(userRole);
-  const pg = document.getElementById('communiques-content');
-  if(!pg) return;
-  pg.innerHTML = '';
-  hdr = document.createElement('div'); hdr.className='sh';
-  hdrL = document.createElement('div');
-  hdrL.innerHTML = '<div class="stl">📢 Communiqués</div><div class="sst">Informations officielles</div>';
-  hdr.appendChild(hdrL);
-  if(canP){btn = document.createElement('button');btn.className='btn bm';btn.style.fontSize='11px';btn.textContent='+ Nouveau';btn.onclick=()=>openM('m-communique');hdr.appendChild(btn);}
-  pg.appendChild(hdr);
-  if(!(comms||[]).length){em = document.createElement('div');em.className='al al-m';em.textContent='Aucun communiqué.';pg.appendChild(em);return;}
-  prioC = {'Urgent':'var(--rd2)','Important':'var(--must2)','Normal':'var(--ac2)'};
-  (comms||[]).sort((a,b)=>(b.created_at||'').localeCompare(a.created_at||'')).forEach(c=>{
-    const card=document.createElement('div');card.className='card';card.style.marginBottom='14px';
-    col = prioC[c.priorite]||'var(--ac2)';
-    card.innerHTML='<div style="border-left:4px solid '+col+';padding:16px;border-radius:0 8px 8px 0">'
-      +'<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">'
-      +'<div><span class="b" style="background:'+col+'20;color:'+col+';font-size:10px;margin-right:8px">'+(c.priorite||'Normal')+'</span>'
-      +'<strong style="font-size:14px">'+(c.titre||'—')+'</strong></div>'
-      +'<div style="font-size:10px;color:var(--tx3);text-align:right"><div>'+(c.auteur||'—')+'</div>'
-      +'<div>'+(c.created_at?new Date(c.created_at).toLocaleDateString('fr-FR'):'—')+'</div></div></div>'
-      +(c.contenu?'<div style="font-size:13px;color:var(--tx2);line-height:1.6;white-space:pre-wrap;margin-bottom:10px">'+c.contenu+'</div>':'')
-      +(c.pdf_nom?'<div style="background:var(--sf2);border-radius:6px;padding:8px 12px;cursor:pointer;display:flex;align-items:center;gap:8px" data-pdf-id="'+c.id+'"><span>📄</span><span style="font-size:12px;color:var(--must2);font-weight:600">'+c.pdf_nom+'</span></div>':'')
-      +'</div>'
-      +(canP?'<div style="padding:8px 16px;border-top:1px solid var(--bd);display:flex;justify-content:flex-end"><button data-del-id="'+c.id+'" style="background:none;border:1px solid var(--rd2);color:var(--rd2);border-radius:4px;padding:3px 10px;cursor:pointer;font-size:11px">Supprimer</button></div>':'');
-    card.querySelectorAll&&card.querySelectorAll('[data-pdf-id]').forEach(el=>el.onclick=()=>viewCommPDF(String(el.dataset.pdfId)));
-    card.querySelectorAll&&card.querySelectorAll('[data-del-id]').forEach(el=>el.onclick=()=>deleteComm(String(el.dataset.delId)));
-    pg.appendChild(card);
-  });
-}
-async function savCommunique(){
-  titre = document.getElementById('comm-titre').value.trim();
-  if(!titre){toast('Titre requis');return;}
-  const pi=document.getElementById('comm-pdf');
-  let pd='',pn='';
-  if(pi&&pi.files&&pi.files[0]){f = pi.files[0];if(f.size>500000){toast('PDF max 500KB');return;}pn=f.name;pd=await new Promise((res,rej)=>{r = new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(f);});}
-  await dbSave('communiques',{titre,contenu:document.getElementById('comm-contenu').value,priorite:document.getElementById('comm-priorite').value,auteur:userName,pdf_nom:pn,pdf_data:pd},'m-communique','communiques','Communique publie');
-}
-async function viewCommPDF(id){
-  const comms=await db('communiques');c = (comms||[]).find(x=>String(x.id)===id);
-  if(!c||!c.pdf_data){toast('PDF non disponible');return;}
-  win = window.open('');if(!win){toast('Autorisez les popups');return;}
-  win.document.write('<html><body style="margin:0"><button onclick="window.close()" style="position:fixed;top:10px;left:10px;z-index:99;background:#333;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer">Retour</button><iframe src="data:application/pdf;base64,'+c.pdf_data+'" width="100%" height="100%" style="border:none;padding-top:44px"></iframe></body></html>');
-  win.document.close();
-}
-async function deleteComm(id){
-  if(!confirm('Supprimer ?'))return;
-  await db('communiques','DELETE',null,{id});
-  logAction('delete','communiques',{id,par:userName});
-  toast('Supprime');render('communiques');
-}
-async function renderRecherche(){
-  const pg=document.getElementById('recherche-content');
-  if(pg){d = document.createElement('div');d.className='al al-b';d.textContent='Utilisez la loupe en haut pour rechercher partout.';pg.innerHTML='';pg.appendChild(d);}
-}
-async function renderAccesMgr(){
-  const pg=document.getElementById('acces_mgr-content');
-  if(!pg)return;
-  if(!['dg','directeur','resp_info'].includes(userRole)){pg.innerHTML='<div class="director-lock"><div class="lock-icon">🔐</div><div class="lock-title">Accès restreint</div></div>';return;}
-  pg.innerHTML='<div class="sh"><div><div class="stl">🔐 Gestion des accès</div><div class="sst">Configuration des accès par département</div></div></div>'
-    +'<div class="al al-b">Les acces se gerent dans Informatique. Chaque departement a ses codes dedies.</div>'
-    +'<div class="card sp"><div class="ch"><div class="ct">Départements configurés</div></div>'
-    +DEPARTMENTS.map(d=>'<div style="display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--bd)"><span style="font-size:22px">'+d.icon+'</span><div><div style="font-size:13px;font-weight:600">'+d.name+'</div><div style="font-size:11px;color:var(--tx3)">Rôles: '+d.roles.join(', ')+'</div></div></div>').join('')
-    +'</div>';
-}
-
-
 
 
 
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
